@@ -1,0 +1,89 @@
+/**************************************************
+ * PSwarm
+ **************************************************
+ * 07/2020 v 0.0.1
+ **************************************************
+ * Initial Build
+ **************************************************
+ * 06/07/2020 - NE
+ **************************************************
+ * 1. Added centroid display to simulation
+ * 2. Refactored code
+ * 3. Added snapshot save and load (to single life) 
+ **************************************************
+ * 07/07/2020 - NE
+ **************************************************
+ * 1. Adjusted tolerance levels (_topspeed) and 
+ *    added annotaions to tunable parameters. 
+ * 2. Converted destination to left mouse click for
+ *    on/off and location.
+ **************************************************
+ * 18/09/2020 - NE
+ **************************************************
+ * 1. Move all graphics into main body of 
+ *    application.
+ * 2. Refactored PSystem and Particle to be model 
+ *    only.
+ **************************************************
+ * 22/09/2020 - NE
+ **************************************************
+ * 1. Updated model (refactored and updated) to be  
+ *    inline with Python model by removing a 
+ *    normalisation stage.
+ * 2. Changed swarm creation to be in the centre 
+ *    of screen (quartile).
+ * 3. Removed physics type calculations replaced 
+ *    vector caluclations and summing to a 
+ *    resultant change.
+ * 4. Added a params file (params.txt). If present 
+ *    the default parameters in the application are
+ *    overridden. (useful for command line running)
+ *    simply adding a Y/N to the first line 
+ *    controls its usage
+ **************************************************
+ * 30/10/2020 - NE
+ **************************************************
+ * 1. Fixed scalling and offsetting for positioning
+ *    destination.
+ * 2. Added mouse over agent information when 
+ *    simulation is stopped.  
+ ************************************************** 
+ * 02/11/2020 - 0.1.0 - NE
+ **************************************************
+ * 1. Refactored to use ArrayList for agents
+ * 2. Added create agent with L Mouse
+ **************************************************
+ * 20/11/2020 - 0.1.0 - NE
+ **************************************************
+ * 1. Refactored to use ArrayList for destinations
+ * 2. Added info screens for agents and destinations
+ * 3. Added add destination, delete destination 
+ * 4. Added delete agent with R Mouse
+ * 5. Added "modes" for editing context
+ * 6. Added Obstacle class needs integrated!
+ **************************************************
+ * 21/11/2020 - 0.1.0 - NE
+ **************************************************
+ * 1. Added Obstacles
+ **************************************************
+ * 27/11/2020 - 0.1.1 - NE
+ **************************************************
+ * 1. Added Generic direction clock?
+ * 2. Refactored PSyetm to allow extends to add 
+ *    additional models
+ **************************************************
+* 30/11/2020 - 0.1.1 - NE
+ **************************************************
+ * 1. Added Generic infoBox class to display
+ **************************************************
+ * 03/12/2020 - 0.1.1 - NE
+ **************************************************
+ * 1. Added themes framework activted with 0 key
+ **************************************************
+ * 03/12/2020 - 0.1.2 - NE
+ **************************************************
+ * 1. Updated load and save experiment to include
+ *    Agents, Destinations, Objects and systemwide
+ *    parameters.
+ * 2. Added polymorphic access to muliple models
+ **************************************************/
