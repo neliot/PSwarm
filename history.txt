@@ -86,4 +86,9 @@
  *    Agents, Destinations, Objects and systemwide
  *    parameters.
  * 2. Added polymorphic access to muliple models
+ **************************************************
+ * 15/12/2020 - 0.1.2 - NE
+ **************************************************
+ * 1. Added Properties. Not supported via 
+ *    Processing so added as separate Class
  **************************************************/
