@@ -5,8 +5,6 @@
  * See history.txt
  **************************************************/
 java.util.Properties properties;
-
-//PSProperties properties;
 PSystem system;
 Theme theme = new Theme(); 
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
@@ -78,37 +76,11 @@ void settings() {
   noSmooth();
 }
 
-void getParams() {
-/** 
-* Parameter setup
-*/   
-  _swarmSize = int(properties.getProperty("size"));
-  system._particleRange = float(properties.getProperty("particleRange"));
-  system._particleRepulse = float(properties.getProperty("particleRepulse"));
-  system._repulsionBias = float(properties.getProperty("repulsionBias"));
-  system._cohesionBias = float(properties.getProperty("cohesionBias"));
-  system._directionBias = float(properties.getProperty("directionBias"));
-  system._obstacleBias = float(properties.getProperty("obstacleBias"));
-  system._obstacleRange = float(properties.getProperty("obstacleRange"));
-  system._repulseProportion = float(properties.getProperty("repulseProportion"));
-  system._cohesionProportion = float(properties.getProperty("cohesionProportion"));
-  system._loggingP = boolean(properties.getProperty("loggingP"));
-  system._loggingN = boolean(properties.getProperty("loggingN"));
-  _run = boolean(properties.getProperty("run"));
-  _displayId = boolean(properties.getProperty("displayId"));
-  _particleTicks = boolean(properties.getProperty("particleTicks"));
-  _lines = boolean(properties.getProperty("lines"));
-  _grid = boolean(properties.getProperty("grid"));
-  _loadSwarm = boolean(properties.getProperty("loadSwarm"));
-  println("Properties Set");
-}
-
 void setup() {
 /** 
 * Sets up frame rate and the initial swarm
 * 
 */
-//  properties = new PSProperties();
   properties = new java.util.Properties();
   try {
     properties.load( createReader("application.properties") );
@@ -139,7 +111,25 @@ void setup() {
   } else {
     system = new Model3(); 
   }
-  getParams();
+
+  _swarmSize = int(properties.getProperty("size"));
+  system._particleRange = float(properties.getProperty("particleRange"));
+  system._particleRepulse = float(properties.getProperty("particleRepulse"));
+  system._repulsionBias = float(properties.getProperty("repulsionBias"));
+  system._cohesionBias = float(properties.getProperty("cohesionBias"));
+  system._directionBias = float(properties.getProperty("directionBias"));
+  system._obstacleBias = float(properties.getProperty("obstacleBias"));
+  system._obstacleRange = float(properties.getProperty("obstacleRange"));
+  system._repulseProportion = float(properties.getProperty("repulseProportion"));
+  system._cohesionProportion = float(properties.getProperty("cohesionProportion"));
+  system._loggingP = boolean(properties.getProperty("loggingP"));
+  system._loggingN = boolean(properties.getProperty("loggingN"));
+  _run = boolean(properties.getProperty("run"));
+  _displayId = boolean(properties.getProperty("displayId"));
+  _particleTicks = boolean(properties.getProperty("particleTicks"));
+  _lines = boolean(properties.getProperty("lines"));
+  _grid = boolean(properties.getProperty("grid"));
+  _loadSwarm = boolean(properties.getProperty("loadSwarm"));
 
   if (_loadSwarm) {
     system.loadSwarm();
