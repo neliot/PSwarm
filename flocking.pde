@@ -4,7 +4,9 @@
  * AUTHOR: Dr. Neil Eliot 
  * See history.txt
  **************************************************/
-PSProperties properties;
+java.util.Properties properties;
+
+//PSProperties properties;
 PSystem system;
 Theme theme = new Theme(); 
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
@@ -79,7 +81,7 @@ void settings() {
 void getParams() {
 /** 
 * Parameter setup
-*/ 
+*/   
   _swarmSize = int(properties.getProperty("size"));
   system._particleRange = float(properties.getProperty("particleRange"));
   system._particleRepulse = float(properties.getProperty("particleRepulse"));
@@ -106,7 +108,14 @@ void setup() {
 * Sets up frame rate and the initial swarm
 * 
 */
-  properties = new PSProperties();
+//  properties = new PSProperties();
+  properties = new java.util.Properties();
+  try {
+    properties.load( createReader("application.properties") );
+  } catch(Exception e) {
+    
+  }
+
   frameRate(30);
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   license = loadImage("icons/license.png");    
@@ -121,6 +130,7 @@ void setup() {
   mouse1 = mice1.get(_mode);
   mouse2 = mice2.get(_mode);
   mouse = mouse1;
+
   _model = int(properties.getProperty("model"));
   if (_model == 1) {
     system = new Model1(); 
