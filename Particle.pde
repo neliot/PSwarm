@@ -3,6 +3,7 @@ class Particle {
   PVector _nextLocation;
   PVector _resultant;
   ArrayList<Particle> _neighbours = new ArrayList<Particle>(); 
+  ArrayList<Destination> _destinations;
 //  ArrayList<PImage> mice2 = new ArrayList<PImage>();
 //  PVector _acceleration;
   int _id;
@@ -57,6 +58,15 @@ class Particle {
     this._nextLocation = new PVector(x,y,z);
     this._resultant = new PVector(0,0,0);
   }
+
+  void setDestinations(ArrayList<Destination> destinations) {
+    _destinations = (ArrayList<Destination>) destinations.clone();
+  }
+
+  void addDestinations(Destination destination) {
+    _destinations.add(destination);
+  }
+
 
   String toString() {
 /** 
@@ -178,5 +188,5 @@ class Particle {
         this._isPerimeter = true;
       }
     }
-  }
+  }  
 }

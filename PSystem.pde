@@ -29,6 +29,7 @@ abstract class PSystem {
   abstract void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress);
   abstract PVector cohesion(Particle p, boolean perimCompress);
   abstract PVector repulsion(Particle p, boolean perimCompress);
+  abstract PVector direction(Particle p, boolean perimCoord);
 
   PSystem(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
 /** 
@@ -193,34 +194,6 @@ abstract class PSystem {
       };
     }
     return result.normalize().mult(-_obstacleBias);
-  }
-
-  PVector direction(Particle p, boolean perimCoord) {
-/** 
-* direction calculation - Calculates the normalised direction.
-* 
-* @param p The particle that is currently being checked
-* @param perimCoord is perimer coordination enabled
-*/
-    PVector destination = new PVector(0,0,0);
-    PVector dir = new PVector(0,0,0);
-    if (this.destinations.size() > 0) {
-      destination = this.destinations.get(0)._location;      
-      for (int loop = 1; loop <= this.destinations.size()-1; loop++) {
-        if (PVector.dist(p._location,destination) > PVector.dist(p._location,this.destinations.get(loop)._location)) {
-          destination = this.destinations.get(loop)._location;
-        }
-      }   
-    }    
-    if (!perimCoord) {
-      dir = PVector.sub(destination,p._location);
-    } else {
-      /* Perimeter only control */
-      if (p._isPerimeter) {
-        dir = PVector.sub(destination,p._location);
-      }
-    }
-    return dir.setMag(_directionBias);
   }
 
   void addDestination(float x, float y, float z) {

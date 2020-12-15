@@ -155,4 +155,32 @@ class Model3 extends PSystem {
     }
     return result;
   }
+
+  PVector direction(Particle p, boolean perimCoord) {
+/** 
+* direction calculation - Calculates the normalised direction.
+* 
+* @param p The particle that is currently being checked
+* @param perimCoord is perimer coordination enabled
+*/
+    PVector destination = new PVector(0,0,0);
+    PVector dir = new PVector(0,0,0);
+    if (this.destinations.size() > 0) {
+      destination = this.destinations.get(0)._location;      
+      for (int loop = 1; loop <= this.destinations.size()-1; loop++) {
+        if (PVector.dist(p._location,destination) > PVector.dist(p._location,this.destinations.get(loop)._location)) {
+          destination = this.destinations.get(loop)._location;
+        }
+      }   
+    }    
+    if (!perimCoord) {
+      dir = PVector.sub(destination,p._location);
+    } else {
+      /* Perimeter only control */
+      if (p._isPerimeter) {
+        dir = PVector.sub(destination,p._location);
+      }
+    }
+    return dir.setMag(_directionBias);
+  }
 }

@@ -108,8 +108,10 @@ void setup() {
     system = new Model1(); 
   } else if (_model == 2) {
     system = new Model2(); 
-  } else {
+  } else if (_model == 3) {
     system = new Model3(); 
+  } else {
+    system = new Model4(); 
   }
 
   _swarmSize = int(properties.getProperty("size"));
