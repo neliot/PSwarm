@@ -257,14 +257,6 @@ void keyPressed() {
   if (key == ' ') {_dest = !_dest;}
   if (key == 'q') {if (_gridSize > 10) _gridSize -= 10;}
   if (key == 'w') {if (_gridSize < 100) _gridSize += 10;}
-  // if (key == 'h') {if (_offsetX >= -10000) _offsetX -= 2;}
-  // if (key == 'k') {if (_offsetX <= (width + 10000)) _offsetX += 2;}
-  // if (key == 'u') {if (_offsetY >= -10000) _offsetY -= 2;}
-  // if (key == 'n') {if (_offsetY <= (height + 10000)) _offsetY += 2;}
-  // if (key == 'j') {_offsetX = 0; _offsetY = 0;}
-  // if (key == 'a') {if (_scale >= 0.2) _scale -= 0.1;}
-  // if (key == 's') {_scale = 1;}
-  // if (key == 'd') {if (_scale <= 5.0) _scale += 0.1;}
   if (key == 'p') {_perimCord = !_perimCord;}  
   if (key == 'c') {_perimCompress = !_perimCompress;} 
   if (key == 'g') {_grid = !_grid;}
@@ -326,7 +318,6 @@ void generateMenu() {
   menuInfo1.add("(y) load (o) Save - Snapshot");
   menuInfo1.add("(1) Screen Grab");  
   menuInfo1.add("(ESC) EXIT");
-  //if (_pLog) {menuInfo1.setFill(color(200,0,50,20));} else {menuInfo1.setFill(color(0,0,100,20));}
 
   menuInfo2.setTitle(system._model + " Model ("+frameRate+")");
   menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
@@ -335,7 +326,6 @@ void generateMenu() {
   menuInfo2.add("(m) MODE:" + _modes[_mode]);  
   menuInfo2.add("Scale (a) <-20% (s) 100% (d) 500%->");
   menuInfo2.add("Offset X:(h) " + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET ");  
-  //if (_pLog) {menuInfo2.setFill(color(200,0,50,20));} else {menuInfo2.setFill(color(0,0,100,20));}
 }
 
 void generateDirectionInfo() {
