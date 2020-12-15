@@ -2,8 +2,8 @@ class Destination {
 //  int _nextId;
   int _id;
   PVector _location;
-  float _size = 10.0;
-  float _mass = 1.0;
+  float _size = 10.0f;
+  float _mass = 1.0f;
 
   Destination(int i, float x, float y, float z) {
 /** 

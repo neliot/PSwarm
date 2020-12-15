@@ -2,9 +2,9 @@ class Obstacle {
 //  static int _nextId = 0;
   int _id;
   PVector _location;
-  float _size = 10.0;
-  float _mass = 1.0;
-  float _range = 50;
+  float _size = 10.0f;
+  float _mass = 1.0f;
+  float _range = 50f;
   
   Obstacle(int i, float x, float y, float z) {
 /** 

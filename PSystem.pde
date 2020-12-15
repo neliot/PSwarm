@@ -4,15 +4,15 @@ abstract class PSystem {
   ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
   boolean _lines = true;
   String _model;
-  float _cohesionBias = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
-  float _repulsionBias = 300; // Must be > _cohesionBias to prevent the swarm collapsing.
-  float _directionBias = 80; // Must be > particle._topspeed to allow free particles to coalesce.
-  float _obstacleBias = 500; // Stay away from those obstacles Eugene.
-  float _particleRange = 70; // Cohesion range, Must be greater than range to repulsion range.
-  float _particleRepulse = 50; // Repulsion range, Must be less than range to allow cohesion.
-  float _obstacleRange = 75; // Obstacle range
-  float _repulseProportion = 1; // Compressed perimeter reduction divisor
-  float _cohesionProportion = 1; // Compressed perimeter reduction divisor
+  float _cohesionBias = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
+  float _repulsionBias = 300f; // Must be > _cohesionBias to prevent the swarm collapsing.
+  float _directionBias = 80f; // Must be > particle._topspeed to allow free particles to coalesce.
+  float _obstacleBias = 500f; // Stay away from those obstacles Eugene.
+  float _particleRange = 70f; // Cohesion range, Must be greater than range to repulsion range.
+  float _particleRepulse = 50f; // Repulsion range, Must be less than range to allow cohesion.
+  float _obstacleRange = 75f; // Obstacle range
+  float _repulseProportion = 1f; // Compressed perimeter reduction divisor
+  float _cohesionProportion = 1f; // Compressed perimeter reduction divisor
 
   int _nextParticleId = 0;
   int _nextDestId = 0;

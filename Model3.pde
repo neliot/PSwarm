@@ -87,7 +87,7 @@ class Model3 extends PSystem {
 */
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
-    float distance = 0;
+    float distance = 0f;
 //    p._neighbours.clear();
     String nData = "";
     
@@ -126,8 +126,8 @@ class Model3 extends PSystem {
     PVector result = new PVector(0,0);
     PVector temp = new PVector(0,0);
     int count = 0;
-    float dist = 0;
-    float distance = 0;
+    float dist = 0f;
+    float distance = 0f;
     String nData = "";
     for(Particle n : p._neighbours) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.

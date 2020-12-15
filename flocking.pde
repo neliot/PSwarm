@@ -4,6 +4,7 @@
  * AUTHOR: Dr. Neil Eliot 
  * See history.txt
  **************************************************/
+PSProperties properties;
 PSystem system;
 Theme theme = new Theme(); 
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
@@ -17,7 +18,7 @@ PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2020";
 String _VERSION = "0.1.2";
-float _scale = 1; // Scaling factor
+float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
 boolean _logo = true;
@@ -75,56 +76,29 @@ void settings() {
   noSmooth();
 }
 
-void getModel() {
-  String[] params = loadStrings("params.txt");
-  if (params.length == 21 && params[0].substring(0,1).equals("Y")) {
-    _model = int(split(params[19],' ')[0]);
-  }
-}
-
 void getParams() {
 /** 
 * Parameter setup
 */ 
-  String[] params = loadStrings("params.txt");
-  if (params.length == 21 && params[0].substring(0,1).equals("Y")) {
-    println("Using Parameter File");
-    println("===================================");
-    _swarmSize = int(split(params[1],' ')[0]);
-    system._particleRange = float(split(params[2],' ')[0]); 
-    system._particleRepulse = float(split(params[3],' ')[0]);
-    system._repulsionBias = float(split(params[4],' ')[0]);
-    system._cohesionBias = float(split(params[5],' ')[0]);
-    system._directionBias = float(split(params[6],' ')[0]);
-    system._obstacleBias = float(split(params[7],' ')[0]);
-    system._obstacleRange = float(split(params[8],' ')[0]);
-    system._repulseProportion = float(split(params[9],' ')[0]); // Compressed perimeter reduction divisor
-    system._cohesionProportion = float(split(params[10],' ')[0]); // Compressed perimeter reduction divisor
-    if (params[11].substring(0,1).equals("Y")) {system._loggingP = true;} else {system._loggingP = false;};
-    if (params[12].substring(0,1).equals("Y")) {system._loggingN = true;} else {system._loggingN = false;};
-    if (params[13].substring(0,1).equals("Y")) {_run = true;} else {_run = false;};
-    if (params[14].substring(0,1).equals("Y")) {_displayId = true;} else {_displayId = false;}; // N         Display Id boolean _displayId = false; // Display Y/N
-    if (params[15].substring(0,1).equals("Y")) {_particleTicks = true;} else {_particleTicks = false;}; //Y         Display Ticks boolean _particleTicks = true; // Display Y/N
-    if (params[16].substring(0,1).equals("Y")) {_lines = true;} else {_lines = false;}; // Y         Lines boolean _lines = true; // Display Y/N
-    if (params[17].substring(0,1).equals("Y")) {_grid = true;} else {_grid = false;}; //Y         Grid boolean _grid = true; // Display Y/N
-    if (params[18].substring(0,1).equals("Y")) {_loadSwarm = true;} else {_loadSwarm=false;}; //Y         Load environment // Display Y/N
-
-    println("Size:\t\t\t"+_swarmSize);
-    println("Cohesion Range:\t\t"+ system._particleRange);
-    println("Replusion Range:\t"+ system._particleRepulse);
-    println("Repulsion Bias:\t\t"+ system._repulsionBias);
-    println("Particle Logging:\t\t"+ system._loggingP);
-    println("Neighbour Logging:\t\t"+ system._loggingN);
-    println("Cohesion Bias:\t\t"+ system._cohesionBias);
-    println("Direction Bias:\t\t"+ system._directionBias);
-    println("Obstacle Bias:\t\t"+ system._obstacleBias);
-    println("Obstacle Range:\t\t"+ system._obstacleRange);
-    println("Perim R Prop:\t\t"+ system._repulseProportion);
-    println("Perim C Prop:\t\t"+ system._cohesionProportion);
-    println("===================================");
-  } else {
-    println("Not using Parameter File");
-  }
+  _swarmSize = int(properties.getProperty("size"));
+  system._particleRange = float(properties.getProperty("particleRange"));
+  system._particleRepulse = float(properties.getProperty("particleRepulse"));
+  system._repulsionBias = float(properties.getProperty("repulsionBias"));
+  system._cohesionBias = float(properties.getProperty("cohesionBias"));
+  system._directionBias = float(properties.getProperty("directionBias"));
+  system._obstacleBias = float(properties.getProperty("obstacleBias"));
+  system._obstacleRange = float(properties.getProperty("obstacleRange"));
+  system._repulseProportion = float(properties.getProperty("repulseProportion"));
+  system._cohesionProportion = float(properties.getProperty("cohesionProportion"));
+  system._loggingP = boolean(properties.getProperty("loggingP"));
+  system._loggingN = boolean(properties.getProperty("loggingN"));
+  _run = boolean(properties.getProperty("run"));
+  _displayId = boolean(properties.getProperty("displayId"));
+  _particleTicks = boolean(properties.getProperty("particleTicks"));
+  _lines = boolean(properties.getProperty("lines"));
+  _grid = boolean(properties.getProperty("grid"));
+  _loadSwarm = boolean(properties.getProperty("loadSwarm"));
+  println("Properties Set");
 }
 
 void setup() {
@@ -132,6 +106,7 @@ void setup() {
 * Sets up frame rate and the initial swarm
 * 
 */
+  properties = new PSProperties();
   frameRate(30);
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   license = loadImage("icons/license.png");    
@@ -146,7 +121,7 @@ void setup() {
   mouse1 = mice1.get(_mode);
   mouse2 = mice2.get(_mode);
   mouse = mouse1;
-  getModel();
+  _model = int(properties.getProperty("model"));
   if (_model == 1) {
     system = new Model1(); 
   } else if (_model == 2) {
