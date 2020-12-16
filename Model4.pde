@@ -1,12 +1,14 @@
+import java.util.*; 
+
 class Model4 extends PSystem {
   Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
     super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "!!UNDER DEVELOPMENT!!";
+    _model = "Path Follower 0.1";
   }
   
   Model4() {
     super();
-    _model = "!!UNDER DEVELOPMENT!!";
+    _model = "Path Follower 0.1";
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
@@ -42,6 +44,8 @@ class Model4 extends PSystem {
       if (obstacles.size() > 0) {
         avoid = avoidObstacles(p);
       }
+
+      removeMetGoals(p);
 
       if (dest && destinations.size() > 0) {
         dir = direction(p, perimCoord);
@@ -173,4 +177,13 @@ class Model4 extends PSystem {
     }
     return dir.setMag(_directionBias);
   }
+
+  void removeMetGoals(Particle p) {
+    Collections.shuffle(p._destinations);
+    for (int i = 1; i < p._destinations.size(); i++) {
+      if (PVector.dist(p._location,p._destinations.get(i)._location) <= p._range) {
+        p._destinations.remove(i);
+      }
+    }   
+  } 
 }

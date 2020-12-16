@@ -35,7 +35,7 @@ float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
 boolean _logo = true;
-boolean _dest = true; // Enable/diable destination seeking
+boolean _dest = false; // Enable/diable destination seeking
 boolean _run = false; // Enable/disable update calculations
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
@@ -145,6 +145,7 @@ void setup() {
   _lines = boolean(properties.getProperty("lines"));
   _grid = boolean(properties.getProperty("grid"));
   _loadSwarm = boolean(properties.getProperty("loadSwarm"));
+  _dest = boolean(properties.getProperty("dest"));
 
   if (_loadSwarm) {
     system.loadSwarm();
@@ -344,7 +345,7 @@ void generateMenu() {
 }
 
 void generateDirectionInfo() {
-  directionInfo.setGraphic(swarmDirectionImage()); 
+  directionInfo.setGraphic(swarmDirectionImage());
   directionInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
 }
 
