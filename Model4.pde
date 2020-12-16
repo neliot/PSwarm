@@ -1,12 +1,12 @@
 class Model4 extends PSystem {
   Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
     super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Destination Spreading";
+    _model = "!!UNDER DEVELOPMENT!!";
   }
   
   Model4() {
     super();
-    _model = "Destination Spreading";
+    _model = "!!UNDER DEVELOPMENT!!";
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {

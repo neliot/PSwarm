@@ -167,7 +167,7 @@ void draw() {
     background(0);
     image(logo, (width - logo.width)/2, (height - logo.height)/2);
     textSize(24);
-    text("Version: " + _VERSION + " (" + system._model + ")", (width - logo.width)/2, ((height - logo.height)/2) - 5);
+    text("V:" + _VERSION + " - " + system._model, (width - logo.width)/2, ((height - logo.height)/2) - 5);
     return;
   } else {
     background(theme.desktopTheme[theme._theme][0]);
@@ -334,7 +334,7 @@ void generateMenu() {
   menuInfo1.add("(1) Screen Grab");  
   menuInfo1.add("(ESC) EXIT");
 
-  menuInfo2.setTitle(system._model + " Model ("+frameRate+")");
+  menuInfo2.setTitle(system._model + " (" + frameRate + ")");
   menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo2.clearData();
   menuInfo2.add("Agents:" + system.particles.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
