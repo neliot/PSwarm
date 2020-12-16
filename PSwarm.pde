@@ -39,7 +39,7 @@ boolean _dest = false; // Enable/diable destination seeking
 boolean _run = false; // Enable/disable update calculations
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
-boolean _perimCord = false; // Enable/disable only using perimeter particles for coordination to destination
+boolean _perimCoord = false; // Enable/disable only using perimeter particles for coordination to destination
 boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _perimCompress = false; // Compress the perimeter Y/N
@@ -123,8 +123,10 @@ void setup() {
     system = new Model2(); 
   } else if (_model == 3) {
     system = new Model3(); 
-  } else {
+  } else if (_model == 4) {
     system = new Model4(); 
+  } else {
+    system = new Model5(); 
   }
 
   _swarmSize = int(properties.getProperty("size"));
@@ -146,6 +148,7 @@ void setup() {
   _grid = boolean(properties.getProperty("grid"));
   _loadSwarm = boolean(properties.getProperty("loadSwarm"));
   _dest = boolean(properties.getProperty("dest"));
+  _perimCoord = boolean(properties.getProperty("perimCoord"));
 
   if (_loadSwarm) {
     system.loadSwarm();
@@ -175,7 +178,7 @@ void draw() {
   }
   if (_grid) displayGrid();
   if (_centroid) displayCentroid();
-  system.update(_run, _dest, _perimCord, _perimCompress);
+  system.update(_run, _dest, _perimCoord, _perimCompress);
   _displayParticleInfo = -1;
   _displayDestinationInfo = -1;
   _displayObstacleInfo = -1;
@@ -273,7 +276,7 @@ void keyPressed() {
   if (key == ' ') {_dest = !_dest;}
   if (key == 'q') {if (_gridSize > 10) _gridSize -= 10;}
   if (key == 'w') {if (_gridSize < 100) _gridSize += 10;}
-  if (key == 'p') {_perimCord = !_perimCord;}  
+  if (key == 'p') {_perimCoord = !_perimCoord;}  
   if (key == 'c') {_perimCompress = !_perimCompress;} 
   if (key == 'g') {_grid = !_grid;}
   if (key == 'l') {_lines = !_lines;} 
@@ -327,7 +330,7 @@ void generateMenu() {
   menuInfo1.add("(l) Display Link Lines:" + _lines);
   menuInfo1.add("(t) Display particle ticks:" + _particleTicks);
   menuInfo1.add("(x) Display centroid:" + _centroid);
-  menuInfo1.add("(p) Perimeter Coordination:" + _perimCord);
+  menuInfo1.add("(p) Perimeter Coordination:" + _perimCoord);
   menuInfo1.add("(c) Perimeter Compress:" + _perimCompress);
   menuInfo1.add("(q) -10 Grid [10-100]");  
   menuInfo1.add("(w) +10 Grid [10-100]");  

@@ -1,14 +1,14 @@
 import java.util.*; 
 
-class Model4 extends PSystem {
-  Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+class Model5 extends PSystem {
+  Model5(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
     super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Path Follower 0.1";
+    _model = "Random Path 0.1";
   }
   
-  Model4() {
+  Model5() {
     super();
-    _model = "Path Follower 0.1";
+    _model = "Random Path 0.1";
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
@@ -182,6 +182,7 @@ class Model4 extends PSystem {
     if (p._destinations.size() > 0) {
       if (PVector.dist(p._location,p._destinations.get(0)._location) <= p._range) {
         p._destinations.remove(0);
+        Collections.shuffle(p._destinations);
       }
     } 
   } 
