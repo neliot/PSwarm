@@ -167,16 +167,19 @@ abstract class PSystem {
     this.destinations.clear();
     for (String data : lines) {
       float[] nums = float(split(data, ','));
-      destinations.add(new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]));
+      Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
+      destinations.add(d);
       this._nextObsId = int(nums[0]++);
+      for(Particle p : particles) {
+        p.addDestination(d);
+      }
     }
-
   }
   
   void moveReset() {
     for(Particle p : this.particles) {
-        p.move();
-        p.reset();
+      p.move();
+      p.reset();
     }
   }
   
@@ -197,13 +200,20 @@ abstract class PSystem {
   }
 
   void addDestination(float x, float y, float z) {
-      this.destinations.add(new Destination(_nextDestId++,x,y,z));
+    Destination d = new Destination(_nextDestId++,x,y,z);
+    this.destinations.add(d);
+    for(Particle p : particles) {
+      p.addDestination(d);
+    }
   }
 
   void deleteDestinationById(int id) {
     for (int i = this.destinations.size() - 1; i >= 0; i--) {
       Destination d = this.destinations.get(i);
       if (d._id == id) {
+        for(Particle p : particles) {
+          p.removeDestination(d);
+        }
         this.destinations.remove(i);
       }
     }
@@ -215,15 +225,13 @@ abstract class PSystem {
      }
      return null;
   }
-
-  boolean hasDestinations() {
-    return (this.destinations.size() > 0);
-  }
   
   void addParticle(float x, float y, float z) {
     try {
       // create agent in centred quartile.
-      this.particles.add(new Particle(this._nextParticleId++,x,y,z,this._particleRange,this._particleRepulse));
+      Particle p = new Particle(this._nextParticleId++,x,y,z,this._particleRange,this._particleRepulse);
+      p.setDestinations(this.destinations);
+      this.particles.add(p);
     } catch (Exception e) {
       println(e);
       exit();

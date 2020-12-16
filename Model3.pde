@@ -165,11 +165,11 @@ class Model3 extends PSystem {
 */
     PVector destination = new PVector(0,0,0);
     PVector dir = new PVector(0,0,0);
-    if (this.destinations.size() > 0) {
-      destination = this.destinations.get(0)._location;      
-      for (int loop = 1; loop <= this.destinations.size()-1; loop++) {
-        if (PVector.dist(p._location,destination) > PVector.dist(p._location,this.destinations.get(loop)._location)) {
-          destination = this.destinations.get(loop)._location;
+    if (p._destinations.size() > 0) {
+      destination = p._destinations.get(0)._location;      
+      for (int i = 1; i < p._destinations.size(); i++) {
+        if (PVector.dist(p._location,destination) > PVector.dist(p._location,p._destinations.get(i)._location)) {
+          destination = p._destinations.get(i)._location;
         }
       }   
     }    
