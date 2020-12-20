@@ -1,13 +1,12 @@
 class Model3 extends PSystem {
-  //String _model = "Linear Vector + Random";
-  Model3(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Linear Vector + Random";
-  }
+  // Model3(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+  //   _model = "Linear Vector + Random";
+  //   _modelId = "LVR";
+  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
+  // }
 
   Model3() {
-    super();
-    _model = "Linear Vector + Random";
+    super("Linear Vector + Random","LVR");
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {

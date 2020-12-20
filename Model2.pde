@@ -1,13 +1,10 @@
 class Model2 extends PSystem {
-//  String _model = "Random Walkers";
-  Model2(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Random Walkers";
-  }
+  // Model2(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
+  // }
 
   Model2() {
-    super();    
-    _model = "Random Walkers";
+    super("Random Walkers","RW");    
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {

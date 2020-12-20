@@ -1,13 +1,14 @@
 class Model1 extends PSystem {
-//  String _model = "Linear Vector";
-  Model1(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Linear Vector";
-  }
+//  Model1(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+//    _model = "Linear Vector";
+//    _modelId = "LV";
+//    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
+//  }
   
   Model1() {
-    super();
-    _model = "Linear Vector";
+//    _model = "Linear Vector";
+//    _modelId = "LV";
+    super("Linear Vector","LV");
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {

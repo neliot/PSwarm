@@ -3,7 +3,6 @@ abstract class PSystem {
   ArrayList<Destination> destinations = new ArrayList<Destination>();
   ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
   boolean _lines = true;
-  String _model;
   float _cohesionBias = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
   float _repulsionBias = 300f; // Must be > _cohesionBias to prevent the swarm collapsing.
   float _directionBias = 80f; // Must be > particle._topspeed to allow free particles to coalesce.
@@ -13,6 +12,9 @@ abstract class PSystem {
   float _obstacleRange = 75f; // Obstacle range
   float _repulseProportion = 1f; // Compressed perimeter reduction divisor
   float _cohesionProportion = 1f; // Compressed perimeter reduction divisor
+
+  String _model;
+  String _modelId;
 
   int _nextParticleId = 0;
   int _nextDestId = 0;
@@ -31,50 +33,54 @@ abstract class PSystem {
   abstract PVector repulsion(Particle p, boolean perimCompress);
   abstract PVector direction(Particle p, boolean perimCoord);
 
-  PSystem(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-/** 
-* Sets up the environment with agents and parameters for the simulation
-* 
-* @param size no. of agents
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
-* @param cohesionBias cohesion bias of system
-* @param repulsionBias repulsion bias of system
-* @param directionBias directional bias of system
-*/ 
-    this._particleRange = particleRange;
-    this._particleRepulse = particleRepulse;
-    this._cohesionBias = cohesionBias;
-    this._repulsionBias = repulsionBias;
-    this._directionBias = directionBias;
-    this._obstacleBias = obstacleBias;
-    this._obstacleRange = obstacleRange;
+//   PSystem(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias, String model, String modelId) {
+// /** 
+// * Sets up the environment with agents and parameters for the simulation
+// * 
+// * @param size no. of agents
+// * @param range cohesion range of agents
+// * @param repulse repulse repulsion range of agents
+// * @param cohesionBias cohesion bias of system
+// * @param repulsionBias repulsion bias of system
+// * @param directionBias directional bias of system
+// */ 
+//     this._particleRange = particleRange;
+//     this._particleRepulse = particleRepulse;
+//     this._cohesionBias = cohesionBias;
+//     this._repulsionBias = repulsionBias;
+//     this._directionBias = directionBias;
+//     this._obstacleBias = obstacleBias;
+//     this._obstacleRange = obstacleRange;
+//     this._model = model;
+//     this._modelId = modelId;
 
-    for(int i = 0; i < size; i++) {
-      try {
-        // create agent in centred quartile.
-        particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
-      } catch (Exception e) {
-        println(e);
-        exit();
-      }
-    }
-    this.plog = new Logger("csv/p.csv");
-    this.nClog = new Logger("csv/nc.csv");
-    this.nRlog = new Logger("csv/nr.csv");
-    this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
-    this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
-    this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
-  }
+//     for(int i = 0; i < size; i++) {
+//       try {
+//         // create agent in centred quartile.
+//         particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
+//       } catch (Exception e) {
+//         println(e);
+//         exit();
+//       }
+//     }
+//     this.plog = new Logger("csv/P-"+_modelId+"-p.csv");
+//     this.nClog = new Logger("csv/P-"+_modelId+"-nc.csv");
+//     this.nRlog = new Logger("csv/P-"+_modelId+"-nr.csv");
+//     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
+//     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
+//     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
+//   }
   
-  PSystem() {
+  PSystem(String model, String modelId) {
 /** 
 * Sets up the environment with agents and parameters for the simulation
 * 
 */ 
-    this.plog = new Logger("csv/p.csv");
-    this.nClog = new Logger("csv/nc.csv");
-    this.nRlog = new Logger("csv/nr.csv");
+    this._model = model;
+    this._modelId = modelId;
+    this.plog = new Logger("csv/P-"+_modelId+"-p.csv");
+    this.nClog = new Logger("csv/P-"+_modelId+"-nc.csv");
+    this.nRlog = new Logger("csv/P-"+_modelId+"-nr.csv");
     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
@@ -103,20 +109,20 @@ abstract class PSystem {
 
   void saveSwarm() {
     PrintWriter output;
-    output = createWriter("P-agents.dat"); 
+    output = createWriter("P-"+_modelId+"-agents.dat"); 
     output.println(this.particles.size() + "," + this._particleRange + "," + this._particleRepulse + "," + this._repulsionBias + "," + this._cohesionBias + "," + this._directionBias +  "," + this._cohesionProportion + "," + this._repulseProportion);
     for(Particle p : particles) {
         output.println(p.toString());
     }        
     output.flush();
     output.close();
-    output = createWriter("P-obstacles.dat"); 
+    output = createWriter("P-"+_modelId+"-obstacles.dat"); 
     for(Obstacle o : obstacles) {
         output.println(o.toString());
     }        
     output.flush();
     output.close();
-    output = createWriter("P-destinations.dat"); 
+    output = createWriter("P-"+_modelId+"-destinations.dat"); 
     for(Destination d : destinations) {
         output.println(d.toString());
     }        
@@ -134,7 +140,7 @@ abstract class PSystem {
 
 //_id + "," + _location.x + "," + _location.y + ","+ _location.z + "," + _range + "," + _repulse + "," + _size + "," + _mass + "," + _isPerimeter
 
-    String[] lines = loadStrings("P-agents.dat");
+    String[] lines = loadStrings("P-"+_modelId+"-agents.dat");
     float[] params = float(split(lines[0], ','));
     this._particleRange = params[1];
     this._particleRepulse = params[2];
@@ -155,7 +161,7 @@ abstract class PSystem {
         exit();
       }
     }
-    lines = loadStrings("P-obstacles.dat");
+    lines = loadStrings("P-"+_modelId+"-obstacles.dat");
     this.obstacles.clear();
     for (String data : lines) {
       float[] nums = float(split(data, ','));
@@ -163,7 +169,7 @@ abstract class PSystem {
       this._nextObsId = int(nums[0]++);
     }
 
-    lines = loadStrings("P-destinations.dat");
+    lines = loadStrings("P-"+_modelId+"-destinations.dat");
     this.destinations.clear();
     for (String data : lines) {
       float[] nums = float(split(data, ','));

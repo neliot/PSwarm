@@ -45,6 +45,7 @@ boolean _grid = true; // Display Y/N
 boolean _perimCompress = false; // Compress the perimeter Y/N
 boolean _usePoint = false;
 boolean _loadSwarm = false;
+int _swarmSize = 0;
 int _gridSize = 40; // Size of canvas grid
 int _lineSpacing = 25; // Line spacing of menu lines
 int _displayParticleInfo = -1;
@@ -71,9 +72,6 @@ InfoBox directionInfo = new InfoBox(345,2,78,78,25,theme.menuTheme[theme._theme]
 InfoBox destinationInfo = new InfoBox(0,0,340,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
 InfoBox agentInfo = new InfoBox(0,0,340,160,25,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
 InfoBox obstacleInfo = new InfoBox(0,0,340,103,25,theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8],"Obstacle",true);
-
-int _swarmSize = 100; // Number of agents.
-//boolean _pLog = true; // Log data for analysis.
 
 void settings() {
 /** 

@@ -1,14 +1,13 @@
-import java.util.*; 
 
 class Model4 extends PSystem {
-  Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Path Follower 0.1";
-  }
+  // Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+  //   _model = "Path Follower 0.1";
+  //   _modelId = "PF";
+  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
+  // }
   
   Model4() {
-    super();
-    _model = "Path Follower 0.1";
+    super("Path Follower 0.1","PF");
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {

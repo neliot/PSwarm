@@ -1,14 +1,14 @@
 import java.util.*; 
 
 class Model5 extends PSystem {
-  Model5(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-    _model = "Random Path 0.1";
-  }
+  // Model5(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
+  //   _model = "Random Path 0.1";
+  //   _modelId = "RP";
+  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
+  // }
   
   Model5() {
-    super();
-    _model = "Random Path 0.1";
+    super("Random Path 0.1","RP");
   }
 
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
