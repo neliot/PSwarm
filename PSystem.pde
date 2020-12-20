@@ -109,20 +109,20 @@ abstract class PSystem {
 
   void saveSwarm() {
     PrintWriter output;
-    output = createWriter("P-"+_modelId+"-agents.dat"); 
+    output = createWriter("save/P-"+_modelId+"-agents.dat"); 
     output.println(this.particles.size() + "," + this._particleRange + "," + this._particleRepulse + "," + this._repulsionBias + "," + this._cohesionBias + "," + this._directionBias +  "," + this._cohesionProportion + "," + this._repulseProportion);
     for(Particle p : particles) {
         output.println(p.toString());
     }        
     output.flush();
     output.close();
-    output = createWriter("P-"+_modelId+"-obstacles.dat"); 
+    output = createWriter("save/P-"+_modelId+"-obstacles.dat"); 
     for(Obstacle o : obstacles) {
         output.println(o.toString());
     }        
     output.flush();
     output.close();
-    output = createWriter("P-"+_modelId+"-destinations.dat"); 
+    output = createWriter("save/P-"+_modelId+"-destinations.dat"); 
     for(Destination d : destinations) {
         output.println(d.toString());
     }        
@@ -140,7 +140,7 @@ abstract class PSystem {
 
 //_id + "," + _location.x + "," + _location.y + ","+ _location.z + "," + _range + "," + _repulse + "," + _size + "," + _mass + "," + _isPerimeter
 
-    String[] lines = loadStrings("P-"+_modelId+"-agents.dat");
+    String[] lines = loadStrings("save/P-"+_modelId+"-agents.dat");
     float[] params = float(split(lines[0], ','));
     this._particleRange = params[1];
     this._particleRepulse = params[2];
@@ -161,7 +161,7 @@ abstract class PSystem {
         exit();
       }
     }
-    lines = loadStrings("P-"+_modelId+"-obstacles.dat");
+    lines = loadStrings("save/P-"+_modelId+"-obstacles.dat");
     this.obstacles.clear();
     for (String data : lines) {
       float[] nums = float(split(data, ','));
@@ -169,7 +169,7 @@ abstract class PSystem {
       this._nextObsId = int(nums[0]++);
     }
 
-    lines = loadStrings("P-"+_modelId+"-destinations.dat");
+    lines = loadStrings("save/P-"+_modelId+"-destinations.dat");
     this.destinations.clear();
     for (String data : lines) {
       float[] nums = float(split(data, ','));
