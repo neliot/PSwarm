@@ -1,8 +1,4 @@
 class Model2 extends PSystem {
-  // Model2(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-  // }
-
   Model2() {
     super("Random Walkers","RW");    
   }

@@ -1,13 +1,5 @@
 class Model1 extends PSystem {
-//  Model1(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-//    _model = "Linear Vector";
-//    _modelId = "LV";
-//    super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-//  }
-  
   Model1() {
-//    _model = "Linear Vector";
-//    _modelId = "LV";
     super("Linear Vector","LV");
   }
 

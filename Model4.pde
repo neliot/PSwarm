@@ -1,11 +1,4 @@
-
 class Model4 extends PSystem {
-  // Model4(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-  //   _model = "Path Follower 0.1";
-  //   _modelId = "PF";
-  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-  // }
-  
   Model4() {
     super("Path Follower 0.1","PF");
   }

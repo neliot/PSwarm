@@ -1,10 +1,4 @@
 class Model3 extends PSystem {
-  // Model3(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias) {
-  //   _model = "Linear Vector + Random";
-  //   _modelId = "LVR";
-  //   super(size, particleRange, particleRepulse, obstacleRange, cohesionBias, repulsionBias, obstacleBias, directionBias);
-  // }
-
   Model3() {
     super("Linear Vector + Random","LVR");
   }
