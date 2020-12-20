@@ -8,7 +8,9 @@ class InfoBox {
   int _posY;
   int _width;
   int _height;
+  int _currentHeight;
   int _lineHeight;
+  boolean _minimised = false;
   boolean _mouse = false;
   PImage _graphic;
 
@@ -117,14 +119,14 @@ class InfoBox {
       } else {
         offX = 0;
       }
-      if (mouseY > (height - this._height)) {
-        offY = -this._height;
+      if (mouseY > (height - this._currentHeight)) {
+        offY = -this._currentHeight;
       } else {
         offY = 0;
       }
     } else {
       if (this._posY < 2) this._posY = 2;
-      if ((this._posY + this._height) > height) this._posY = height - (this._height+2);
+      if ((this._posY + this._currentHeight) > height) this._posY = height - (this._currentHeight+2);
       if (this._posX < 2) this._posX = 2;
       if ((this._posX + this._width) > width) this._posX = width - (this._width+2);
     }
@@ -134,15 +136,23 @@ class InfoBox {
     stroke(_borderColour);
     fill(this._fillColour);
     rect(this._posX+offX,this._posY+offY,this._width,25);
-    rect(this._posX+offX,this._posY+offY,this._width,this._height);
-    fill(this._textColour);
-    text(this._title,this._posX+offX+2,this._posY+offY+25);
-    if (this._graphic != null) {
-      image(this._graphic,this._posX+offX+2,this._posY+offY+27);
+    if (_minimised) {
+      this._currentHeight = 25;
+      rect(this._posX+offX,this._posY+offY,this._width,25);
+      fill(this._textColour);
+      text(this._title,this._posX+offX+2,this._posY+offY+25);
     } else {
-      for (String d : _data) { 
-        text(d, this._posX+offX+2, this._posY+offY+25 + (this._lineHeight * nextItem));
-        nextItem++;
+      this._currentHeight = this._height;
+      rect(this._posX+offX,this._posY+offY,this._width,this._height);
+      fill(this._textColour);
+      text(this._title,this._posX+offX+2,this._posY+offY+25);
+      if (this._graphic != null) {
+        image(this._graphic,this._posX+offX+2,this._posY+offY+27);
+      } else {
+        for (String d : _data) { 
+          text(d, this._posX+offX+2, this._posY+offY+25 + (this._lineHeight * nextItem));
+          nextItem++;
+        }
       }
     }
   }

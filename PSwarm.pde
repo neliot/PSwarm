@@ -63,7 +63,7 @@ int _DESTINATION = 1;
 int _OBSTACLE = 2;
 int _WINDOW = 3;
 //
-String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab)"};
+String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
 InfoBox menuInfo1 = new InfoBox(2,2,340,375,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox menuInfo2 = new InfoBox(344,2,350,127,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox directionInfo = new InfoBox(345,2,78,78,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
@@ -244,6 +244,9 @@ void mousePressed() {
   if (mouseButton == LEFT && _mode == _WINDOW && _displayWindowInfo != null) {
     _clickPosX = _displayWindowInfo._posX - mouseX;
     _clickPosY = _displayWindowInfo._posY - mouseY;
+  }  
+  if (mouseButton == RIGHT && _mode == _WINDOW && _displayWindowInfo != null) {
+    _displayWindowInfo._minimised = !_displayWindowInfo._minimised;
   }  
   
 }
