@@ -98,4 +98,10 @@
  *    stored globally in PSystem and in
  *    particle as a list of localised destination 
  *    attractors. (allows agents to be independant)
+ **************************************************
+ * 20/12/2020 - 0.1.3 - NE
+ **************************************************
+ * 1. Split data logging and saving/loading by 
+ *    Model.
+ * 2. Added movable window minimise and restore.
  **************************************************/
