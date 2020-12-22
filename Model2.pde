@@ -3,6 +3,18 @@ class Model2 extends PSystem {
     super("Random Walkers","RW");    
   }
 
+  void populate(int size) {
+    for(int i = 0; i < size; i++) {
+      try {
+        // create agent in centred quartile.
+        particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
+      } catch (Exception e) {
+        println(e);
+        exit();
+      }
+    }
+  }
+
   void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
 /** 
 * Update system - Updates particle positions based on forces and displays the result.

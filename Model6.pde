@@ -1,15 +1,20 @@
 import java.util.*; // Allows for Randmising the ArrayList Collection
 
-class Model5 extends PSystem {
-  Model5() {
-    super("Random Path 0.1","RP");
+class Model6 extends PSystem {
+  Model6() {
+    super("Shape Forming 0.1","SF");
   }
 
   void populate(int size) {
-    for(int i = 0; i < size; i++) {
+    this.loadSwarm();
+    this.particles.clear();
+    for(int i = 0; i < destinations.size(); i++) {
       try {
         // create agent in centred quartile.
-        particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
+        Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._particleRange,this._particleRepulse);
+        particles.add(p);
+        p._destinations.clear();
+        p._destinations.add(this.destinations.get(i));
       } catch (Exception e) {
         println(e);
         exit();
@@ -50,8 +55,6 @@ class Model5 extends PSystem {
       if (obstacles.size() > 0) {
         avoid = avoidObstacles(p);
       }
-
-      removeMetGoals(p);
 
       if (dest && p._destinations.size() > 0) {
         dir = direction(p, perimCoord);
@@ -182,14 +185,5 @@ class Model5 extends PSystem {
       }
     }
     return dir.setMag(_directionBias);
-  }
-
-  void removeMetGoals(Particle p) {
-    if (p._destinations.size() > 0) {
-      if (PVector.dist(p._location,p._destinations.get(0)._location) <= p._range) {
-        p._destinations.remove(0);
-        Collections.shuffle(p._destinations);
-      }
-    } 
   } 
 }

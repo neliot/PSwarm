@@ -8,10 +8,10 @@ class InfoBox {
   int _posY;
   int _width;
   int _height;
-  int _currentHeight;
   int _lineHeight;
   boolean _minimised = false;
   boolean _mouse = false;
+  boolean _visible = true;
   PImage _graphic;
 
   InfoBox(int x, int y, int boxWidth, int boxHeight, int lineHeight, color borderColour, color fillColour, color textColour, String title, ArrayList<String> content, boolean mouse) {
@@ -119,14 +119,14 @@ class InfoBox {
       } else {
         offX = 0;
       }
-      if (mouseY > (height - this._currentHeight)) {
-        offY = -this._currentHeight;
+      if (mouseY > (height - this._height)) {
+        offY = -this._height;
       } else {
         offY = 0;
       }
     } else {
       if (this._posY < 2) this._posY = 2;
-      if ((this._posY + this._currentHeight) > height) this._posY = height - (this._currentHeight+2);
+      if ((this._posY + this._height) > height) this._posY = height - (this._height+2);
       if (this._posX < 2) this._posX = 2;
       if ((this._posX + this._width) > width) this._posX = width - (this._width+2);
     }
@@ -137,12 +137,13 @@ class InfoBox {
     fill(this._fillColour);
     rect(this._posX+offX,this._posY+offY,this._width,25);
     if (_minimised) {
-      this._currentHeight = 25;
+      this._height = 25;
       rect(this._posX+offX,this._posY+offY,this._width,25);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
     } else {
-      this._currentHeight = this._height;
+      this._height = ((this._data.size() + 1) * 25);
+      rect(this._posX+offX,this._posY+offY,this._width,this._height);
       rect(this._posX+offX,this._posY+offY,this._width,this._height);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);

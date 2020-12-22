@@ -18,6 +18,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ****************************************************************************/
 java.util.Properties properties;
+java.util.Properties modelProperties;
 PSystem system;
 Theme theme = new Theme(); 
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
@@ -42,6 +43,7 @@ boolean _particleTicks = true; // Display Y/N
 boolean _perimCoord = false; // Enable/disable only using perimeter particles for coordination to destination
 boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
+boolean _displayDestinations = true; // Display Y/N
 boolean _perimCompress = false; // Compress the perimeter Y/N
 boolean _usePoint = false;
 boolean _loadSwarm = false;
@@ -93,8 +95,11 @@ void setup() {
 * 
 */
   properties = new java.util.Properties();
+  modelProperties = new java.util.Properties();
   try {
     properties.load( createReader("application.properties") );
+    _model = int(properties.getProperty("model"));
+    modelProperties.load( createReader("Model"+_model+".properties") );
   } catch(Exception e) {
     
   }
@@ -114,7 +119,6 @@ void setup() {
   mouse2 = mice2.get(_mode);
   mouse = mouse1;
 
-  _model = int(properties.getProperty("model"));
   if (_model == 1) {
     system = new Model1(); 
   } else if (_model == 2) {
@@ -123,30 +127,36 @@ void setup() {
     system = new Model3(); 
   } else if (_model == 4) {
     system = new Model4(); 
-  } else {
+  } else if (_model == 5) {
     system = new Model5(); 
+  } else {
+    system = new Model6(); 
   }
 
-  _swarmSize = int(properties.getProperty("size"));
-  system._particleRange = float(properties.getProperty("particleRange"));
-  system._particleRepulse = float(properties.getProperty("particleRepulse"));
-  system._repulsionBias = float(properties.getProperty("repulsionBias"));
-  system._cohesionBias = float(properties.getProperty("cohesionBias"));
-  system._directionBias = float(properties.getProperty("directionBias"));
-  system._obstacleBias = float(properties.getProperty("obstacleBias"));
-  system._obstacleRange = float(properties.getProperty("obstacleRange"));
-  system._repulseProportion = float(properties.getProperty("repulseProportion"));
-  system._cohesionProportion = float(properties.getProperty("cohesionProportion"));
-  system._loggingP = boolean(properties.getProperty("loggingP"));
-  system._loggingN = boolean(properties.getProperty("loggingN"));
+  _swarmSize = int(modelProperties.getProperty("size"));
+  system._particleRange = float(modelProperties.getProperty("particleRange"));
+  system._particleRepulse = float(modelProperties.getProperty("particleRepulse"));
+  system._repulsionBias = float(modelProperties.getProperty("repulsionBias"));
+  system._cohesionBias = float(modelProperties.getProperty("cohesionBias"));
+  system._directionBias = float(modelProperties.getProperty("directionBias"));
+  system._obstacleBias = float(modelProperties.getProperty("obstacleBias"));
+  system._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
+  system._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
+  system._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
+  _dest = boolean(modelProperties.getProperty("dest"));
+  _perimCoord = boolean(modelProperties.getProperty("perimCoord"));
+  _loadSwarm = boolean(modelProperties.getProperty("loadSwarm"));
+  system._loggingP = boolean(modelProperties.getProperty("loggingP"));
+  system._loggingN = boolean(modelProperties.getProperty("loggingN"));
+  
+  
+  directionInfo._visible = boolean(properties.getProperty("directionBox"));
   _run = boolean(properties.getProperty("run"));
   _displayId = boolean(properties.getProperty("displayId"));
   _particleTicks = boolean(properties.getProperty("particleTicks"));
   _lines = boolean(properties.getProperty("lines"));
   _grid = boolean(properties.getProperty("grid"));
-  _loadSwarm = boolean(properties.getProperty("loadSwarm"));
-  _dest = boolean(properties.getProperty("dest"));
-  _perimCoord = boolean(properties.getProperty("perimCoord"));
+  _displayDestinations = boolean(properties.getProperty("displayDestinations"));
 
   if (_loadSwarm) {
     system.loadSwarm();
@@ -185,17 +195,23 @@ void draw() {
     generateMenu();
     generateDirectionInfo();
     for(InfoBox b : displayWindows) {
-      b.draw();
-      if (overWindow(b)) _displayWindowInfo = b;
+      if (b._visible) {
+        b.draw();
+        if (overWindow(b)) _displayWindowInfo = b;
+      }
     }
   }
-  for (Destination d : system.destinations) {
-    displayDestination(d);
-    if (overDestination(transposeX(d._location.x),transposeY(d._location.y),10,10)) _displayDestinationInfo = d._id;
+  if (_displayDestinations) {
+    for (Destination d : system.destinations) {
+      displayDestination(d);
+      if (overDestination(transposeX(d._location.x),transposeY(d._location.y),10,10)) _displayDestinationInfo = d._id;
+      if (_displayId) displayId(d);
+    }
   }
   for (Obstacle o : system.obstacles) {
     displayObstacle(o);
     if (overObstacle(transposeX(o._location.x),transposeY(o._location.y),10,10)) _displayObstacleInfo = o._id;
+    if (_displayId) displayId(o);
   }  
   if (_lines) displayLines();
   for(Particle p : system.particles) {
@@ -284,6 +300,7 @@ void keyPressed() {
   if (key == 'i') {_displayId = !_displayId;}
   if (key == 't') {_particleTicks = !_particleTicks;}
   if (key == 'x') {_centroid = !_centroid;}
+  if (key == 'z') {_displayDestinations = !_displayDestinations;}
   if (key == '1') {saveFrame("screen.png");}
   if (key == 'm') {
     _mode += 1;
@@ -324,18 +341,21 @@ void generateMenu() {
   }
   menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo1.clearData();
-  menuInfo1.add("(SPACE) Destination:" + _dest);
-  menuInfo1.add("(r) Run:" + _run);
-  menuInfo1.add("(i) Display Ids:" + _displayId);
-  menuInfo1.add("(g) Display Grid:" + _grid);
-  menuInfo1.add("(l) Display Link Lines:" + _lines);
-  menuInfo1.add("(t) Display particle ticks:" + _particleTicks);
-  menuInfo1.add("(x) Display centroid:" + _centroid);
-  menuInfo1.add("(p) Perimeter Coordination:" + _perimCoord);
-  menuInfo1.add("(c) Perimeter Compress:" + _perimCompress);
-  menuInfo1.add("(q) -10 Grid [10-100]");  
-  menuInfo1.add("(w) +10 Grid [10-100]");  
+  menuInfo1.add("(SPACE) Destinations Active: " + _dest);
+  menuInfo1.add("(z) Display Destinations: " + _displayDestinations);
+  menuInfo1.add("(r) Run: " + _run);
+  menuInfo1.add("(i) Display Ids: " + _displayId);
+  menuInfo1.add("(g) Display Grid: " + _grid);
+  menuInfo1.add("(l) Display Link Lines: " + _lines);
+  menuInfo1.add("(t) Display particle ticks: " + _particleTicks);
+  menuInfo1.add("(x) Display centroid: " + _centroid);
+  menuInfo1.add("(p) Perimeter Coordination: " + _perimCoord);
+  menuInfo1.add("(c) Perimeter Compress: " + _perimCompress);
+  menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : "+ _scale);
+  menuInfo1.add("(h) X:" + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET - Offset");  
+  menuInfo1.add("(q) -10 (w) +10 - Grid :" + _gridSize);  
   menuInfo1.add("(y) load (o) Save - Snapshot");
+  menuInfo1.add("(m) MODE:" + _modes[_mode]);  
   menuInfo1.add("(1) Screen Grab");  
   menuInfo1.add("(ESC) EXIT");
 
@@ -343,9 +363,17 @@ void generateMenu() {
   menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo2.clearData();
   menuInfo2.add("Agents:" + system.particles.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
-  menuInfo2.add("(m) MODE:" + _modes[_mode]);  
-  menuInfo2.add("Scale (a) <-20% (s) 100% (d) 500%->");
-  menuInfo2.add("Offset X:(h) " + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET ");  
+  menuInfo2.add("==========================");  
+  menuInfo2.add("Cohesion Range: " + system._particleRange);
+  menuInfo2.add("Cohesion Bias: " + system._cohesionBias);
+  menuInfo2.add("Repulsion Range: " + system._particleRepulse);
+  menuInfo2.add("Repulsion Bias: " + system._repulsionBias);
+  menuInfo2.add("Obstacle Range: " + system._obstacleRange);
+  menuInfo2.add("Obstacle Bias: " + system._obstacleBias);
+  menuInfo2.add("Direction Bias: " + system._directionBias);
+  menuInfo2.add("==========================");  
+  menuInfo2.add("Repulsion Proportion: " + system._repulseProportion);
+  menuInfo2.add("Cohesion Proportion: " + system._cohesionProportion);
 }
 
 void generateDirectionInfo() {
@@ -573,9 +601,32 @@ void displayId(Particle agent) {
 */
   textSize(12);
   textAlign(CENTER,CENTER);
-  fill(0, 0, 0, 255);
+  fill(0, 0, 0,255);
   text(agent._id,transposeX(agent._location.x),transposeY(agent._location.y));
 }
+
+void displayId(Destination d) {
+/** 
+* Renders the particleId onto the canvas
+* 
+*/
+  textSize(12);
+  textAlign(CENTER,CENTER);
+  fill(0, 0, 0,255);
+  text(d._id,transposeX(d._location.x),transposeY(d._location.y));
+}
+
+void displayId(Obstacle o) {
+/** 
+* Renders the particleId onto the canvas
+* 
+*/
+  textSize(12);
+  textAlign(CENTER,CENTER);
+  fill(255,255,255,255);
+  text(o._id,transposeX(o._location.x),transposeY(o._location.y));
+}
+
 
 void displayTick(Particle agent) {
 /** 

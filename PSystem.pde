@@ -32,45 +32,8 @@ abstract class PSystem {
   abstract PVector cohesion(Particle p, boolean perimCompress);
   abstract PVector repulsion(Particle p, boolean perimCompress);
   abstract PVector direction(Particle p, boolean perimCoord);
+  abstract void populate(int size);
 
-//   PSystem(int size, float particleRange, float particleRepulse, float obstacleRange, float cohesionBias, float repulsionBias, float obstacleBias, float directionBias, String model, String modelId) {
-// /** 
-// * Sets up the environment with agents and parameters for the simulation
-// * 
-// * @param size no. of agents
-// * @param range cohesion range of agents
-// * @param repulse repulse repulsion range of agents
-// * @param cohesionBias cohesion bias of system
-// * @param repulsionBias repulsion bias of system
-// * @param directionBias directional bias of system
-// */ 
-//     this._particleRange = particleRange;
-//     this._particleRepulse = particleRepulse;
-//     this._cohesionBias = cohesionBias;
-//     this._repulsionBias = repulsionBias;
-//     this._directionBias = directionBias;
-//     this._obstacleBias = obstacleBias;
-//     this._obstacleRange = obstacleRange;
-//     this._model = model;
-//     this._modelId = modelId;
-
-//     for(int i = 0; i < size; i++) {
-//       try {
-//         // create agent in centred quartile.
-//         particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
-//       } catch (Exception e) {
-//         println(e);
-//         exit();
-//       }
-//     }
-//     this.plog = new Logger("csv/P-"+_modelId+"-p.csv");
-//     this.nClog = new Logger("csv/P-"+_modelId+"-nc.csv");
-//     this.nRlog = new Logger("csv/P-"+_modelId+"-nr.csv");
-//     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
-//     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
-//     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
-//   }
-  
   PSystem(String model, String modelId) {
 /** 
 * Sets up the environment with agents and parameters for the simulation
@@ -84,18 +47,6 @@ abstract class PSystem {
     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
-  }
-
-  void populate(int size) {
-    for(int i = 0; i < size; i++) {
-      try {
-        // create agent in centred quartile.
-        particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
-      } catch (Exception e) {
-        println(e);
-        exit();
-      }
-    }
   }
 
   PVector getCentroid() {
@@ -175,7 +126,7 @@ abstract class PSystem {
       float[] nums = float(split(data, ','));
       Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
       destinations.add(d);
-      this._nextObsId = int(nums[0]++);
+      this._nextDestId = int(nums[0]++);
       for(Particle p : particles) {
         p.addDestination(d);
       }
