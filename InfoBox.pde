@@ -142,13 +142,17 @@ class InfoBox {
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
     } else {
-      this._height = ((this._data.size() + 1) * 25);
+      if (this._graphic == null) {
+        this._height = ((this._data.size() + 1) * 25);
+      } else {
+        this._height = this._graphic.height + 25 + 2;
+      }
       rect(this._posX+offX,this._posY+offY,this._width,this._height);
-      rect(this._posX+offX,this._posY+offY,this._width,this._height);
+//      rect(this._posX+offX,this._posY+offY,this._width,this._height);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
       if (this._graphic != null) {
-        image(this._graphic,this._posX+offX+2,this._posY+offY+27);
+        image(this._graphic,this._posX+offX+2,this._posY+offY + 25 + 2);
       } else {
         for (String d : _data) { 
           text(d, this._posX+offX+2, this._posY+offY+25 + (this._lineHeight * nextItem));
