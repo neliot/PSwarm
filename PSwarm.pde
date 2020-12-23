@@ -40,6 +40,7 @@ boolean _dest = false; // Enable/diable destination seeking
 boolean _run = false; // Enable/disable update calculations
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
+boolean _displayParticleFields = false; // Display Y/N
 boolean _perimCoord = false; // Enable/disable only using perimeter particles for coordination to destination
 boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
@@ -145,6 +146,7 @@ void setup() {
   system._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
   _dest = boolean(modelProperties.getProperty("dest"));
   _perimCoord = boolean(modelProperties.getProperty("perimCoord"));
+  _perimCompress = boolean(modelProperties.getProperty("perimCompress"));
   _loadSwarm = boolean(modelProperties.getProperty("loadSwarm"));
   system._loggingP = boolean(modelProperties.getProperty("loggingP"));
   system._loggingN = boolean(modelProperties.getProperty("loggingN"));
@@ -154,6 +156,7 @@ void setup() {
   _run = boolean(properties.getProperty("run"));
   _displayId = boolean(properties.getProperty("displayId"));
   _particleTicks = boolean(properties.getProperty("particleTicks"));
+  _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
   _lines = boolean(properties.getProperty("lines"));
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
@@ -217,9 +220,11 @@ void draw() {
   for(Particle p : system.particles) {
     displayParticle(p);
     if (overAgent(transposeX(p._location.x),transposeY(p._location.y),10,10)) _displayParticleInfo = p._id;
-    if (_particleTicks) displayTick(p);
-    if (_displayId) displayId(p);
+    // if (_particleTicks) displayTick(p);
+    // if (_displayId) displayId(p);
   }
+  noCursor();
+  image(mouse,mouseX-10,mouseY-10,32,32);
   if (_displayParticleInfo != -1 && _mode == _AGENT) { displayAgentInfo(system.getParticleWithId(_displayParticleInfo)); agentInfo.draw();};
   if (_displayDestinationInfo != -1 && _mode == _DESTINATION) { displayDestinationInfo(system.getDestinationWithId(_displayDestinationInfo)); destinationInfo.draw();};
   if (_displayObstacleInfo != -1 && _mode == _OBSTACLE) { displayObstacleInfo(system.getObstacleWithId(_displayObstacleInfo)); obstacleInfo.draw();};
@@ -227,8 +232,6 @@ void draw() {
   fill(0);
   textSize(10);
   text(_AUTHORS, 10, height-25);
-  noCursor();
-  image(mouse,mouseX-10,mouseY-10,32,32);
   image(license,width-88,height-31,88,31);
   if (keyPressed) {
     scalers();
@@ -301,6 +304,7 @@ void keyPressed() {
   if (key == 't') {_particleTicks = !_particleTicks;}
   if (key == 'x') {_centroid = !_centroid;}
   if (key == 'z') {_displayDestinations = !_displayDestinations;}
+  if (key == '0') {_displayParticleFields = !_displayParticleFields;}
   if (key == '1') {saveFrame("screen.png");}
   if (key == 'm') {
     _mode += 1;
@@ -311,7 +315,7 @@ void keyPressed() {
     mouse2 = mice2.get(_mode);
     mouse = mouse1;
   }
- if (key == '0') {
+ if (key == '2') {
     theme._theme += 1;
     if (theme._theme > 1) {
       theme._theme = 0;
@@ -351,7 +355,8 @@ void generateMenu() {
   menuInfo1.add("(x) Display centroid: " + _centroid);
   menuInfo1.add("(p) Perimeter Coordination: " + _perimCoord);
   menuInfo1.add("(c) Perimeter Compress: " + _perimCompress);
-  menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : "+ _scale);
+  menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
+  menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : " + String.format("%.2f",_scale));
   menuInfo1.add("(h) X:" + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET - Offset");  
   menuInfo1.add("(q) -10 (w) +10 - Grid :" + _gridSize);  
   menuInfo1.add("(y) load (o) Save - Snapshot");
@@ -390,6 +395,7 @@ void displayAgentInfo(Particle agent) {
   agentInfo.add("R Range: ["+ agent._repulse +"]");
   agentInfo.add("Speed: ["+ agent._topspeed +"]");
   agentInfo.add("Size: ["+ agent._size +"]");
+  agentInfo.add("Neighbours: ["+ agent._neighbours.size() +"]");
 }
 
 void displayDestinationInfo(Destination dest) {
@@ -472,6 +478,16 @@ void displayParticle(Particle p) {
          fill(theme.particleTheme[theme._theme][2]);
       }
       ellipse(transposeX(p._location.x),transposeY(p._location.y),(p._size*p._mass*_scale),(p._size*p._mass*_scale));
+      if (_particleTicks) displayTick(p);
+      if (_displayId) displayId(p);
+      if (_displayParticleFields) {
+        noFill();
+        strokeWeight(1);
+        stroke(150,0,0);
+        ellipse(transposeX(p._location.x),transposeY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
+        stroke(0,150,0);
+        ellipse(transposeX(p._location.x),transposeY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
+      }
     }
 }
 
