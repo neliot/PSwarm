@@ -12,6 +12,10 @@ abstract class PSystem {
   float _obstacleRange = 75f; // Obstacle range
   float _repulseProportion = 1f; // Compressed perimeter reduction divisor
   float _cohesionProportion = 1f; // Compressed perimeter reduction divisor
+  boolean _dest = true;
+  boolean _run = true;
+  boolean _perimCoord = false;
+  boolean _perimCompress = false;
 
   String _model;
   String _modelId;
@@ -28,11 +32,12 @@ abstract class PSystem {
   Logger nClog;
   Logger nRlog;
 
-  abstract void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress);
-  abstract PVector cohesion(Particle p, boolean perimCompress);
-  abstract PVector repulsion(Particle p, boolean perimCompress);
-  abstract PVector direction(Particle p, boolean perimCoord);
+  abstract void update();
+  abstract PVector cohesion(Particle p);
+  abstract PVector repulsion(Particle p);
+  abstract PVector direction(Particle p);
   abstract void populate(int size);
+  abstract void init();
 
   PSystem(String model, String modelId) {
 /** 
@@ -134,9 +139,11 @@ abstract class PSystem {
   }
   
   void moveReset() {
-    for(Particle p : this.particles) {
-      p.move();
-      p.reset();
+    if(this._run) {
+      for(Particle p : this.particles) {
+        p.move();
+        p.reset();
+      }
     }
   }
   

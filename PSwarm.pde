@@ -36,16 +36,12 @@ float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
 boolean _logo = true;
-boolean _dest = false; // Enable/diable destination seeking
-boolean _run = false; // Enable/disable update calculations
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
 boolean _displayParticleFields = false; // Display Y/N
-boolean _perimCoord = false; // Enable/disable only using perimeter particles for coordination to destination
 boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _displayDestinations = true; // Display Y/N
-boolean _perimCompress = false; // Compress the perimeter Y/N
 boolean _usePoint = false;
 boolean _loadSwarm = false;
 int _swarmSize = 0;
@@ -84,7 +80,7 @@ void settings() {
 //    fullScreen(JAVA2D,SPAN);
     fullScreen(P2D,SPAN);
   } else {
-    fullScreen(P2D);
+    fullScreen(P2D,SPAN);
 //    fullScreen(P2D);
   }
   noSmooth();
@@ -102,7 +98,8 @@ void setup() {
     _model = int(properties.getProperty("model"));
     modelProperties.load( createReader("Model"+_model+".properties") );
   } catch(Exception e) {
-    
+    println(e);
+    exit();
   }
 
   frameRate(30);
@@ -144,16 +141,15 @@ void setup() {
   system._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
   system._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
   system._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
-  _dest = boolean(modelProperties.getProperty("dest"));
-  _perimCoord = boolean(modelProperties.getProperty("perimCoord"));
-  _perimCompress = boolean(modelProperties.getProperty("perimCompress"));
-  _loadSwarm = boolean(modelProperties.getProperty("loadSwarm"));
+  system._dest = boolean(modelProperties.getProperty("dest"));
+  system._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
+  system._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
+  system._run = boolean(modelProperties.getProperty("run"));
   system._loggingP = boolean(modelProperties.getProperty("loggingP"));
   system._loggingN = boolean(modelProperties.getProperty("loggingN"));
   
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));
-  _run = boolean(properties.getProperty("run"));
   _displayId = boolean(properties.getProperty("displayId"));
   _particleTicks = boolean(properties.getProperty("particleTicks"));
   _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
@@ -161,11 +157,12 @@ void setup() {
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
 
-  if (_loadSwarm) {
+  if (boolean(modelProperties.getProperty("loadSwarm"))) {
     system.loadSwarm();
   } else {
     system.populate(_swarmSize);
   }
+  system.init();
 
   directionInfo.setPos(width,2);
   displayWindows.add(menuInfo1);
@@ -189,7 +186,7 @@ void draw() {
   }
   if (_grid) displayGrid();
   if (_centroid) displayCentroid();
-  system.update(_run, _dest, _perimCoord, _perimCompress);
+  system.update();
   _displayParticleInfo = -1;
   _displayDestinationInfo = -1;
   _displayObstacleInfo = -1;
@@ -228,7 +225,7 @@ void draw() {
   if (_displayParticleInfo != -1 && _mode == _AGENT) { displayAgentInfo(system.getParticleWithId(_displayParticleInfo)); agentInfo.draw();};
   if (_displayDestinationInfo != -1 && _mode == _DESTINATION) { displayDestinationInfo(system.getDestinationWithId(_displayDestinationInfo)); destinationInfo.draw();};
   if (_displayObstacleInfo != -1 && _mode == _OBSTACLE) { displayObstacleInfo(system.getObstacleWithId(_displayObstacleInfo)); obstacleInfo.draw();};
-  if (_run) system.moveReset();
+  system.moveReset();
   fill(0);
   textSize(10);
   text(_AUTHORS, 10, height-25);
@@ -292,12 +289,12 @@ void keyPressed() {
   }
   // Menu 
   if (key == '?') {_menu = !_menu;}
-  if (key == 'r') {_run = !_run;}
-  if (key == ' ') {_dest = !_dest;}
+  if (key == 'r') {system._run = !system._run;}
+  if (key == ' ') {system._dest = !system._dest;}
   if (key == 'q') {if (_gridSize > 10) _gridSize -= 10;}
   if (key == 'w') {if (_gridSize < 100) _gridSize += 10;}
-  if (key == 'p') {_perimCoord = !_perimCoord;}  
-  if (key == 'c') {_perimCompress = !_perimCompress;} 
+  if (key == 'p') {system._perimCoord = !system._perimCoord;}  
+  if (key == 'c') {system._perimCompress = !system._perimCompress;} 
   if (key == 'g') {_grid = !_grid;}
   if (key == 'l') {_lines = !_lines;} 
   if (key == 'i') {_displayId = !_displayId;}
@@ -345,16 +342,16 @@ void generateMenu() {
   }
   menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo1.clearData();
-  menuInfo1.add("(SPACE) Destinations Active: " + _dest);
+  menuInfo1.add("(SPACE) Destinations Active: " + system._dest);
   menuInfo1.add("(z) Display Destinations: " + _displayDestinations);
-  menuInfo1.add("(r) Run: " + _run);
+  menuInfo1.add("(r) Run: " + system._run);
   menuInfo1.add("(i) Display Ids: " + _displayId);
   menuInfo1.add("(g) Display Grid: " + _grid);
   menuInfo1.add("(l) Display Link Lines: " + _lines);
   menuInfo1.add("(t) Display particle ticks: " + _particleTicks);
   menuInfo1.add("(x) Display centroid: " + _centroid);
-  menuInfo1.add("(p) Perimeter Coordination: " + _perimCoord);
-  menuInfo1.add("(c) Perimeter Compress: " + _perimCompress);
+  menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
+  menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
   menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
   menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : " + String.format("%.2f",_scale));
   menuInfo1.add("(h) X:" + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET - Offset");  

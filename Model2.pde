@@ -3,6 +3,8 @@ class Model2 extends PSystem {
     super("Random Walkers","RW");    
   }
 
+  void init() {};
+
   void populate(int size) {
     for(int i = 0; i < size; i++) {
       try {
@@ -15,7 +17,7 @@ class Model2 extends PSystem {
     }
   }
 
-  void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
+  void update() {
 /** 
 * Update system - Updates particle positions based on forces and displays the result.
 * 
@@ -31,7 +33,7 @@ class Model2 extends PSystem {
       move.setMag(p._topspeed);
       p.setChange(move);
     }
-    if (run) {
+    if (this._run) {
       _swarmDirection.set(0,0,0);
       for(Particle p : particles) {
         _swarmDirection.add(p._resultant);
@@ -40,14 +42,14 @@ class Model2 extends PSystem {
     }
   }
 
-  PVector cohesion(Particle p, boolean perimCompress) {
+  PVector cohesion(Particle p) {
     return new PVector(0,0,0);
   };
-  PVector repulsion(Particle p, boolean perimCompress) {
+  PVector repulsion(Particle p) {
     return new PVector(0,0,0);
   };
 
-  PVector direction(Particle p, boolean perimCoord) {
+  PVector direction(Particle p) {
 /** 
 * direction calculation - Calculates the normalised direction.
 * 
@@ -64,7 +66,7 @@ class Model2 extends PSystem {
         }
       }   
     }    
-    if (!perimCoord) {
+    if (!this._perimCoord) {
       dir = PVector.sub(destination,p._location);
     } else {
       /* Perimeter only control */

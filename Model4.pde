@@ -3,6 +3,8 @@ class Model4 extends PSystem {
     super("Path Follower 0.1","PF");
   }
 
+  void init() {};
+
   void populate(int size) {
     for(int i = 0; i < size; i++) {
       try {
@@ -15,7 +17,7 @@ class Model4 extends PSystem {
     }
   }
 
-  void update(boolean run, boolean dest, boolean perimCoord, boolean perimCompress) {
+  void update() {
 /** 
 * Update system - Updates particle positions based on forces and displays the result.
 * 
@@ -39,10 +41,10 @@ class Model4 extends PSystem {
       p.getNeighbours(particles);
 
       /* Calculate Cohesion */
-      coh = cohesion(p, perimCompress);
+      coh = cohesion(p);
 
       /* Calculate Repulsion */
-      rep = repulsion(p, perimCompress);
+      rep = repulsion(p);
 
       /* Calculate Obstacle avoidance */
       if (obstacles.size() > 0) {
@@ -51,8 +53,8 @@ class Model4 extends PSystem {
 
       removeMetGoals(p);
 
-      if (dest && p._destinations.size() > 0) {
-        dir = direction(p, perimCoord);
+      if (this._dest && p._destinations.size() > 0) {
+        dir = direction(p);
         change.add(dir);
       }
       change.add(avoid);
@@ -62,25 +64,25 @@ class Model4 extends PSystem {
       inter.add(coh);
       inter.add(rep);
       
-      if (_loggingP) {
+      if (this._loggingP) {
         pData += plog._counter + "," + p.toString() + "," + coh.x + "," + coh.y + "," + coh.z + "," + coh.mag() + "," + rep.x + "," + rep.y + "," +  rep.z + "," + rep.mag() + "," + inter.x + "," + inter.y + "," +  inter.z + "," + inter.mag() + "," + avoid.x + "," + avoid.y + "," + avoid.z + "," + avoid.mag() + "," + dir.x + "," + dir.y + "," + dir.z + "," + dir.mag() + "," + change.x + "," + change.y + "," + change.z + "," + change.mag() + "\n";
       }
       p.setChange(change);
     }
-    if (run) {
+    if (this._run) {
       _swarmDirection.set(0,0,0);
       for(Particle p : particles) {
         _swarmDirection.add(p._resultant);
         p.update();
       }
     }
-    if (_loggingP) {
+    if (this._loggingP) {
       plog.dump(pData);
       plog.clean();
     }
   }
     
-  PVector cohesion(Particle p, boolean perimCompress) {
+  PVector cohesion(Particle p) {
 /** 
 * cohesion calculation - Calculates the cohesion between each agent and its neigbours.
 * 
@@ -96,17 +98,17 @@ class Model4 extends PSystem {
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._neighbours) {
       distance = PVector.dist(p._location,n._location);
-      if (perimCompress && p._isPerimeter && n._isPerimeter) {
-        temp = PVector.sub(n._location,p._location).mult(_cohesionProportion).mult(_cohesionBias);
+      if (this._perimCompress && p._isPerimeter && n._isPerimeter) {
+        temp = PVector.sub(n._location,p._location).mult(this._cohesionProportion).mult(this._cohesionBias);
       } else {
-        temp = PVector.sub(n._location,p._location).mult(_cohesionBias);
+        temp = PVector.sub(n._location,p._location).mult(this._cohesionBias);
       }
       result.add(temp);
-      if (_loggingN && _loggingP) {
+      if (this._loggingN && this._loggingP) {
         nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
       }
     }
-    if (_loggingN && _loggingP) {
+    if (this._loggingN && this._loggingP) {
       nClog.dump(nData);
       nClog.clean();
     }
@@ -117,7 +119,7 @@ class Model4 extends PSystem {
     return result;
   }
 
-  PVector repulsion(Particle p, boolean perimCompress) {
+  PVector repulsion(Particle p) {
 /** 
 * repulsion calculation - Calculates the repulsion between each agent and its neigbours.
 * 
@@ -133,28 +135,28 @@ class Model4 extends PSystem {
     String nData = "";
     for(Particle n : p._neighbours) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
-      if (perimCompress && p._isPerimeter && n._isPerimeter) { 
+      if (this._perimCompress && p._isPerimeter && n._isPerimeter) { 
         dist = p._repulse/this._repulseProportion;
       } else {
         dist = p._repulse;
       }
       distance = PVector.dist(p._location,n._location);
       if (distance <= dist & p != n) {
-        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(_repulsionBias);
+        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(this._repulsionBias);
         result.add(temp);
-        if (_loggingN && _loggingP) {
+        if (this._loggingN && this._loggingP) {
           nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
         }
       }
     }
-    if (_loggingN && _loggingP) {
+    if (this._loggingN && this._loggingP) {
       nRlog.dump(nData);
       nRlog.clean();
     }
     return result;
   }
 
-  PVector direction(Particle p, boolean perimCoord) {
+  PVector direction(Particle p) {
 /** 
 * direction calculation - Calculates the normalised direction.
 * 
@@ -165,13 +167,8 @@ class Model4 extends PSystem {
     PVector dir = new PVector(0,0,0);
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._location;      
-//      for (int i = 1; i < p._destinations.size(); i++) {
-//        if (PVector.dist(p._location,destination) > PVector.dist(p._location,p._destinations.get(i)._location)) {
-//          destination = p._destinations.get(i)._location;
-//        }
-//      }   
     }    
-    if (!perimCoord) {
+    if (!this._perimCoord) {
       dir = PVector.sub(destination,p._location);
     } else {
       /* Perimeter only control */
@@ -179,7 +176,7 @@ class Model4 extends PSystem {
         dir = PVector.sub(destination,p._location);
       }
     }
-    return dir.setMag(_directionBias);
+    return dir.setMag(this._directionBias);
   }
 
   void removeMetGoals(Particle p) {
