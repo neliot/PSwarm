@@ -53,7 +53,7 @@ int _displayObstacleInfo = -1;
 int _clickPosX = 0;
 int _clickPosY = 0;
 InfoBox _displayWindowInfo = null;
-boolean _centroid = false;
+boolean _displayCentroid = false;
 boolean _menu = true;
 int _model = 3;
 int _mode = 0;
@@ -156,6 +156,7 @@ void setup() {
   _lines = boolean(properties.getProperty("lines"));
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
+  _displayCentroid = boolean(properties.getProperty("displayCentroid"));
 
   if (boolean(modelProperties.getProperty("loadSwarm"))) {
     system.loadSwarm();
@@ -185,7 +186,7 @@ void draw() {
     background(theme.desktopTheme[theme._theme][0]);
   }
   if (_grid) displayGrid();
-  if (_centroid) displayCentroid();
+  if (_displayCentroid) displayCentroid();
   system.update();
   _displayParticleInfo = -1;
   _displayDestinationInfo = -1;
@@ -299,7 +300,7 @@ void keyPressed() {
   if (key == 'l') {_lines = !_lines;} 
   if (key == 'i') {_displayId = !_displayId;}
   if (key == 't') {_particleTicks = !_particleTicks;}
-  if (key == 'x') {_centroid = !_centroid;}
+  if (key == 'x') {_displayCentroid = !_displayCentroid;}
   if (key == 'z') {_displayDestinations = !_displayDestinations;}
   if (key == '0') {_displayParticleFields = !_displayParticleFields;}
   if (key == '1') {saveFrame("screen.png");}
@@ -349,7 +350,7 @@ void generateMenu() {
   menuInfo1.add("(g) Display Grid: " + _grid);
   menuInfo1.add("(l) Display Link Lines: " + _lines);
   menuInfo1.add("(t) Display particle ticks: " + _particleTicks);
-  menuInfo1.add("(x) Display centroid: " + _centroid);
+  menuInfo1.add("(x) Display centroid: " + _displayCentroid);
   menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
   menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
   menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
