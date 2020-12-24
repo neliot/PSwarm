@@ -4,8 +4,6 @@ class Particle {
   PVector _resultant;
   ArrayList<Particle> _neighbours = new ArrayList<Particle>(); 
   ArrayList<Destination> _destinations = new ArrayList<Destination>(); ;
-//  ArrayList<PImage> mice2 = new ArrayList<PImage>();
-//  PVector _acceleration;
   int _id;
   float _size = 10.0;
   float _mass = 1.0;
