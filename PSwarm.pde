@@ -275,7 +275,7 @@ void keyPressed() {
   if (key == 'x') {_displayCentroid = !_displayCentroid;}
   if (key == 'z') {_displayDestinations = !_displayDestinations;}
   if (key == '0') {_displayParticleFields = !_displayParticleFields;}
-  if (key == '1') {saveFrame("screen.png");}
+  if (key == '1') {saveFrame("screen.png"); println("Snapshot taken!");}
   if (key == 'm') {
     _mode += 1;
     if (_mode > 3) {
