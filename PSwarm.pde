@@ -254,11 +254,11 @@ void keyPressed() {
 */ 
   if (key == 'o') {
     system.saveSwarm();
-    print("Swarm Saved");
+    println("Swarm Saved");
   }
   if (key == 'y') {
     system.loadSwarm();
-    print("Swarm Loaded");
+    println("Swarm Loaded");
   }
   // Menu 
   if (key == '?') {_menu = !_menu;}
