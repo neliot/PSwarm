@@ -2,12 +2,12 @@ import java.util.*; // Allows for Randmising the ArrayList Collection
 
 class Model6 extends PSystem {
   Model6() {
-    super("Shape Forming 0.1","SF");
+    super("Shape Forming 0.1","6");
   }
 
   void init() {};
 
-  void populate(int size) {
+  void populate() {
     this.loadSwarm();
     this.particles.clear();
     for(int i = 0; i < destinations.size(); i++) {

@@ -2,7 +2,7 @@ import java.util.*; // Allows for Randmising the ArrayList Collection
 
 class Model5 extends PSystem {
   Model5() {
-    super("Random Path 0.1","RP");
+    super("Random Path 0.1","5");
   }
 
   void init() {
@@ -11,8 +11,8 @@ class Model5 extends PSystem {
     }
   }
 
-  void populate(int size) {
-    for(int i = 0; i < size; i++) {
+  void populate() {
+    for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
         particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));

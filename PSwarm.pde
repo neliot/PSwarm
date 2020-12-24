@@ -17,8 +17,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ****************************************************************************/
-java.util.Properties properties;
-java.util.Properties modelProperties;
+java.util.Properties properties = new java.util.Properties();
 PSystem system;
 Theme theme = new Theme(); 
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
@@ -76,13 +75,13 @@ void settings() {
 /** 
 * Environment setup
 */ 
-  if (platformNames[platform] == "linux") {
-//    fullScreen(JAVA2D,SPAN);
-    fullScreen(P2D,SPAN);
-  } else {
-    fullScreen(P2D,SPAN);
-//    fullScreen(P2D);
+  try {
+    properties.load( createReader("application.properties") );
+  } catch(Exception e) {
+    println(e);
+    exit();
   }
+  fullScreen(P2D,int(properties.getProperty("screen")));
   noSmooth();
 }
 
@@ -91,17 +90,9 @@ void setup() {
 * Sets up frame rate and the initial swarm
 * 
 */
-  properties = new java.util.Properties();
-  modelProperties = new java.util.Properties();
-  try {
-    properties.load( createReader("application.properties") );
-    _model = int(properties.getProperty("model"));
-    modelProperties.load( createReader("Model"+_model+".properties") );
-  } catch(Exception e) {
-    println(e);
-    exit();
-  }
-
+//  properties = new java.util.Properties();
+  
+  _model = int(properties.getProperty("model"));
   frameRate(30);
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   license = loadImage("icons/license.png");    
@@ -130,24 +121,6 @@ void setup() {
   } else {
     system = new Model6(); 
   }
-
-  _swarmSize = int(modelProperties.getProperty("size"));
-  system._particleRange = float(modelProperties.getProperty("particleRange"));
-  system._particleRepulse = float(modelProperties.getProperty("particleRepulse"));
-  system._repulsionBias = float(modelProperties.getProperty("repulsionBias"));
-  system._cohesionBias = float(modelProperties.getProperty("cohesionBias"));
-  system._directionBias = float(modelProperties.getProperty("directionBias"));
-  system._obstacleBias = float(modelProperties.getProperty("obstacleBias"));
-  system._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
-  system._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
-  system._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
-  system._dest = boolean(modelProperties.getProperty("dest"));
-  system._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
-  system._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
-  system._run = boolean(modelProperties.getProperty("run"));
-  system._loggingP = boolean(modelProperties.getProperty("loggingP"));
-  system._loggingN = boolean(modelProperties.getProperty("loggingN"));
-  
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));
   _displayId = boolean(properties.getProperty("displayId"));
@@ -157,13 +130,6 @@ void setup() {
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
-
-  if (boolean(modelProperties.getProperty("loadSwarm"))) {
-    system.loadSwarm();
-  } else {
-    system.populate(_swarmSize);
-  }
-  system.init();
 
   directionInfo.setPos(width,2);
   displayWindows.add(menuInfo1);

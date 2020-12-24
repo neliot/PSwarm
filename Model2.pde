@@ -1,12 +1,12 @@
 class Model2 extends PSystem {
   Model2() {
-    super("Random Walkers","RW");    
+    super("Random Walkers","2");    
   }
 
   void init() {};
 
-  void populate(int size) {
-    for(int i = 0; i < size; i++) {
+  void populate() {
+    for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
         particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));

@@ -1,8 +1,10 @@
 abstract class PSystem {
+  java.util.Properties modelProperties = new java.util.Properties();
   ArrayList<Particle> particles = new ArrayList<Particle>();
   ArrayList<Destination> destinations = new ArrayList<Destination>();
   ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
   boolean _lines = true;
+  int _swarmSize = 0;
   float _cohesionBias = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
   float _repulsionBias = 300f; // Must be > _cohesionBias to prevent the swarm collapsing.
   float _directionBias = 80f; // Must be > particle._topspeed to allow free particles to coalesce.
@@ -24,8 +26,6 @@ abstract class PSystem {
   int _nextDestId = 0;
   int _nextObsId = 0;
   PVector _swarmDirection = new PVector();
-  // float _repulseProportion = 0.5; // Compressed perimeter reduction divisor
-  // float _cohesionProportion = 0.5; // Compressed perimeter reduction divisor
   boolean _loggingP = false;
   boolean _loggingN = false;
   Logger plog;
@@ -36,7 +36,7 @@ abstract class PSystem {
   abstract PVector cohesion(Particle p);
   abstract PVector repulsion(Particle p);
   abstract PVector direction(Particle p);
-  abstract void populate(int size);
+  abstract void populate();
   abstract void init();
 
   PSystem(String model, String modelId) {
@@ -46,12 +46,43 @@ abstract class PSystem {
 */ 
     this._model = model;
     this._modelId = modelId;
+
+    try {
+      modelProperties.load( createReader("Model" + this._modelId + ".properties") );
+    } catch(Exception e) {
+      println(e);
+      exit();
+    }
+
+    this._swarmSize = int(modelProperties.getProperty("size"));
+    this._particleRange = float(modelProperties.getProperty("particleRange"));
+    this._particleRepulse = float(modelProperties.getProperty("particleRepulse"));
+    this._repulsionBias = float(modelProperties.getProperty("repulsionBias"));
+    this._cohesionBias = float(modelProperties.getProperty("cohesionBias"));
+    this._directionBias = float(modelProperties.getProperty("directionBias"));
+    this._obstacleBias = float(modelProperties.getProperty("obstacleBias"));
+    this._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
+    this._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
+    this._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
+    this._dest = boolean(modelProperties.getProperty("dest"));
+    this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
+    this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
+    this._run = boolean(modelProperties.getProperty("run"));
+    this._loggingP = boolean(modelProperties.getProperty("loggingP"));
+    this._loggingN = boolean(modelProperties.getProperty("loggingN"));
     this.plog = new Logger("csv/P-"+_modelId+"-p.csv");
     this.nClog = new Logger("csv/P-"+_modelId+"-nc.csv");
     this.nRlog = new Logger("csv/P-"+_modelId+"-nr.csv");
     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
-    this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");    
+    this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");  
+
+    if (boolean(modelProperties.getProperty("loadSwarm"))) {
+      this.loadSwarm();
+    } else {
+      this.populate();
+    }
+    this.init();  
   }
 
   PVector getCentroid() {
@@ -136,6 +167,7 @@ abstract class PSystem {
         p.addDestination(d);
       }
     }
+    this.init(); 
   }
   
   void moveReset() {
