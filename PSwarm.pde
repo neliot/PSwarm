@@ -30,7 +30,7 @@ PImage logo;
 PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2020";
-String _VERSION = "0.1.3";
+String _VERSION = "0.1.4";
 float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
@@ -92,8 +92,8 @@ void setup() {
 */
 //  properties = new java.util.Properties();
   
-  _model = int(properties.getProperty("model"));
-  frameRate(30);
+//  _model = int(properties.getProperty("model"));
+  frameRate(int(properties.getProperty("frameRate")));
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   license = loadImage("icons/license.png");    
   mice1.add(loadImage("icons/1.png"));    
@@ -108,18 +108,24 @@ void setup() {
   mouse2 = mice2.get(_mode);
   mouse = mouse1;
 
-  if (_model == 1) {
-    system = new Model1(); 
-  } else if (_model == 2) {
-    system = new Model2(); 
-  } else if (_model == 3) {
-    system = new Model3(); 
-  } else if (_model == 4) {
-    system = new Model4(); 
-  } else if (_model == 5) {
-    system = new Model5(); 
-  } else {
-    system = new Model6(); 
+  switch (int(properties.getProperty("model"))) {
+    case 1:
+      system = new Model1(); 
+      break;
+    case 2:
+      system = new Model2(); 
+      break;
+    case 3:
+      system = new Model3(); 
+      break;
+    case 4:
+      system = new Model4(); 
+      break;
+    case 5:
+      system = new Model5(); 
+      break;
+    default:
+      system = new Model6(); 
   }
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));

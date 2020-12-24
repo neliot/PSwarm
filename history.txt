@@ -104,4 +104,11 @@
  * 1. Split data logging and saving/loading by 
  *    Model.
  * 2. Added movable window minimise and restore.
+ **************************************************
+ * 24/12/2020 - 0.1.4 - NE
+ **************************************************
+ * 1. Refactored properties into Models
+ * 2. Added screen selection/span to application 
+ *    properties.
+ * 3. Added frameRate to application properties.
  **************************************************/
