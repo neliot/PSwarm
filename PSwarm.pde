@@ -84,7 +84,7 @@ void settings() {
   if (boolean(properties.getProperty("fullScreen"))) { 
     fullScreen(P2D,int(properties.getProperty("screen")));
   } else {
-    size(int(properties.getProperty("height")),int(properties.getProperty("width")));
+    size(int(properties.getProperty("width")),int(properties.getProperty("height")));
   }
   noSmooth();
 }
