@@ -98,9 +98,15 @@ void setup() {
   
 //  _model = int(properties.getProperty("model"));
   frameRate(int(properties.getProperty("frameRate")));
+  if (!boolean(properties.getProperty("fullScreen"))) {
+    surface.setTitle(_NAME + ":" +_VERSION);
+    surface.setResizable(true);
+    surface.setLocation(0, 0);
+  }
   noCursor();
 
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
+  surface.setIcon(logo);
   license = loadImage("icons/license.png");    
   mice1.add(loadImage("icons/1.png"));    
   mice2.add(loadImage("icons/2.png"));    
@@ -109,7 +115,7 @@ void setup() {
   mice1.add(loadImage("icons/5.png"));    
   mice2.add(loadImage("icons/6.png"));    
   mice1.add(loadImage("icons/7.png"));    
-  mice2.add(loadImage("icons/8.png"));    
+  mice2.add(loadImage("icons/8.png"));  
   mouse1 = mice1.get(_mode);
   mouse2 = mice2.get(_mode);
   mouse = mouse1;
@@ -143,7 +149,7 @@ void setup() {
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
 
-  directionInfo.setPos(width,2);
+  directionInfo.setPos(2,height);
   displayWindows.add(menuInfo1);
   displayWindows.add(menuInfo2);
   displayWindows.add(directionInfo);
