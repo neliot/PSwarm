@@ -81,7 +81,11 @@ void settings() {
     println(e);
     exit();
   }
-  fullScreen(P2D,int(properties.getProperty("screen")));
+  if (boolean(properties.getProperty("fullScreen"))) { 
+    fullScreen(P2D,int(properties.getProperty("screen")));
+  } else {
+    size(int(properties.getProperty("height")),int(properties.getProperty("width")));
+  }
   noSmooth();
 }
 
@@ -94,6 +98,8 @@ void setup() {
   
 //  _model = int(properties.getProperty("model"));
   frameRate(int(properties.getProperty("frameRate")));
+  noCursor();
+
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   license = loadImage("icons/license.png");    
   mice1.add(loadImage("icons/1.png"));    
@@ -193,7 +199,6 @@ void draw() {
     // if (_particleTicks) displayTick(p);
     // if (_displayId) displayId(p);
   }
-  noCursor();
   image(mouse,mouseX-10,mouseY-10,32,32);
   if (_displayParticleInfo != -1 && _mode == _AGENT) { displayAgentInfo(system.getParticleWithId(_displayParticleInfo)); agentInfo.draw();};
   if (_displayDestinationInfo != -1 && _mode == _DESTINATION) { displayDestinationInfo(system.getDestinationWithId(_displayDestinationInfo)); destinationInfo.draw();};
@@ -275,7 +280,7 @@ void keyPressed() {
   if (key == 'x') {_displayCentroid = !_displayCentroid;}
   if (key == 'z') {_displayDestinations = !_displayDestinations;}
   if (key == '0') {_displayParticleFields = !_displayParticleFields;}
-  if (key == '1') {saveFrame("screen.png"); println("Snapshot taken!");}
+  if (key == '1') {screenGrab();}
   if (key == 'm') {
     _mode += 1;
     if (_mode > 3) {
@@ -291,6 +296,11 @@ void keyPressed() {
       theme._theme = 0;
     } 
   } 
+}
+
+void screenGrab(){
+  saveFrame("screen.png"); 
+  println("Snapshot taken!");
 }
 
 void scalers() {
@@ -310,10 +320,11 @@ void generateMenu() {
 */ 
   if (system._loggingP) {
     menuInfo1.setTitle("Menu - " + theme._themeName[theme._theme] + " (LOGGING)");
+    menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][3],theme.menuTheme[theme._theme][2]);
   } else {
     menuInfo1.setTitle("Menu - " + theme._themeName[theme._theme]);
+    menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   }
-  menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo1.clearData();
   menuInfo1.add("(SPACE) Destinations Active: " + system._dest);
   menuInfo1.add("(z) Display Destinations: " + _displayDestinations);
