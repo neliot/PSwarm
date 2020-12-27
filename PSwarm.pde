@@ -96,20 +96,14 @@ void setup() {
 * Sets up frame rate and the initial swarm
 * 
 */
-//  properties = new java.util.Properties();
-  
-//  _model = int(properties.getProperty("model"));
   frameRate(int(properties.getProperty("frameRate")));
   if (!boolean(properties.getProperty("fullScreen"))) {
-    surface.setTitle(_NAME + ":" +_VERSION);
+    surface.setTitle(_NAME + " : " +_VERSION);
     surface.setResizable(boolean(properties.getProperty("scalable")));
     surface.setLocation(0, 0);
     surface.setIcon(logo);
   }
   noCursor();
-
-  // logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
-  // surface.setIcon(logo);
   license = loadImage("icons/license.png");    
   mice1.add(loadImage("icons/1.png"));    
   mice2.add(loadImage("icons/2.png"));    
@@ -184,28 +178,24 @@ void draw() {
     for(InfoBox b : displayWindows) {
       if (b._visible) {
         b.draw();
-        if (overWindow(b)) _displayWindowInfo = b;
+        if (mouseOver(b)) _displayWindowInfo = b;
       }
     }
   }
   if (_displayDestinations) {
     for (Destination d : system.destinations) {
       displayDestination(d);
-      if (overDestination(transposeX(d._location.x),transposeY(d._location.y),10,10)) _displayDestinationInfo = d._id;
-      if (_displayId) displayId(d);
+      if (mouseOver(d)) _displayDestinationInfo = d._id;
     }
   }
   for (Obstacle o : system.obstacles) {
     displayObstacle(o);
-    if (overObstacle(transposeX(o._location.x),transposeY(o._location.y),10,10)) _displayObstacleInfo = o._id;
-    if (_displayId) displayId(o);
+    if (mouseOver(o)) _displayObstacleInfo = o._id;
   }  
   if (_lines) displayLines();
   for(Particle p : system.particles) {
     displayParticle(p);
-    if (overAgent(transposeX(p._location.x),transposeY(p._location.y),10,10)) _displayParticleInfo = p._id;
-    // if (_particleTicks) displayTick(p);
-    // if (_displayId) displayId(p);
+    if (mouseOver(p)) _displayParticleInfo = p._id;
   }
   image(mouse,mouseX-10,mouseY-10,32,32);
   if (_displayParticleInfo != -1 && _mode == _AGENT) { displayAgentInfo(system.getParticleWithId(_displayParticleInfo)); agentInfo.draw();};
@@ -265,15 +255,8 @@ void keyPressed() {
 /** 
 * Menu selection
 */ 
-  if (key == 'o') {
-    system.saveSwarm();
-    println("Swarm Saved");
-  }
-  if (key == 'y') {
-    system.loadSwarm();
-    println("Swarm Loaded");
-  }
-  // Menu 
+  if (key == 'o') {saveSwarm();}
+  if (key == 'y') {loadSwarm();}
   if (key == '?') {_menu = !_menu;}
   if (key == 'r') {system._run = !system._run;}
   if (key == ' ') {system._dest = !system._dest;}
@@ -289,21 +272,35 @@ void keyPressed() {
   if (key == 'z') {_displayDestinations = !_displayDestinations;}
   if (key == '0') {_displayParticleFields = !_displayParticleFields;}
   if (key == '1') {screenGrab();}
-  if (key == 'm') {
-    _mode += 1;
-    if (_mode > 3) {
-      _mode = 0;
-    } 
-    mouse1 = mice1.get(_mode);  
-    mouse2 = mice2.get(_mode);
-    mouse = mouse1;
-  }
- if (key == '2') {
-    theme._theme += 1;
-    if (theme._theme > 1) {
-      theme._theme = 0;
-    } 
+  if (key == 'm') {changeMode();}
+  if (key == '2') {changeTheme();} 
+}
+
+void changeMode(){
+  _mode += 1;
+  if (_mode > 3) {
+    _mode = 0;
   } 
+  mouse1 = mice1.get(_mode);  
+  mouse2 = mice2.get(_mode);
+  mouse = mouse1;
+};
+
+void changeTheme() {
+  theme._theme += 1;
+  if (theme._theme > 1) {
+    theme._theme = 0;
+  } 
+}
+
+void saveSwarm() {
+  system.saveSwarm();
+  println("Swarm Saved");
+}
+
+void loadSwarm() {
+  system.loadSwarm();
+  println("Swarm Loaded");
 }
 
 void screenGrab(){
@@ -454,6 +451,7 @@ void displayGrid() {
 void displayParticle(Particle p) {
 /** 
 * Renders the particle onto the canvas
+* @param p Particle/Agent to render.
 * 
 */
     if (_usePoint) {
@@ -481,15 +479,22 @@ void displayParticle(Particle p) {
 }
 
 void displayDestination(Destination d) {
+/** 
+* Renders the Destination onto the canvas
+* @param d Destination to render.
+* 
+*/
   strokeWeight(constrain(2*_scale,1,4));
   stroke(theme.destinationTheme[theme._theme][0]);
   fill(theme.destinationTheme[theme._theme][1]);
   ellipse(transposeX(d._location.x),transposeY(d._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
+  if (_displayId) displayId(d);
 }
 
 void displayObstacle(Obstacle o) {
 /** 
 * Renders the obstacle onto the canvas
+* @param o Obstacle to render.
 * 
 */
   strokeWeight(constrain(2*_scale,1,4));
@@ -500,9 +505,15 @@ void displayObstacle(Obstacle o) {
   strokeWeight(1);
   stroke(theme.obstacleTheme[theme._theme][2]);
   ellipse(transposeX(o._location.x),transposeY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
+  if (_displayId) displayId(o);
+
 }
 
 PImage swarmDirectionImage() {
+/** 
+* Generate Direction Image.
+* 
+*/
     int sizeXY = 150;
     PVector lineStart = new PVector(sizeXY/2,sizeXY/2); 
     PVector lineEnd = system._swarmDirection.copy();
@@ -602,7 +613,7 @@ void displayLines() {
 void displayId(Particle agent) {
 /** 
 * Renders the particleId onto the canvas
-* 
+* @param agent to apply Id
 */
   textSize(12);
   textAlign(CENTER,CENTER);
@@ -612,7 +623,8 @@ void displayId(Particle agent) {
 
 void displayId(Destination d) {
 /** 
-* Renders the particleId onto the canvas
+* Renders the DestinationId onto the canvas
+* @param Destination to apply Id
 * 
 */
   textSize(12);
@@ -623,7 +635,8 @@ void displayId(Destination d) {
 
 void displayId(Obstacle o) {
 /** 
-* Renders the particleId onto the canvas
+* Renders the ObstacleId onto the canvas
+* @param Obstacle to apply Id
 * 
 */
   textSize(12);
@@ -636,6 +649,7 @@ void displayId(Obstacle o) {
 void displayTick(Particle agent) {
 /** 
 * Renders the particle's tick onto the canvas
+* @param agent Agent/Particle to apply tick to.
 * 
 */
   float _tickSize = 5.0;
@@ -649,31 +663,50 @@ void displayTick(Particle agent) {
 }
 
 float transposeX(float val) {
+/** 
+* Scale and Pan Transpose
+* @param val X value to transpose.
+* 
+*/
   val = val * _scale + _offsetX;
   return val;
 }
 
 float transposeY(float val) {
+/** 
+* Scale and Pan Transpose
+* @param val Y value to transpose.
+* 
+*/
   val = val * _scale + _offsetY;
   return val;
 }
 
 float rTransposeX(float val) {
-  val = val / _scale - _offsetX / _scale;
+/** 
+* Reverse Scale and Pan Transpose
+* @param val X value to transpose.
+* 
+*/  val = val / _scale - _offsetX / _scale;
   return val;
 }
 
 float rTransposeY(float val) {
+/** 
+* Reverse Scale and Pan Transpose
+* @param val Y value to transpose.
+* 
+*/
   val = val / _scale - _offsetY / _scale;
   return val;
 }
 
-PVector adjust(PVector location) {
-  PVector _adjusted = new PVector((location.x / _scale), (location.y / _scale));
-  return _adjusted;
-};
-
-boolean overWindow(InfoBox b) {
+boolean mouseOver(InfoBox b) {
+/** 
+* Detect if mouse is over Window header
+* @param b Box.
+* 
+*/
   if (mouseX >= b._posX && mouseX <= b._posX+b._width && 
       mouseY >= b._posY && mouseY <= b._posY+25) {
     return true;
@@ -682,7 +715,16 @@ boolean overWindow(InfoBox b) {
   }
 }
 
-boolean overAgent(float x, float y, float w, float h) {
+boolean mouseOver(Particle p) {
+/** 
+* Detect if mouse is over Agent/Particle
+* @param p Particle.
+* 
+*/
+  float x = transposeX(p._location.x);
+  float y = transposeY(p._location.y);
+  int w = 10;
+  int h = 10;
   if (mouseX >= x-w && mouseX <= x+w && 
       mouseY >= y-h && mouseY <= y+h) {
     return true;
@@ -691,7 +733,16 @@ boolean overAgent(float x, float y, float w, float h) {
   }
 }
 
-boolean overDestination(float x, float y, float w, float h) {
+boolean mouseOver(Destination d) {
+/** 
+* Detect if mouse is over Destination
+* @param p Particle.
+* 
+*/
+  float x = transposeX(d._location.x);
+  float y = transposeY(d._location.y);
+  int w = 10;
+  int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
       mouseY >= y-h && mouseY <= y+h) {
     return true;
@@ -700,9 +751,18 @@ boolean overDestination(float x, float y, float w, float h) {
   }
 }
 
-boolean overObstacle(float x, float y, float w, float h) {
+boolean mouseOver(Obstacle o) {
+/** 
+* Detect if mouse is over Obstacle
+* @param o Obstacle.
+* 
+*/
+  float x = transposeX(o._location.x);
+  float y = transposeY(o._location.y);
+  int w = 10;
+  int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
-      mouseY >= y-h && mouseY <= y+h) {
+    mouseY >= y-h && mouseY <= y+h) {
     return true;
   } else {
     return false;
