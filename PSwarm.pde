@@ -46,17 +46,17 @@ boolean _loadSwarm = false;
 int _swarmSize = 0;
 int _gridSize = 40; // Size of canvas grid
 int _lineSpacing = 25; // Line spacing of menu lines
-int _displayParticleInfo = -1;
-int _displayDestinationInfo = -1;
-int _displayObstacleInfo = -1;
+Particle _currentParticle = null; 
+Destination _currentDestination = null; 
+Obstacle _currentObstacle = null; 
+InfoBox _displayWindowInfo = null;
 int _clickPosX = 0;
 int _clickPosY = 0;
-InfoBox _displayWindowInfo = null;
 boolean _displayCentroid = false;
 boolean _menu = true;
-int _model = 3;
 int _mode = 0;
 // MODES
+// Should be implemneted with an enum but it's a bit messy in Java. Maybe later eh!
 int _AGENT = 0;
 int _DESTINATION = 1;
 int _OBSTACLE = 2;
@@ -168,9 +168,9 @@ void draw() {
   if (_grid) displayGrid();
   if (_displayCentroid) displayCentroid();
   system.update();
-  _displayParticleInfo = -1;
-  _displayDestinationInfo = -1;
-  _displayObstacleInfo = -1;
+  _currentParticle = null;
+  _currentDestination = null;
+  _currentObstacle = null;
   _displayWindowInfo = null;
   if (_menu) { 
     generateMenu();
@@ -185,22 +185,22 @@ void draw() {
   if (_displayDestinations) {
     for (Destination d : system.destinations) {
       displayDestination(d);
-      if (mouseOver(d)) _displayDestinationInfo = d._id;
+      if (mouseOver(d)) _currentDestination = d;
     }
   }
   for (Obstacle o : system.obstacles) {
     displayObstacle(o);
-    if (mouseOver(o)) _displayObstacleInfo = o._id;
+    if (mouseOver(o)) _currentObstacle = o;
   }  
   if (_lines) displayLines();
   for(Particle p : system.particles) {
     displayParticle(p);
-    if (mouseOver(p)) _displayParticleInfo = p._id;
+    if (mouseOver(p)) _currentParticle = p;
   }
   image(mouse,mouseX-10,mouseY-10,32,32);
-  if (_displayParticleInfo != -1 && _mode == _AGENT) { displayAgentInfo(system.getParticleWithId(_displayParticleInfo)); agentInfo.draw();};
-  if (_displayDestinationInfo != -1 && _mode == _DESTINATION) { displayDestinationInfo(system.getDestinationWithId(_displayDestinationInfo)); destinationInfo.draw();};
-  if (_displayObstacleInfo != -1 && _mode == _OBSTACLE) { displayObstacleInfo(system.getObstacleWithId(_displayObstacleInfo)); obstacleInfo.draw();};
+  if (_currentParticle != null && _mode == _AGENT) displayAgentInfo(_currentParticle);
+  if (_currentDestination != null && _mode == _DESTINATION) displayDestinationInfo(_currentDestination);
+  if (_currentObstacle != null && _mode == _OBSTACLE) displayObstacleInfo(_currentObstacle);
   system.moveReset();
   fill(0);
   textSize(10);
@@ -216,20 +216,20 @@ void mousePressed() {
   if (mouseButton == LEFT && _mode == _DESTINATION) {
     system.addDestination(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }
-  if (mouseButton == RIGHT && _mode == _DESTINATION && _displayDestinationInfo != -1) {
-    system.deleteDestinationById(_displayDestinationInfo);
+  if (mouseButton == RIGHT && _mode == _DESTINATION && _currentDestination != null) {
+    system.deleteDestination(_currentDestination);
   }
   if (mouseButton == LEFT && _mode == _AGENT) {
     system.addParticle(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }  
-  if (mouseButton == RIGHT && _mode == _AGENT && _displayParticleInfo != -1) {
-    system.deleteParticleById(_displayParticleInfo);
+  if (mouseButton == RIGHT && _mode == _AGENT && _currentParticle != null) {
+    system.deleteParticle(_currentParticle);
   }  
   if (mouseButton == LEFT && _mode == _OBSTACLE) {
     system.addObstacle(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }  
-  if (mouseButton == RIGHT && _mode == _OBSTACLE && _displayObstacleInfo != -1) {
-    system.deleteObstacleById(_displayObstacleInfo);
+  if (mouseButton == RIGHT && _mode == _OBSTACLE && _currentObstacle != null) {
+    system.deleteObstacle(_currentObstacle);
   }
   if (mouseButton == LEFT && _mode == _WINDOW && _displayWindowInfo != null) {
     _clickPosX = _displayWindowInfo._posX - mouseX;
@@ -382,6 +382,7 @@ void displayAgentInfo(Particle agent) {
   agentInfo.add("Speed: ["+ agent._topspeed +"]");
   agentInfo.add("Size: ["+ agent._size +"]");
   agentInfo.add("Neighbours: ["+ agent._neighbours.size() +"]");
+  agentInfo.draw();
 }
 
 void displayDestinationInfo(Destination dest) {
@@ -390,6 +391,7 @@ void displayDestinationInfo(Destination dest) {
   destinationInfo.clearData();
   destinationInfo.add("Size: ["+ dest._size +"]");
   destinationInfo.add("Mass: ["+ dest._mass +"]");
+  destinationInfo.draw();
 }
 
 void displayObstacleInfo(Obstacle o) {
@@ -399,6 +401,7 @@ void displayObstacleInfo(Obstacle o) {
   obstacleInfo.add("Size: ["+ o._size +"]");
   obstacleInfo.add("Range: ["+ o._range +"]");
   obstacleInfo.add("Mass: ["+ o._mass +"]");
+  obstacleInfo.draw();
 }
 
 void displayCentroid() {

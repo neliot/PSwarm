@@ -203,10 +203,10 @@ abstract class PSystem {
     }
   }
 
-  void deleteDestinationById(int id) {
+  void deleteDestination(Destination d) {
     for (int i = this.destinations.size() - 1; i >= 0; i--) {
-      Destination d = this.destinations.get(i);
-      if (d._id == id) {
+      Destination dest = this.destinations.get(i);
+      if (d == dest) {
         for(Particle p : particles) {
           p.removeDestination(d);
         }
@@ -215,13 +215,6 @@ abstract class PSystem {
     }
   }
 
-  Destination getDestinationWithId(int id) {
-     for(Destination d : this.destinations) {
-       if (d._id == id) return d;
-     }
-     return null;
-  }
-  
   void addParticle(float x, float y, float z) {
     try {
       // create agent in centred quartile.
@@ -234,33 +227,19 @@ abstract class PSystem {
     }
   }
   
-  void deleteParticleById(int id) {
+  void deleteParticle(Particle p) {
     for (int i = this.particles.size() - 1; i >= 0; i--) {
       Particle part = this.particles.get(i);
-      if (part._id == id) {
+      if (part == p) {
         this.particles.remove(i);
       }
     }
   }
-  
-  Particle getParticleWithId(int id) {
-     for(Particle n : this.particles) {
-       if (n._id == id) return n;
-     }
-     return null;
-  }
 
-  Obstacle getObstacleWithId(int id) {
-     for(Obstacle o : this.obstacles) {
-       if (o._id == id) return o;
-     }
-     return null;
-  }
-
-  void deleteObstacleById(int id) {
+  void deleteObstacle(Obstacle o) {
     for (int i = this.obstacles.size() - 1; i >= 0; i--) {
-      Obstacle o = this.obstacles.get(i);
-      if (o._id == id) {
+      Obstacle obs = this.obstacles.get(i);
+      if (obs == o) {
         this.obstacles.remove(i);
       }
     }
