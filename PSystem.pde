@@ -142,7 +142,7 @@ abstract class PSystem {
       float[] nums = float(split(lines[i], ','));
       try {
         particles.add(new Particle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6], nums[7]));
-        this._nextParticleId = int(nums[0]++);
+        this._nextParticleId = int(nums[0]) + 1;
       } catch (Exception e) {
         println(e);
         exit();
@@ -153,7 +153,7 @@ abstract class PSystem {
     for (String data : lines) {
       float[] nums = float(split(data, ','));
       obstacles.add(new Obstacle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6]));
-      this._nextObsId = int(nums[0]++);
+      this._nextObsId = int(nums[0]) + 1;
     }
 
     lines = loadStrings("save/P-"+_modelId+"-destinations.dat");
@@ -162,7 +162,7 @@ abstract class PSystem {
       float[] nums = float(split(data, ','));
       Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
       destinations.add(d);
-      this._nextDestId = int(nums[0]++);
+      this._nextDestId = int(nums[0]) + 1;
       for(Particle p : particles) {
         p.addDestination(d);
       }

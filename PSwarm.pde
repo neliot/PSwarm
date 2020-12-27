@@ -75,6 +75,7 @@ void settings() {
 /** 
 * Environment setup
 */ 
+  logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   try {
     properties.load( createReader("application.properties") );
   } catch(Exception e) {
@@ -83,6 +84,7 @@ void settings() {
   }
   if (boolean(properties.getProperty("fullScreen"))) { 
     fullScreen(P2D,int(properties.getProperty("screen")));
+    PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
   } else {
     size(int(properties.getProperty("width")),int(properties.getProperty("height")));
   }
@@ -100,13 +102,14 @@ void setup() {
   frameRate(int(properties.getProperty("frameRate")));
   if (!boolean(properties.getProperty("fullScreen"))) {
     surface.setTitle(_NAME + ":" +_VERSION);
-    surface.setResizable(true);
+    surface.setResizable(boolean(properties.getProperty("scalable")));
     surface.setLocation(0, 0);
+    surface.setIcon(logo);
   }
   noCursor();
 
-  logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
-  surface.setIcon(logo);
+  // logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
+  // surface.setIcon(logo);
   license = loadImage("icons/license.png");    
   mice1.add(loadImage("icons/1.png"));    
   mice2.add(loadImage("icons/2.png"));    
