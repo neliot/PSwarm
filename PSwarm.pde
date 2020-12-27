@@ -56,7 +56,7 @@ boolean _displayCentroid = false;
 boolean _menu = true;
 int _mode = 0;
 // MODES
-// Should be implemneted with an enum but it's a bit messy in Java. Maybe later eh!
+// Should be implemented with an enum but it's a bit messy in Java. Maybe later eh!
 int _AGENT = 0;
 int _DESTINATION = 1;
 int _OBSTACLE = 2;
@@ -241,7 +241,6 @@ void mousePressed() {
   if (mouseButton == RIGHT && _mode == _WINDOW && _displayWindowInfo != null) {
     _displayWindowInfo._minimised = !_displayWindowInfo._minimised;
   }  
-  
 }
 
 void mouseReleased() {
@@ -456,7 +455,8 @@ void displayGrid() {
 
 void displayParticle(Particle p) {
 /** 
-* Renders the particle onto the canvas
+* Render the particle onto the canvas
+*
 * @param p Particle/Agent to render.
 * 
 */
@@ -487,6 +487,7 @@ void displayParticle(Particle p) {
 void displayDestination(Destination d) {
 /** 
 * Renders the Destination onto the canvas
+*
 * @param d Destination to render.
 * 
 */
@@ -499,7 +500,8 @@ void displayDestination(Destination d) {
 
 void displayObstacle(Obstacle o) {
 /** 
-* Renders the obstacle onto the canvas
+* Render the obstacle onto the canvas
+*
 * @param o Obstacle to render.
 * 
 */
@@ -619,6 +621,7 @@ void displayLines() {
 void displayId(Particle agent) {
 /** 
 * Renders the particleId onto the canvas
+*
 * @param agent to apply Id
 */
   textSize(12);
@@ -630,6 +633,7 @@ void displayId(Particle agent) {
 void displayId(Destination d) {
 /** 
 * Renders the DestinationId onto the canvas
+*
 * @param Destination to apply Id
 * 
 */
@@ -642,6 +646,7 @@ void displayId(Destination d) {
 void displayId(Obstacle o) {
 /** 
 * Renders the ObstacleId onto the canvas
+*
 * @param Obstacle to apply Id
 * 
 */
@@ -655,6 +660,7 @@ void displayId(Obstacle o) {
 void displayTick(Particle agent) {
 /** 
 * Renders the particle's tick onto the canvas
+*
 * @param agent Agent/Particle to apply tick to.
 * 
 */
@@ -671,6 +677,7 @@ void displayTick(Particle agent) {
 float transposeX(float val) {
 /** 
 * Scale and Pan Transpose
+*
 * @param val X value to transpose.
 * 
 */
@@ -681,6 +688,7 @@ float transposeX(float val) {
 float transposeY(float val) {
 /** 
 * Scale and Pan Transpose
+*
 * @param val Y value to transpose.
 * 
 */
@@ -691,6 +699,7 @@ float transposeY(float val) {
 float rTransposeX(float val) {
 /** 
 * Reverse Scale and Pan Transpose
+*
 * @param val X value to transpose.
 * 
 */  val = val / _scale - _offsetX / _scale;
@@ -700,6 +709,7 @@ float rTransposeX(float val) {
 float rTransposeY(float val) {
 /** 
 * Reverse Scale and Pan Transpose
+*
 * @param val Y value to transpose.
 * 
 */
@@ -710,6 +720,7 @@ float rTransposeY(float val) {
 boolean mouseOver(InfoBox b) {
 /** 
 * Detect if mouse is over Window header
+*
 * @param b Box.
 * 
 */
@@ -724,6 +735,7 @@ boolean mouseOver(InfoBox b) {
 boolean mouseOver(Particle p) {
 /** 
 * Detect if mouse is over Agent/Particle
+*
 * @param p Particle.
 * 
 */
@@ -742,6 +754,7 @@ boolean mouseOver(Particle p) {
 boolean mouseOver(Destination d) {
 /** 
 * Detect if mouse is over Destination
+*
 * @param p Particle.
 * 
 */
@@ -760,6 +773,7 @@ boolean mouseOver(Destination d) {
 boolean mouseOver(Obstacle o) {
 /** 
 * Detect if mouse is over Obstacle
+*
 * @param o Obstacle.
 * 
 */

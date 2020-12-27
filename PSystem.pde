@@ -95,6 +95,10 @@ abstract class PSystem {
   }
 
   void saveSwarm() {
+/** 
+* Save environment settings to file.
+* 
+*/     
     PrintWriter output;
     output = createWriter("save/P-"+_modelId+"-agents.dat"); 
     output.println(this.particles.size() + "," + this._particleRange + "," + this._particleRepulse + "," + this._repulsionBias + "," + this._cohesionBias + "," + this._directionBias +  "," + this._cohesionProportion + "," + this._repulseProportion);
@@ -119,14 +123,9 @@ abstract class PSystem {
 
   void loadSwarm() {
 /** 
-* Load environment settings from file and particles.
+* Load environment settings from files.
 * 
-* @param size no. of agents
-* @param linesYN Grid enabled/disable
 */    
-
-//_id + "," + _location.x + "," + _location.y + ","+ _location.z + "," + _range + "," + _repulse + "," + _size + "," + _mass + "," + _isPerimeter
-
     String[] lines = loadStrings("save/P-"+_modelId+"-agents.dat");
     float[] params = float(split(lines[0], ','));
     this._particleRange = params[1];
@@ -196,6 +195,13 @@ abstract class PSystem {
   }
 
   void addDestination(float x, float y, float z) {
+/** 
+* Add Destination in 3D
+* 
+* @param x X Position
+* @param y Y Position
+* @param z Z Position
+*/
     Destination d = new Destination(_nextDestId++,x,y,z);
     this.destinations.add(d);
     for(Particle p : particles) {
@@ -204,6 +210,11 @@ abstract class PSystem {
   }
 
   void deleteDestination(Destination d) {
+/** 
+* Delete Destination
+* 
+* @param d Destination
+*/
     for (int i = this.destinations.size() - 1; i >= 0; i--) {
       Destination dest = this.destinations.get(i);
       if (d == dest) {
@@ -216,6 +227,13 @@ abstract class PSystem {
   }
 
   void addParticle(float x, float y, float z) {
+/** 
+* Add Particle/Agent in 3D
+* 
+* @param x X Position
+* @param y Y Position
+* @param z Z Position
+*/
     try {
       // create agent in centred quartile.
       Particle p = new Particle(this._nextParticleId++,x,y,z,this._particleRange,this._particleRepulse);
@@ -228,6 +246,11 @@ abstract class PSystem {
   }
   
   void deleteParticle(Particle p) {
+/** 
+* Delete Particle/Agent
+* 
+* @param p Particle
+*/
     for (int i = this.particles.size() - 1; i >= 0; i--) {
       Particle part = this.particles.get(i);
       if (part == p) {
@@ -237,6 +260,11 @@ abstract class PSystem {
   }
 
   void deleteObstacle(Obstacle o) {
+/** 
+* Delete Obstacle
+* 
+* @param o Obstacle
+*/
     for (int i = this.obstacles.size() - 1; i >= 0; i--) {
       Obstacle obs = this.obstacles.get(i);
       if (obs == o) {
@@ -246,7 +274,14 @@ abstract class PSystem {
   }
 
   void addObstacle(float x, float y, float z) {
-      this.obstacles.add(new Obstacle(_nextObsId++,x,y,z,this._obstacleRange));
+/** 
+* Add Destination in 3D
+* 
+* @param x X Position
+* @param y Y Position
+* @param z Z Position
+*/
+    this.obstacles.add(new Obstacle(_nextObsId++,x,y,z,this._obstacleRange));
   }
 
   boolean hasObstacles() {

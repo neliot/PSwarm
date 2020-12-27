@@ -148,7 +148,6 @@ class InfoBox {
         this._height = this._graphic.height + 25 + 2;
       }
       rect(this._posX+offX,this._posY+offY,this._width,this._height);
-//      rect(this._posX+offX,this._posY+offY,this._width,this._height);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
       if (this._graphic != null) {
