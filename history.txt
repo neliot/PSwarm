@@ -111,4 +111,8 @@
  * 2. Added screen selection/span to application 
  *    properties.
  * 3. Added frameRate to application properties.
+ **************************************************
+ * 27/12/2020 - 0.1.4 - NE
+ **************************************************
+ * 1. Refactored Objects and PSwarm.pde.
  **************************************************/
