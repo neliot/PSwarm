@@ -133,8 +133,11 @@ void setup() {
     case 5:
       system = new Model5(); 
       break;
-    default:
+    case 6:
       system = new Model6(); 
+      break;
+    default:
+      system = new Model7(); 
   }
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));

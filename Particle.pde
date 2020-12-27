@@ -3,7 +3,8 @@ class Particle {
   PVector _nextLocation;
   PVector _resultant;
   ArrayList<Particle> _neighbours = new ArrayList<Particle>(); 
-  ArrayList<Destination> _destinations = new ArrayList<Destination>(); ;
+  ArrayList<Destination> _destinations = new ArrayList<Destination>();
+  ArrayList<Particle> _gap = new ArrayList<Particle>(); 
   int _id;
   float _size = 10.0;
   float _mass = 1.0;
@@ -12,7 +13,7 @@ class Particle {
   float _topspeed = 3.0/_mass; 
   float _sweepAngle;
   boolean _isPerimeter = true;
-
+  
   Particle(int i, float x, float y, float z, float range, float repulse, float size, float mass) throws Exception {
 /** 
 * Creates a particle
@@ -73,6 +74,14 @@ class Particle {
       }
     }
   }
+
+  boolean hasGap(){
+    if(_gap.size() > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   String toString() {
 /** 
@@ -157,6 +166,7 @@ class Particle {
     float angle;
     float dist;
     this._isPerimeter = false;
+    this._gap.clear();
     if (this._neighbours.size() < 4) {
       this._isPerimeter = true;
       return;
@@ -186,12 +196,18 @@ class Particle {
         dist = PVector.dist(this._neighbours.get(i)._location, this._neighbours.get(i+1)._location);
         if ( dist > this._range || angle > 180) {
           this._isPerimeter = true;
+          _gap.clear();
+          _gap.add(this._neighbours.get(i));          
+          _gap.add(this._neighbours.get(i+1));
         }
       }
       angle = calcAngle(this._neighbours.get(this._neighbours.size()-1)._sweepAngle,this._neighbours.get(0)._sweepAngle);
       dist = PVector.dist(this._neighbours.get(0)._location,this._neighbours.get(this._neighbours.size()-1)._location); 
       if (dist > _range  || angle > 180) {
         this._isPerimeter = true;
+        _gap.clear();
+        _gap.add(this._neighbours.get(0));          
+        _gap.add(this._neighbours.get(this._neighbours.size()-1));
       }
     }
   }  
