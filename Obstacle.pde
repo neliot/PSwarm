@@ -1,5 +1,4 @@
 class Obstacle {
-//  static int _nextId = 0;
   int _id;
   PVector _location;
   float _size = 10.0f;
@@ -11,13 +10,12 @@ class Obstacle {
 * Creates a desination
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
 */
     this._id = i;
-    this._location = new PVector(x,y);
+    this._location = new PVector(x,y,z);
   }
   
   Obstacle(int i, float x, float y, float z, float range) {
@@ -25,14 +23,14 @@ class Obstacle {
 * Creates a desination
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
+* @param range repulsion range of Obstacle
 */
     this._id = i;
     this._range = range;
-    this._location = new PVector(x,y);
+    this._location = new PVector(x,y,z);
   }
 
   Obstacle(int i, float x, float y, float z, float range, float size, float mass) {
@@ -40,10 +38,12 @@ class Obstacle {
 * Creates a desination
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
+* @param range repulsion range
+* @param size diameter
+* @param mass mass of obstacle (possible attractor?)
 */
     this._id = i;
     this._size = size;

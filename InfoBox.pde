@@ -69,49 +69,94 @@ class InfoBox {
   }
 
   void setGraphic(PImage graphic) {
+/** 
+* Creates an InfoBox with a graphic rather than text
+* 
+* @param graphic
+*/    
     this._graphic = graphic;
   }
 
   void setFill(color fillColour) {
+/** 
+* Set the background colour of the InfoBox
+* 
+* @param fillColour colour of background
+*/    
     this._fillColour = fillColour;
   }
 
   void setColour(color borderColour, color fillColour, color textColour) {
+/** 
+* Set all colours for InfoBox
+* 
+* @param borderColour colour of the borders
+* @param fillColour colour of background
+* @param textColour colour of text
+*/    
     this._borderColour = borderColour;
     this._fillColour = fillColour;
     this._textColour = textColour;
   }
 
   void setTitle(String title) {
+/** 
+* Set title string. Useful when a dynamic display is required.
+* 
+* @param title InfoBox title text
+*/    
     this._title = title;
   }
 
   void setPos(int x, int y) {
+/* 
+* Set screen location of top right corner.
+* 
+* @param x Position
+* @param y Position
+*/    
     this._posX = x;
     this._posY = y;
   }
 
   void setContent(ArrayList<String> content) {
+/* 
+* Set arraylist of InfoBox content.
+* 
+* @param content ArrayList of strings for MENU?
+*/    
     this._data = content;
   }
 
   void add(String data) {
+/* 
+* Add an additional line of text.
+* 
+* @param data Menu line
+*/    
     this._data.add(data);
   }
 
   void clearData() {
+/* 
+* Clear all InfoBox lines.
+* 
+*/    
     this._data.clear();
   }
 
-  void draw() 
-  { 
+  void draw() {
+/* 
+* Render InfoBox.
+* 
+*/    
     int offX = 0;
     int offY = 0;
     if (_graphic != null) {
       this._height = this._graphic.height + 29;
       this._width = this._graphic.width + 4;
     }
-    if (_mouse) {
+    if (_mouse) { // If the InfoBox is dynamic it be displayed at the mouse pointer offset by the size of the box.
       this._posX = mouseX;
       this._posY = mouseY;
       if (mouseX > width - this._width) {

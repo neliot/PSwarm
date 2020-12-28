@@ -19,10 +19,13 @@ class Particle {
 * Creates a particle
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
+* @param range cohesion range of agents
+* @param repulse repulse repulsion range of agents
+* @param size diameter of agent
+* @param mass mass of agent (can be used to effect speed)
 */
     _id = i;
     _range = range;
@@ -42,10 +45,11 @@ class Particle {
 * Creates a particle
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
+* @param range cohesion range of agents
+* @param repulse repulse repulsion range of agents
 */
     this._id = i;
     this._range = range;
@@ -59,16 +63,30 @@ class Particle {
   }
 
   void setDestinations(ArrayList<Destination> destinations) {
+/** 
+* Each agent has its own set of Desinations to allow for individual control of where agents must migrate.
+* 
+* @param ArrayList of Destinations
+*/
     _destinations = (ArrayList<Destination>) destinations.clone();
   }
 
   void addDestination(Destination destination) {
+/** 
+* Add a destination to and agents list.
+* 
+* @param Destinations single destination appended to list
+*/
     _destinations.add(destination);
   }
 
   void removeDestination(Destination destination) {
+/** 
+* Remove specific destination from aent list.
+* 
+* @param Destination destination to be removed.
+*/
     for (int i = this._destinations.size() - 1; i >= 0; i--) {
-//      Destination d = this._destinations.get(i);
       if (this._destinations.get(i) == destination) {
         this._destinations.remove(i);
       }
@@ -76,6 +94,9 @@ class Particle {
   }
 
   boolean hasGap(){
+/** 
+* Checks gap Array to see if has been populated by the neighbour check.
+*/
     if(_gap.size() > 0) {
       return true;
     } else {
@@ -96,17 +117,15 @@ class Particle {
 * 
 * @param force PVector
 */
-    // mass set to 1. This is for future work.
+    // mass of Particles is set to 1. This is for future work.
     PVector f = PVector.div(change,this._mass);
     this._resultant.set(f);
   }
 
   void update() {
 /** 
-* Updates the position of the particle based on the _acceleration.
-* 
+* Updates the position of the particle based on the accumulated vectors.
 */
-//    _change.add(_acceleration);
     PVector next = this._location.copy().add(_resultant);
     if (PVector.dist(this._location,next) > this._topspeed) {
       this._resultant.limit(_topspeed);    
@@ -120,7 +139,6 @@ class Particle {
   void move() {
 /** 
 * Updates the position of the particle based on the _acceleration.
-* 
 */
     // Copy values rather than object! Lets help the garbage collector out!
     this._location.x = _nextLocation.x;
@@ -131,13 +149,14 @@ class Particle {
   void reset() {
 /** 
 * Updates the particle for next iteration.
-* 
 */
-//    _acceleration.mult(0);
     _resultant.mult(0);
   }
 
   void getNeighbours(ArrayList<Particle> s){
+/** 
+* Identify Partcle neighbours.
+*/
     this._neighbours.clear();
     for(Particle n : s) {
       float distance = PVector.dist(this._location,n._location); 
@@ -162,7 +181,6 @@ class Particle {
 * @param neighbours is an ArrayList of all particles in the cohesion field of the particle.
 */
 // TEST FOR SMALL CONNECTIONS THAT MUST BE PERIMETER AGENTS    
-//    PVector p1, p2;
     float angle;
     float dist;
     this._isPerimeter = false;
@@ -196,6 +214,7 @@ class Particle {
         dist = PVector.dist(this._neighbours.get(i)._location, this._neighbours.get(i+1)._location);
         if ( dist > this._range || angle > 180) {
           this._isPerimeter = true;
+//POPULATE GAP AGENTS
           _gap.clear();
           _gap.add(this._neighbours.get(i));          
           _gap.add(this._neighbours.get(i+1));
@@ -205,6 +224,7 @@ class Particle {
       dist = PVector.dist(this._neighbours.get(0)._location,this._neighbours.get(this._neighbours.size()-1)._location); 
       if (dist > _range  || angle > 180) {
         this._isPerimeter = true;
+//POPULATE GAP AGENTS
         _gap.clear();
         _gap.add(this._neighbours.get(0));          
         _gap.add(this._neighbours.get(this._neighbours.size()-1));

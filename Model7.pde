@@ -1,5 +1,3 @@
-import java.util.*; // Allows for Randmising the ArrayList Collection
-
 class Model7 extends PSystem {
   Model7() {
     super("Void Reduction 0.1","7");
@@ -24,11 +22,6 @@ class Model7 extends PSystem {
   void update() {
 /** 
 * Update system - Updates particle positions based on forces and displays the result.
-* 
-* @param run Enables and disables the update of the particle velocities to freeze particle positions.
-* @param dest Enables and disables the destination vector
-* @param perimCoord Enables and disables the perimeter only directional vector
-* @param perimCompress Enables and disables the reduction of the perimeter agents repulsion range
 */
     String pData = "";
     PVector change = new PVector(0,0,0);
@@ -89,12 +82,10 @@ class Model7 extends PSystem {
 * cohesion calculation - Calculates the cohesion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
-* @param s The swarm
 */
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
     float distance = 0f;
-//    p._neighbours.clear();
     String nData = "";
     
 // GET ALL THE NEIGHBOURS
@@ -127,8 +118,6 @@ class Model7 extends PSystem {
 * repulsion calculation - Calculates the repulsion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
-* @param s The swarm
-* @param perimCompress boolean value to toggle swarm perimeter compression on/off 
 */
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
@@ -164,7 +153,6 @@ class Model7 extends PSystem {
 * direction calculation - Calculates the normalised direction.
 * 
 * @param p The particle that is currently being checked
-* @param perimCoord is perimer coordination enabled
 */
     PVector destination = new PVector(0,0,0);
     PVector dir = new PVector(0,0,0);

@@ -1,5 +1,4 @@
 class Destination {
-//  int _nextId;
   int _id;
   PVector _location;
   float _size = 10.0f;
@@ -7,28 +6,27 @@ class Destination {
 
   Destination(int i, float x, float y, float z) {
 /** 
-* Creates a desination
+* Creates a destination
 * 
 * @param i Destination Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
 */
     this._id = i;
     this._location = new PVector(x,y,z);
   }
-
   
   Destination(int i, float x, float y, float z, float size, float mass) {
 /** 
 * Creates a desination
 * 
 * @param i Agent Id
-* @param range cohesion range of agents
-* @param repulse repulse repulsion range of agents
 * @param x location
 * @param y location
+* @param z location
+* @param size diameter
+* @param mass mass of destination (Future wrk maybe?)
 */
     this._id = i;
     this._size = size;

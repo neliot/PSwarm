@@ -1,5 +1,3 @@
-import java.util.*; // Allows for Randmising the ArrayList Collection
-
 class Model6 extends PSystem {
   Model6() {
     super("Shape Forming 0.1","6");
@@ -27,11 +25,6 @@ class Model6 extends PSystem {
   void update() {
 /** 
 * Update system - Updates particle positions based on forces and displays the result.
-* 
-* @param run Enables and disables the update of the particle velocities to freeze particle positions.
-* @param dest Enables and disables the destination vector
-* @param perimCoord Enables and disables the perimeter only directional vector
-* @param perimCompress Enables and disables the reduction of the perimeter agents repulsion range
 */
     String pData = "";
     PVector change = new PVector(0,0,0);
@@ -92,7 +85,6 @@ class Model6 extends PSystem {
 * cohesion calculation - Calculates the cohesion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
-* @param s The swarm
 */
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
@@ -129,8 +121,6 @@ class Model6 extends PSystem {
 * repulsion calculation - Calculates the repulsion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
-* @param s The swarm
-* @param perimCompress boolean value to toggle swarm perimeter compression on/off 
 */
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
@@ -166,17 +156,11 @@ class Model6 extends PSystem {
 * direction calculation - Calculates the normalised direction.
 * 
 * @param p The particle that is currently being checked
-* @param perimCoord is perimer coordination enabled
 */
     PVector destination = new PVector(0,0,0);
     PVector dir = new PVector(0,0,0);
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._location;      
-//      for (int i = 1; i < p._destinations.size(); i++) {
-//        if (PVector.dist(p._location,destination) > PVector.dist(p._location,p._destinations.get(i)._location)) {
-//          destination = p._destinations.get(i)._location;
-//        }
-//      }   
     }    
     if (!this._perimCoord) {
       dir = PVector.sub(destination,p._location);
