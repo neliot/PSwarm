@@ -39,6 +39,7 @@ boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
 boolean _displayParticleFields = false; // Display Y/N
 boolean _lines = true; // Display Y/N
+boolean _obsLines = false; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _displayDestinations = true; // Display Y/N
 boolean _usePoint = false;
@@ -148,6 +149,7 @@ void setup() {
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
+  _obsLines = boolean(properties.getProperty("obsLines"));
 
   displayWindows.add(menuInfo1);
   displayWindows.add(menuInfo2);
@@ -514,7 +516,33 @@ void displayObstacle(Obstacle o) {
   stroke(theme.obstacleTheme[theme._theme][2]);
   ellipse(transposeX(o._location.x),transposeY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
   if (_displayId) displayId(o);
+  if (_obsLines) displayObstacleLines();
+}
 
+void displayObstacleLines(){
+  if (system.obstacles.size() > 1) {
+    for (int i = 1; i < system.obstacles.size(); i++) {
+      strokeWeight(1);
+      stroke(theme.obstacleTheme[theme._theme][2]);
+      PVector start = system.obstacles.get(i)._location;
+      float startRange = system.obstacles.get(i)._range;
+      PVector end = system.obstacles.get(i-1)._location;
+      float endRange = system.obstacles.get(i-1)._range;
+      PVector d = PVector.sub(end,start);
+      d.rotate(HALF_PI).normalize();
+      line(transposeX(start.x),transposeY(start.y),transposeX(end.x),transposeY(end.y));
+      line(transposeX(start.x + (d.x * startRange)),
+           transposeY(start.y + (d.y * startRange)),
+           transposeX(end.x + (d.x * endRange)),
+           transposeY(end.y + (d.y * endRange))
+           );
+      line(transposeX(start.x - (d.x * startRange)),
+           transposeY(start.y - (d.y * startRange)),
+           transposeX(end.x - (d.x * endRange)),
+           transposeY(end.y - (d.y * endRange))
+           );
+    }
+  }
 }
 
 PImage swarmDirectionImage() {
