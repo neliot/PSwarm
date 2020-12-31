@@ -34,6 +34,10 @@ class Destination {
     this._location = new PVector(x,y,z);
   }
 
+  void setPos(float x, float y, float z) {
+    this._location.set(x,y,z);
+  }
+
   String toString() {
 /** 
 * Creates a formatted string of destination.

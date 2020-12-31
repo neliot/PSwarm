@@ -218,19 +218,19 @@ void draw() {
 
 void mousePressed() {
   mouse = mouse2;
-  if (mouseButton == LEFT && _mode == _DESTINATION) {
+  if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination == null) {
     system.addDestination(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }
   if (mouseButton == RIGHT && _mode == _DESTINATION && _currentDestination != null) {
     system.deleteDestination(_currentDestination);
   }
-  if (mouseButton == LEFT && _mode == _AGENT) {
+  if (mouseButton == LEFT && _mode == _AGENT && _currentParticle == null) {
     system.addParticle(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _AGENT && _currentParticle != null) {
     system.deleteParticle(_currentParticle);
   }  
-  if (mouseButton == LEFT && _mode == _OBSTACLE) {
+  if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle == null) {
     system.addObstacle(rTransposeX(mouseX),rTransposeY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _OBSTACLE && _currentObstacle != null) {
@@ -250,9 +250,18 @@ void mouseReleased() {
 }
 
 void mouseDragged() {
+  if (mouseButton == LEFT && _mode == _AGENT && _currentParticle != null) {
+    _currentParticle.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+  }  
   if (mouseButton == LEFT && _mode == _WINDOW && _displayWindowInfo != null) {
     _displayWindowInfo.setPos(mouseX + _clickPosX, mouseY + _clickPosY);
   }  
+  if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle != null) {
+    _currentObstacle.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+  }  
+  if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination != null) {
+    _currentDestination.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+  }
 }
 
 void keyPressed() {
