@@ -14,6 +14,7 @@ abstract class PSystem {
   float _obstacleRange = 75f; // Obstacle range
   float _repulseProportion = 1f; // Compressed perimeter reduction divisor
   float _cohesionProportion = 1f; // Compressed perimeter reduction divisor
+  boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
   boolean _perimCoord = false;
@@ -184,14 +185,43 @@ abstract class PSystem {
 * 
 * @param p The particle that is currently being checked
 */
-    PVector result = new PVector(0,0);
+    PVector result = new PVector(0,0,0);
 // GET ALL THE IN RANGE OBSTACLES
     for(Obstacle o : this.obstacles) {
       if (PVector.dist(p._location,o._location) <= o._range) {
          result.add(PVector.sub(o._location,p._location));
-      };
+      }
     }
-    return result.normalize().mult(-_obstacleBias);
+
+    if (system.obstacles.size() > 1 && this._obstacleLink) {
+      for (int i = 1; i < this.obstacles.size(); i++) {
+        float x0 = p._location.x;
+        float y0 = p._location.y;
+        float x1 = this.obstacles.get(i)._location.x;
+        float y1 = this.obstacles.get(i)._location.y;
+        float x2 = this.obstacles.get(i-1)._location.x;
+        float y2 = this.obstacles.get(i-1)._location.y;
+
+        float dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1));
+        float num = abs(dir);
+//        float num = dir;
+        float denum = sqrt(sq(x2-x1) + sq(y2-y1));
+        float distance = num/denum;
+        if (distance <= system._obstacleRange && x0 >= min(x1,x2) && x0 <= max(x1,x2) && y0 >= min(y1,y2) && y0 <= max(y1,y2)) {
+          PVector start = system.obstacles.get(i)._location;
+          PVector end = system.obstacles.get(i-1)._location;
+          PVector d = PVector.sub(end,start);
+          d.rotate(HALF_PI).setMag(system._obstacleRange);
+          if (dir > 0) {
+            result.add(d);
+          } else {
+            result.sub(d);
+          }
+        }
+      }
+    }
+//    return result.normalize().mult(-_obstacleBias);
+    return result.mult(-_obstacleBias);
   }
 
   void addDestination(float x, float y, float z) {

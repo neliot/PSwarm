@@ -1,6 +1,8 @@
-class Model1 extends PSystem {
-  Model1() {
-    super("Linear Vector","1");
+class Model8 extends PSystem {
+  int _stabaliseRange = 0;
+  Model8() {
+    super("Linear Vector - With Stablisation","8");
+    _stabaliseRange = int(modelProperties.getProperty("stabaliseRange"));
   }
 
   void init() {};
@@ -86,18 +88,21 @@ class Model1 extends PSystem {
     float distance = 0f;
 //    p._neighbours.clear();
     String nData = "";
-    
+    int count = 0;
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._neighbours) {
       distance = PVector.dist(p._location,n._location);
-      if (this._perimCompress && p._isPerimeter && n._isPerimeter) {
-        temp = PVector.sub(n._location,p._location).mult(this._cohesionProportion).mult(this._cohesionBias);
-      } else {
-        temp = PVector.sub(n._location,p._location).mult(this._cohesionBias);
-      }
-      result.add(temp);
-      if (this._loggingN && this._loggingP) {
-        nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
+      if (distance > p._repulse + this._stabaliseRange) {
+        count++;
+        if (this._perimCompress && p._isPerimeter && n._isPerimeter) {
+            temp = PVector.sub(n._location,p._location).mult(this._cohesionProportion).mult(this._cohesionBias);
+        } else {
+            temp = PVector.sub(n._location,p._location).mult(this._cohesionBias);
+        }
+        result.add(temp);
+        if (this._loggingN && this._loggingP) {
+            nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
+        }
       }
     }
     if (this._loggingN && this._loggingP) {
@@ -105,8 +110,8 @@ class Model1 extends PSystem {
       nClog.clean();
     }
 
-    if (p._neighbours.size() > 0) {
-      result.div(p._neighbours.size());
+    if (count > 0) {
+      result.div(count);
     }
     return result;
   }

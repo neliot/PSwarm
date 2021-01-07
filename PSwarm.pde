@@ -137,8 +137,11 @@ void setup() {
     case 6:
       system = new Model6(); 
       break;
-    default:
+    case 7:
       system = new Model7(); 
+      break;
+    default:
+      system = new Model8(); 
   }
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));
@@ -150,6 +153,7 @@ void setup() {
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
   _obsLines = boolean(properties.getProperty("obsLines"));
+  system._obstacleLink = _obsLines;
 
   displayWindows.add(menuInfo1);
   displayWindows.add(menuInfo2);
@@ -219,19 +223,19 @@ void draw() {
 void mousePressed() {
   mouse = mouse2;
   if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination == null) {
-    system.addDestination(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    system.addDestination(rtrX(mouseX),rtrY(mouseY),0);
   }
   if (mouseButton == RIGHT && _mode == _DESTINATION && _currentDestination != null) {
     system.deleteDestination(_currentDestination);
   }
   if (mouseButton == LEFT && _mode == _AGENT && _currentParticle == null) {
-    system.addParticle(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    system.addParticle(rtrX(mouseX),rtrY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _AGENT && _currentParticle != null) {
     system.deleteParticle(_currentParticle);
   }  
   if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle == null) {
-    system.addObstacle(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    system.addObstacle(rtrX(mouseX),rtrY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _OBSTACLE && _currentObstacle != null) {
     system.deleteObstacle(_currentObstacle);
@@ -251,16 +255,16 @@ void mouseReleased() {
 
 void mouseDragged() {
   if (mouseButton == LEFT && _mode == _AGENT && _currentParticle != null) {
-    _currentParticle.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    _currentParticle.setPos(rtrX(mouseX),rtrY(mouseY),0);
   }  
   if (mouseButton == LEFT && _mode == _WINDOW && _displayWindowInfo != null) {
     _displayWindowInfo.setPos(mouseX + _clickPosX, mouseY + _clickPosY);
   }  
   if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle != null) {
-    _currentObstacle.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    _currentObstacle.setPos(rtrX(mouseX),rtrY(mouseY),0);
   }  
   if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination != null) {
-    _currentDestination.setPos(rTransposeX(mouseX),rTransposeY(mouseY),0);
+    _currentDestination.setPos(rtrX(mouseX),rtrY(mouseY),0);
   }
 }
 
@@ -422,8 +426,8 @@ void displayCentroid() {
   float _size2 = 30;
   float _size3 = 15;
   PVector center = system.getCentroid();
-  float x = transposeX(center.x);
-  float y = transposeY(center.y);
+  float x = trX(center.x);
+  float y = trY(center.y);
   noStroke();
   fill(0,0,100,100);
   ellipse(x,y,(_size1*_scale),(_size1*_scale));
@@ -472,7 +476,7 @@ void displayParticle(Particle p) {
 * 
 */
     if (_usePoint) {
-      point(transposeX(p._location.x),transposeY(p._location.y));
+      point(trX(p._location.x),trY(p._location.y));
     } else {
       strokeWeight(1);
       stroke(theme.particleTheme[theme._theme][0]);
@@ -481,16 +485,16 @@ void displayParticle(Particle p) {
       } else {
          fill(theme.particleTheme[theme._theme][2]);
       }
-      ellipse(transposeX(p._location.x),transposeY(p._location.y),(p._size*p._mass*_scale),(p._size*p._mass*_scale));
+      ellipse(trX(p._location.x),trY(p._location.y),(p._size*p._mass*_scale),(p._size*p._mass*_scale));
       if (_particleTicks) displayTick(p);
       if (_displayId) displayId(p);
       if (_displayParticleFields) {
         noFill();
         strokeWeight(1);
         stroke(150,0,0);
-        ellipse(transposeX(p._location.x),transposeY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
+        ellipse(trX(p._location.x),trY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
         stroke(0,150,0);
-        ellipse(transposeX(p._location.x),transposeY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
+        ellipse(trX(p._location.x),trY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
       }
     }
 }
@@ -505,7 +509,7 @@ void displayDestination(Destination d) {
   strokeWeight(constrain(2*_scale,1,4));
   stroke(theme.destinationTheme[theme._theme][0]);
   fill(theme.destinationTheme[theme._theme][1]);
-  ellipse(transposeX(d._location.x),transposeY(d._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
+  ellipse(trX(d._location.x),trY(d._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
   if (_displayId) displayId(d);
 }
 
@@ -519,11 +523,11 @@ void displayObstacle(Obstacle o) {
   strokeWeight(constrain(2*_scale,1,4));
   stroke(theme.obstacleTheme[theme._theme][0]);
   fill(theme.obstacleTheme[theme._theme][1]);
-  ellipse(transposeX(o._location.x),transposeY(o._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
+  ellipse(trX(o._location.x),trY(o._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
   noFill();
   strokeWeight(1);
   stroke(theme.obstacleTheme[theme._theme][2]);
-  ellipse(transposeX(o._location.x),transposeY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
+  ellipse(trX(o._location.x),trY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
   if (_displayId) displayId(o);
   if (_obsLines) displayObstacleLines();
 }
@@ -534,22 +538,12 @@ void displayObstacleLines(){
       strokeWeight(1);
       stroke(theme.obstacleTheme[theme._theme][2]);
       PVector start = system.obstacles.get(i)._location;
-      float startRange = system.obstacles.get(i)._range;
       PVector end = system.obstacles.get(i-1)._location;
-      float endRange = system.obstacles.get(i-1)._range;
       PVector d = PVector.sub(end,start);
-      d.rotate(HALF_PI).normalize();
-      line(transposeX(start.x),transposeY(start.y),transposeX(end.x),transposeY(end.y));
-      line(transposeX(start.x + (d.x * startRange)),
-           transposeY(start.y + (d.y * startRange)),
-           transposeX(end.x + (d.x * endRange)),
-           transposeY(end.y + (d.y * endRange))
-           );
-      line(transposeX(start.x - (d.x * startRange)),
-           transposeY(start.y - (d.y * startRange)),
-           transposeX(end.x - (d.x * endRange)),
-           transposeY(end.y - (d.y * endRange))
-           );
+      d.rotate(HALF_PI).setMag(system._obstacleRange);
+      line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
+      line(trX(start.x + d.x),trY(start.y + d.y),trX(end.x + d.x),trY(end.y + d.y));
+      line(trX(start.x - d.x),trY(start.y - d.y),trX(end.x - d.x),trY(end.y - d.y));
     }
   }
 }
@@ -616,7 +610,7 @@ PImage swarmDirectionImage() {
 //           strokeWeight(1);
 //           stroke(100,100,100);
 //         }
-//         line(transposeX(start.x),transposeY(start.y),transposeX(end.x),transposeY(end.y));
+//         line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
 //         strokeWeight(1);
 //       }
 //     }
@@ -648,7 +642,7 @@ void displayLines() {
           strokeWeight(1);
           stroke(100,100,100);
         }
-        line(transposeX(start.x),transposeY(start.y),transposeX(end.x),transposeY(end.y));
+        line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
         strokeWeight(1);
       }
     }
@@ -664,7 +658,7 @@ void displayId(Particle agent) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(0, 0, 0,255);
-  text(agent._id,transposeX(agent._location.x),transposeY(agent._location.y));
+  text(agent._id,trX(agent._location.x),trY(agent._location.y));
 }
 
 void displayId(Destination d) {
@@ -677,7 +671,7 @@ void displayId(Destination d) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(0, 0, 0,255);
-  text(d._id,transposeX(d._location.x),transposeY(d._location.y));
+  text(d._id,trX(d._location.x),trY(d._location.y));
 }
 
 void displayId(Obstacle o) {
@@ -690,7 +684,7 @@ void displayId(Obstacle o) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(255,255,255,255);
-  text(o._id,transposeX(o._location.x),transposeY(o._location.y));
+  text(o._id,trX(o._location.x),trY(o._location.y));
 }
 
 
@@ -707,11 +701,11 @@ void displayTick(Particle agent) {
   tick.setMag((agent._mass * agent._size/2) + _tickSize);
   tick.add(agent._location);
   strokeWeight(2);
-  line(transposeX(agent._location.x), transposeY(agent._location.y), transposeX(tick.x), transposeY(tick.y));
+  line(trX(agent._location.x), trY(agent._location.y), trX(tick.x), trY(tick.y));
   strokeWeight(1);
 }
 
-float transposeX(float val) {
+float trX(float val) {
 /** 
 * Scale and Pan Transpose
 *
@@ -722,7 +716,7 @@ float transposeX(float val) {
   return val;
 }
 
-float transposeY(float val) {
+float trY(float val) {
 /** 
 * Scale and Pan Transpose
 *
@@ -733,7 +727,7 @@ float transposeY(float val) {
   return val;
 }
 
-float rTransposeX(float val) {
+float rtrX(float val) {
 /** 
 * Reverse Scale and Pan Transpose
 *
@@ -743,7 +737,7 @@ float rTransposeX(float val) {
   return val;
 }
 
-float rTransposeY(float val) {
+float rtrY(float val) {
 /** 
 * Reverse Scale and Pan Transpose
 *
@@ -776,8 +770,8 @@ boolean mouseOver(Particle p) {
 * @param p Particle.
 * 
 */
-  float x = transposeX(p._location.x);
-  float y = transposeY(p._location.y);
+  float x = trX(p._location.x);
+  float y = trY(p._location.y);
   int w = 10;
   int h = 10;
   if (mouseX >= x-w && mouseX <= x+w && 
@@ -795,8 +789,8 @@ boolean mouseOver(Destination d) {
 * @param p Particle.
 * 
 */
-  float x = transposeX(d._location.x);
-  float y = transposeY(d._location.y);
+  float x = trX(d._location.x);
+  float y = trY(d._location.y);
   int w = 10;
   int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
@@ -814,8 +808,8 @@ boolean mouseOver(Obstacle o) {
 * @param o Obstacle.
 * 
 */
-  float x = transposeX(o._location.x);
-  float y = transposeY(o._location.y);
+  float x = trX(o._location.x);
+  float y = trY(o._location.y);
   int w = 10;
   int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
