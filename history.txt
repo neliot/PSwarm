@@ -119,4 +119,12 @@
  * 27/12/2020 - 0.1.4 - NE
  **************************************************
  * 1. Added Model7 - Void Reduction. :-)
+ **************************************************
+ * 07/01/2021 - 0.1.4 - NE
+ **************************************************
+ * 1. Added Model8 - Linear Model + stabaliseRange
+ * 2. Added stabaliseRange to Model8.properties to
+ *    allow an additional "field effect" where an
+ *    agent does not apply cohesion in an attempt
+ *    to stabalise the swarms "jitter".
  **************************************************/
