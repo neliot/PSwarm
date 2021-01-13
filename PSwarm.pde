@@ -448,8 +448,8 @@ void displayCentroid() {
   float _size2 = 30;
   float _size3 = 15;
   PVector center = system.getCentroid();
-  float x = trX(center.x);
-  float y = trY(center.y);
+  float x = transX(center.x);
+  float y = transY(center.y);
   noStroke();
   fill(0,0,100,100);
   ellipse(x,y,(_size1*_scale),(_size1*_scale));
@@ -498,7 +498,7 @@ void displayParticle(Particle p) {
 * 
 */
     if (_usePoint) {
-      point(trX(p._location.x),trY(p._location.y));
+      point(transX(p._location.x),transY(p._location.y));
     } else {
       strokeWeight(1);
       stroke(theme.particleTheme[theme._theme][0]);
@@ -507,16 +507,16 @@ void displayParticle(Particle p) {
       } else {
          fill(theme.particleTheme[theme._theme][2]);
       }
-      ellipse(trX(p._location.x),trY(p._location.y),(p._size*p._mass*_scale),(p._size*p._mass*_scale));
+      ellipse(transX(p._location.x),transY(p._location.y),(p._size*p._mass*_scale),(p._size*p._mass*_scale));
       if (_particleTicks) displayTick(p);
       if (_displayId) displayId(p);
       if (_displayParticleFields) {
         noFill();
         strokeWeight(1);
         stroke(150,0,0);
-        ellipse(trX(p._location.x),trY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
+        ellipse(transX(p._location.x),transY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
         stroke(0,150,0);
-        ellipse(trX(p._location.x),trY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
+        ellipse(transX(p._location.x),transY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
       }
     }
 }
@@ -531,7 +531,7 @@ void displayDestination(Destination d) {
   strokeWeight(constrain(2*_scale,1,4));
   stroke(theme.destinationTheme[theme._theme][0]);
   fill(theme.destinationTheme[theme._theme][1]);
-  ellipse(trX(d._location.x),trY(d._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
+  ellipse(transX(d._location.x),transY(d._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
   if (_displayId) displayId(d);
 }
 
@@ -545,11 +545,11 @@ void displayObstacle(Obstacle o) {
   strokeWeight(constrain(2*_scale,1,4));
   stroke(theme.obstacleTheme[theme._theme][0]);
   fill(theme.obstacleTheme[theme._theme][1]);
-  ellipse(trX(o._location.x),trY(o._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
+  ellipse(transX(o._location.x),transY(o._location.y),constrain(20*_scale,10,25),constrain(20*_scale,10,25));
   noFill();
   strokeWeight(1);
   stroke(theme.obstacleTheme[theme._theme][2]);
-  ellipse(trX(o._location.x),trY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
+  ellipse(transX(o._location.x),transY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
   if (_displayId) displayId(o);
   if (_obsLines) displayObstacleLines();
 }
@@ -563,9 +563,9 @@ void displayObstacleLines(){
       PVector end = system.obstacles.get(i-1)._location;
       PVector d = PVector.sub(end,start);
       d.rotate(HALF_PI).setMag(system._obstacleRange);
-      line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
-      line(trX(start.x + d.x),trY(start.y + d.y),trX(end.x + d.x),trY(end.y + d.y));
-      line(trX(start.x - d.x),trY(start.y - d.y),trX(end.x - d.x),trY(end.y - d.y));
+      line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
+      line(transX(start.x + d.x),transY(start.y + d.y),transX(end.x + d.x),transY(end.y + d.y));
+      line(transX(start.x - d.x),transY(start.y - d.y),transX(end.x - d.x),transY(end.y - d.y));
     }
   }
 }
@@ -632,7 +632,7 @@ PImage swarmDirectionImage() {
 //           strokeWeight(1);
 //           stroke(100,100,100);
 //         }
-//         line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
+//         line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
 //         strokeWeight(1);
 //       }
 //     }
@@ -664,7 +664,7 @@ void displayLines() {
           strokeWeight(1);
           stroke(100,100,100);
         }
-        line(trX(start.x),trY(start.y),trX(end.x),trY(end.y));
+        line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
         strokeWeight(1);
       }
     }
@@ -680,7 +680,7 @@ void displayId(Particle agent) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(0, 0, 0,255);
-  text(agent._id,trX(agent._location.x),trY(agent._location.y));
+  text(agent._id,transX(agent._location.x),transY(agent._location.y));
 }
 
 void displayId(Destination d) {
@@ -693,7 +693,7 @@ void displayId(Destination d) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(0, 0, 0,255);
-  text(d._id,trX(d._location.x),trY(d._location.y));
+  text(d._id,transX(d._location.x),transY(d._location.y));
 }
 
 void displayId(Obstacle o) {
@@ -706,7 +706,7 @@ void displayId(Obstacle o) {
   textSize(12);
   textAlign(CENTER,CENTER);
   fill(255,255,255,255);
-  text(o._id,trX(o._location.x),trY(o._location.y));
+  text(o._id,transX(o._location.x),transY(o._location.y));
 }
 
 
@@ -723,11 +723,11 @@ void displayTick(Particle agent) {
   tick.setMag((agent._mass * agent._size/2) + _tickSize);
   tick.add(agent._location);
   strokeWeight(2);
-  line(trX(agent._location.x), trY(agent._location.y), trX(tick.x), trY(tick.y));
+  line(transX(agent._location.x), transY(agent._location.y), transX(tick.x), transY(tick.y));
   strokeWeight(1);
 }
 
-float trX(float val) {
+float transX(float val) {
 /** 
 * Scale and Pan Transpose
 *
@@ -738,7 +738,7 @@ float trX(float val) {
   return val;
 }
 
-float trY(float val) {
+float transY(float val) {
 /** 
 * Scale and Pan Transpose
 *
@@ -755,7 +755,8 @@ float tranX(float val) {
 *
 * @param val X value to transpose.
 * 
-*/  val = val / _scale - _offsetX / _scale;
+*/  
+  val = val / _scale - _offsetX / _scale;
   return val;
 }
 
@@ -792,8 +793,8 @@ boolean mouseOver(Particle p) {
 * @param p Particle.
 * 
 */
-  float x = trX(p._location.x);
-  float y = trY(p._location.y);
+  float x = transX(p._location.x);
+  float y = transY(p._location.y);
   int w = 10;
   int h = 10;
   if (mouseX >= x-w && mouseX <= x+w && 
@@ -811,8 +812,8 @@ boolean mouseOver(Destination d) {
 * @param p Particle.
 * 
 */
-  float x = trX(d._location.x);
-  float y = trY(d._location.y);
+  float x = transX(d._location.x);
+  float y = transY(d._location.y);
   int w = 10;
   int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
@@ -830,8 +831,8 @@ boolean mouseOver(Obstacle o) {
 * @param o Obstacle.
 * 
 */
-  float x = trX(o._location.x);
-  float y = trY(o._location.y);
+  float x = transX(o._location.x);
+  float y = transY(o._location.y);
   int w = 10;
   int h = 10;  
   if (mouseX >= x-w && mouseX <= x+w && 
