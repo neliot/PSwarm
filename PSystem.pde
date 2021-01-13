@@ -202,16 +202,20 @@ abstract class PSystem {
         float x2 = this.obstacles.get(i-1)._location.x;
         float y2 = this.obstacles.get(i-1)._location.y;
 
-        float dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1));
-        float num = abs(dir);
-//        float num = dir;
-        float denum = sqrt(sq(x2-x1) + sq(y2-y1));
-        float distance = num/denum;
-        if (distance <= system._obstacleRange && x0 >= min(x1,x2) && x0 <= max(x1,x2) && y0 >= min(y1,y2) && y0 <= max(y1,y2)) {
-          PVector start = system.obstacles.get(i)._location;
-          PVector end = system.obstacles.get(i-1)._location;
-          PVector d = PVector.sub(end,start);
-          d.rotate(HALF_PI).setMag(system._obstacleRange);
+        float dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1)); // above or below line segment
+        float distance = distBetweenPointAndLine(x0,y0,x1,y1,x2,y2);
+// FIND X,Y LIMITS FROM LINE 
+        PVector start = system.obstacles.get(i)._location;
+        PVector end = system.obstacles.get(i-1)._location;
+        PVector d = PVector.sub(end,start);
+        d.rotate(HALF_PI).setMag(system._obstacleRange); 
+        if (distance <= system._obstacleRange && 
+            (
+              (x0 >= min(x1+d.x,x2+d.x) && x0 <= max(x1+d.x,x2+d.x) && y0 >= min(y1+d.y,y2+d.y) && y0 <= max(y1+d.y,y2+d.y)) // Line above
+              ||
+              (x0 >= min(x1-d.x,x2-d.x) && x0 <= max(x1-d.x,x2-d.x) && y0 >= min(y1-d.y,y2-d.y) && y0 <= max(y1-d.y,y2-d.y)) // Line below            )
+            )
+          ){
           if (dir > 0) {
             result.add(d);
           } else {
@@ -222,6 +226,35 @@ abstract class PSystem {
     }
 //    return result.normalize().mult(-_obstacleBias);
     return result.mult(-_obstacleBias);
+  }
+
+  float distBetweenPointAndLine(float x, float y, float x1, float y1, float x2, float y2) {
+    // A - the standalone point (x, y)
+    // B - start point of the line segment (x1, y1)
+    // C - end point of the line segment (x2, y2)
+    // D - the crossing point between line from A to BC
+
+    float AB = distBetween(x, y, x1, y1);
+    float BC = distBetween(x1, y1, x2, y2);
+    float AC = distBetween(x, y, x2, y2);
+
+    // Heron's formula
+    float s = (AB + BC + AC) / 2;
+    float area = (float) Math.sqrt(s * (s - AB) * (s - BC) * (s - AC));
+
+    // but also area == (BC * AD) / 2
+    // BC * AD == 2 * area
+    // AD == (2 * area) / BC
+    // TODO: check if BC == 0
+    float AD = (2 * area) / BC;
+    return AD;
+  }
+
+  float distBetween(float x, float y, float x1, float y1) {
+    float xx = x1 - x;
+    float yy = y1 - y;
+
+    return (float) Math.sqrt(xx * xx + yy * yy);
   }
 
   void addDestination(float x, float y, float z) {
