@@ -127,4 +127,11 @@
  *    allow an additional "field effect" where an
  *    agent does not apply cohesion in an attempt
  *    to stabalise the swarms "jitter".
+ **************************************************
+ * 13/01/2021 - 0.1.5 - NE
+ **************************************************
+ * 1. Added Middle mouse button functionality.
+ *  a. Middle pressed pan 
+ *  b. Middle scroll zoom +/-
+ * 2. Finalised Obstacle linked repulsion.
  **************************************************/

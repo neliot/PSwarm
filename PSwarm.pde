@@ -29,11 +29,15 @@ PImage mouse2;
 PImage logo;
 PImage license;
 String _NAME = "PSwarm";
-String _AUTHORS = "(c) 2020";
-String _VERSION = "0.1.4";
+String _AUTHORS = "(c) 2021";
+String _VERSION = "0.1.5";
 float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
+int _clickedOffsetX = 0; // Swarm display offsetX
+int _clickedOffsetY = 0; // Swarm display offsetY
+int _clickedMouseX = 0;
+int _clickedMouseY = 0;
 boolean _logo = true;
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
@@ -223,19 +227,19 @@ void draw() {
 void mousePressed() {
   mouse = mouse2;
   if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination == null) {
-    system.addDestination(rtrX(mouseX),rtrY(mouseY),0);
+    system.addDestination(tranX(mouseX),tranY(mouseY),0);
   }
   if (mouseButton == RIGHT && _mode == _DESTINATION && _currentDestination != null) {
     system.deleteDestination(_currentDestination);
   }
   if (mouseButton == LEFT && _mode == _AGENT && _currentParticle == null) {
-    system.addParticle(rtrX(mouseX),rtrY(mouseY),0);
+    system.addParticle(tranX(mouseX),tranY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _AGENT && _currentParticle != null) {
     system.deleteParticle(_currentParticle);
   }  
   if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle == null) {
-    system.addObstacle(rtrX(mouseX),rtrY(mouseY),0);
+    system.addObstacle(tranX(mouseX),tranY(mouseY),0);
   }  
   if (mouseButton == RIGHT && _mode == _OBSTACLE && _currentObstacle != null) {
     system.deleteObstacle(_currentObstacle);
@@ -246,6 +250,12 @@ void mousePressed() {
   }  
   if (mouseButton == RIGHT && _mode == _WINDOW && _displayWindowInfo != null) {
     _displayWindowInfo._minimised = !_displayWindowInfo._minimised;
+  }
+  if (mouseButton == CENTER) {
+    _clickedMouseX = mouseX;
+    _clickedMouseY = mouseY;
+    _clickedOffsetX = _offsetX;
+    _clickedOffsetY = _offsetY;
   }  
 }
 
@@ -253,18 +263,30 @@ void mouseReleased() {
   mouse = mouse1;
 }
 
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  if (e > 0) {if (_scale >= 0.2) _scale -= 0.01;}
+  if (e < 0) {if (_scale <= 5.0) _scale += 0.01;}
+}
+
 void mouseDragged() {
   if (mouseButton == LEFT && _mode == _AGENT && _currentParticle != null) {
-    _currentParticle.setPos(rtrX(mouseX),rtrY(mouseY),0);
+    _currentParticle.setPos(tranX(mouseX),tranY(mouseY),0);
   }  
   if (mouseButton == LEFT && _mode == _WINDOW && _displayWindowInfo != null) {
     _displayWindowInfo.setPos(mouseX + _clickPosX, mouseY + _clickPosY);
   }  
   if (mouseButton == LEFT && _mode == _OBSTACLE && _currentObstacle != null) {
-    _currentObstacle.setPos(rtrX(mouseX),rtrY(mouseY),0);
+    _currentObstacle.setPos(tranX(mouseX),tranY(mouseY),0);
   }  
   if (mouseButton == LEFT && _mode == _DESTINATION && _currentDestination != null) {
-    _currentDestination.setPos(rtrX(mouseX),rtrY(mouseY),0);
+    _currentDestination.setPos(tranX(mouseX),tranY(mouseY),0);
+  }
+  if (mouseButton == CENTER) {
+    int moveX = mouseX - _clickedMouseX;
+    int moveY = mouseY - _clickedMouseY;
+    if(_offsetX + moveX >= -10000 && _offsetX + moveX <= 10000) _offsetX = _clickedOffsetX + moveX;
+    if(_offsetY + moveY >= -10000 && _offsetY + moveY <= 10000) _offsetY = _clickedOffsetY + moveY;
   }
 }
 
@@ -727,7 +749,7 @@ float trY(float val) {
   return val;
 }
 
-float rtrX(float val) {
+float tranX(float val) {
 /** 
 * Reverse Scale and Pan Transpose
 *
@@ -737,7 +759,7 @@ float rtrX(float val) {
   return val;
 }
 
-float rtrY(float val) {
+float tranY(float val) {
 /** 
 * Reverse Scale and Pan Transpose
 *
