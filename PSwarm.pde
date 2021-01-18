@@ -80,6 +80,7 @@ void settings() {
 /** 
 * Environment setup
 */ 
+  String renderer = P2D;
   logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
   try {
     properties.load( createReader("application.properties") );
@@ -87,13 +88,19 @@ void settings() {
     println(e);
     exit();
   }
-  if (boolean(properties.getProperty("fullScreen"))) { 
-    fullScreen(P2D,int(properties.getProperty("screen")));
+  if (boolean(properties.getProperty("perspective"))) renderer=P3D;
+  println("Render Engine:"+renderer);
+  if (boolean(properties.getProperty("fullScreen"))) {
+    fullScreen(renderer,int(properties.getProperty("screen")));
     PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
   } else {
-    size(int(properties.getProperty("width")),int(properties.getProperty("height")));
+    size(int(properties.getProperty("width")),int(properties.getProperty("height")),renderer);
   }
-  noSmooth();
+  if (boolean(properties.getProperty("antialias"))) {
+    smooth(int(properties.getProperty("smoothFactor")));
+  } else {
+    noSmooth();
+  }
 }
 
 void setup() {
@@ -178,6 +185,12 @@ void draw() {
   } else {
     background(theme.desktopTheme[theme._theme][0]);
   }
+  if (boolean(properties.getProperty("perspective"))) {
+    translate(height/2,width/2);
+    rotateX(radians(float(properties.getProperty("angle"))));
+    translate(-height/2,-width/2);
+  }
+
   if (_grid) displayGrid();
   if (_displayCentroid) displayCentroid();
   system.update();
@@ -464,7 +477,7 @@ void displayGrid() {
 * Display the grid
 */ 
   boolean alt = true;
-  for(int x = 0; x < width; x = x + _gridSize) {
+  for(int x = -width; x < width*2; x = x + _gridSize) {
     if (alt) {
       strokeWeight(1);
       stroke(theme.desktopTheme[theme._theme][1]);
@@ -473,10 +486,10 @@ void displayGrid() {
       stroke(theme.desktopTheme[theme._theme][2]);
     }
     alt = !alt;
-    line(x,0,x,height);      
+    line(x,-height*2,x,height);      
   }
   alt = true;
-  for(int y = 0; y < height; y = y + _gridSize) {
+  for(int y = -height*2; y < height; y = y + _gridSize) {
     if (alt) {
       strokeWeight(1);
       stroke(theme.desktopTheme[theme._theme][1]);
@@ -485,7 +498,7 @@ void displayGrid() {
       stroke(theme.desktopTheme[theme._theme][2]);
     }
     alt = !alt;
-    line(0,y,width,y);      
+    line(-width,y,width*2,y);      
   }
   strokeWeight(1);
 }
@@ -605,55 +618,23 @@ PImage swarmDirectionImage() {
     return myImage;
 }
 
-// void displayLines1() {
-// /** 
-// * Display cohesion lines.
-// * Start and endpoints moved to particle borders 
-// * Slower?
-// */ 
-//   for(Particle i : system.particles) {
-//     for(Particle j : system.particles) {
-//       if (PVector.dist(i._location,j._location) < i._range & i != j) {
-// // Calculate start point
-//         PVector atb = PVector.sub(i._location,j._location);
-//         atb.normalize().setMag(i._mass * j._size/2);
-//         PVector start = i._location.copy();
-//         start.sub(atb);
-// // Calculate end point  
-//         PVector bta = PVector.sub(j._location,i._location);
-//         bta.normalize().setMag(j._mass * j._size/2);
-//         PVector end = j._location.copy();
-//         end.sub(bta);
-// // Enbolden perimeter lines
-//         stroke(theme.lineTheme[theme._theme]);
-//         if(i._isPerimeter && j._isPerimeter) {
-//           strokeWeight(2);
-//         } else {
-//           strokeWeight(1);
-//           stroke(100,100,100);
-//         }
-//         line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
-//         strokeWeight(1);
-//       }
-//     }
-//   }
-// }
-
 void displayLines() {
 /** 
 * Display cohesion lines.
-* From centre to centre
-* Faster?
+* Start and endpoints moved to particle borders 
+* Slower?
 */ 
   for(Particle i : system.particles) {
     for(Particle j : system.particles) {
       if (PVector.dist(i._location,j._location) < i._range & i != j) {
 // Calculate start point
         PVector atb = PVector.sub(i._location,j._location);
+        atb.normalize().setMag(i._mass * j._size/2);
         PVector start = i._location.copy();
         start.sub(atb);
 // Calculate end point  
         PVector bta = PVector.sub(j._location,i._location);
+        bta.normalize().setMag(j._mass * j._size/2);
         PVector end = j._location.copy();
         end.sub(bta);
 // Enbolden perimeter lines
@@ -670,6 +651,38 @@ void displayLines() {
     }
   }
 }
+
+// void displayLinesOLD() {
+// /** 
+// * Display cohesion lines.
+// * From centre to centre
+// * Faster?
+// */ 
+//   for(Particle i : system.particles) {
+//     for(Particle j : system.particles) {
+//       if (PVector.dist(i._location,j._location) < i._range & i != j) {
+// // Calculate start point
+//         PVector atb = PVector.sub(i._location,j._location);
+//         PVector start = i._location.copy();
+//         start.sub(atb);
+// // Calculate end point  
+//         PVector bta = PVector.sub(j._location,i._location);
+//         PVector end = j._location.copy();
+//         end.sub(bta);
+// // Enbolden perimeter lines
+//         stroke(theme.lineTheme[theme._theme]);
+//         if(i._isPerimeter && j._isPerimeter) {
+//           strokeWeight(2);
+//         } else {
+//           strokeWeight(1);
+//           stroke(100,100,100);
+//         }
+//         line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
+//         strokeWeight(1);
+//       }
+//     }
+//   }
+// }
 
 void displayId(Particle agent) {
 /** 
