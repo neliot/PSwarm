@@ -164,6 +164,7 @@ void setup() {
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
   _obsLines = boolean(properties.getProperty("obsLines"));
+  _usePoint = boolean(properties.getProperty("usePoint"));
   system._obstacleLink = _obsLines;
 
   displayWindows.add(menuInfo1);
@@ -619,6 +620,14 @@ PImage swarmDirectionImage() {
 }
 
 void displayLines() {
+  if (_usePoint) {
+    displayPointLines();
+  } else {
+    displayParticleLines();
+  }
+}
+
+void displayParticleLines() {
 /** 
 * Display cohesion lines.
 * Start and endpoints moved to particle borders 
@@ -652,37 +661,37 @@ void displayLines() {
   }
 }
 
-// void displayLinesOLD() {
-// /** 
-// * Display cohesion lines.
-// * From centre to centre
-// * Faster?
-// */ 
-//   for(Particle i : system.particles) {
-//     for(Particle j : system.particles) {
-//       if (PVector.dist(i._location,j._location) < i._range & i != j) {
-// // Calculate start point
-//         PVector atb = PVector.sub(i._location,j._location);
-//         PVector start = i._location.copy();
-//         start.sub(atb);
-// // Calculate end point  
-//         PVector bta = PVector.sub(j._location,i._location);
-//         PVector end = j._location.copy();
-//         end.sub(bta);
-// // Enbolden perimeter lines
-//         stroke(theme.lineTheme[theme._theme]);
-//         if(i._isPerimeter && j._isPerimeter) {
-//           strokeWeight(2);
-//         } else {
-//           strokeWeight(1);
-//           stroke(100,100,100);
-//         }
-//         line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
-//         strokeWeight(1);
-//       }
-//     }
-//   }
-// }
+ void displayPointLines() {
+ /** 
+ * Display cohesion lines.
+ * From centre to centre
+ * Faster?
+ */ 
+   for(Particle i : system.particles) {
+     for(Particle j : system.particles) {
+       if (PVector.dist(i._location,j._location) < i._range & i != j) {
+ // Calculate start point
+         PVector atb = PVector.sub(i._location,j._location);
+         PVector start = i._location.copy();
+         start.sub(atb);
+ // Calculate end point  
+         PVector bta = PVector.sub(j._location,i._location);
+         PVector end = j._location.copy();
+         end.sub(bta);
+ // Enbolden perimeter lines
+         stroke(theme.lineTheme[theme._theme]);
+         if(i._isPerimeter && j._isPerimeter) {
+           strokeWeight(2);
+         } else {
+           strokeWeight(1);
+           stroke(100,100,100);
+         }
+         line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
+         strokeWeight(1);
+       }
+     }
+   }
+ }
 
 void displayId(Particle agent) {
 /** 
