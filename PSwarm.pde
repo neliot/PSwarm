@@ -70,7 +70,7 @@ int _WINDOW = 3;
 String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
 InfoBox menuInfo1 = new InfoBox(2,2,340,375,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox menuInfo2 = new InfoBox(344,2,350,127,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
-InfoBox directionInfo = new InfoBox(2,500,78,78,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
+InfoBox directionInfo = new InfoBox(2,605,78,78,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
 
 InfoBox destinationInfo = new InfoBox(0,0,340,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
 InfoBox agentInfo = new InfoBox(0,0,340,160,25,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
@@ -89,7 +89,6 @@ void settings() {
     exit();
   }
   if (boolean(properties.getProperty("perspective"))) renderer=P3D;
-  println("Render Engine:"+renderer);
   if (boolean(properties.getProperty("fullScreen"))) {
     fullScreen(renderer,int(properties.getProperty("screen")));
     PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
@@ -395,8 +394,13 @@ void generateMenu() {
   menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
   menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
   menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
+  menuInfo1.add("===========PAN============");
+  menuInfo1.add("(h/k) X:" + _offsetX);
+  menuInfo1.add("(u/n) Y:" + _offsetY);
+  menuInfo1.add("(j) RESET - Offset");  
+  menuInfo1.add("===========ZOOM===========");
   menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : " + String.format("%.2f",_scale));
-  menuInfo1.add("(h) X:" + _offsetX + " (k) - Y:(u) " + _offsetY + " (n) - (j) RESET - Offset");  
+  menuInfo1.add("==========================");
   menuInfo1.add("(q) -10 (w) +10 - Grid :" + _gridSize);  
   menuInfo1.add("(y) load (o) Save - Snapshot");
   menuInfo1.add("(m) MODE:" + _modes[_mode]);  
