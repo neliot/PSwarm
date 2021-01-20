@@ -192,7 +192,12 @@ abstract class PSystem {
          result.add(PVector.sub(o._location,p._location));
       }
     }
+    result.add(calcLineRepulsion(p));
+    return result.mult(-_obstacleBias);
+  }
 
+  PVector calcLineRepulsion(Particle p) {
+    PVector result = new PVector(0,0,0);
     if (system.obstacles.size() > 1 && this._obstacleLink) {
       for (int i = 1; i < this.obstacles.size(); i++) {
         float x0 = p._location.x;
@@ -201,21 +206,19 @@ abstract class PSystem {
         float y1 = this.obstacles.get(i)._location.y;
         float x2 = this.obstacles.get(i-1)._location.x;
         float y2 = this.obstacles.get(i-1)._location.y;
-
         float dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1)); // above or below line segment
         float distance = distBetweenPointAndLine(x0,y0,x1,y1,x2,y2);
-// FIND X,Y LIMITS FROM LINE 
+        ArrayList<PVector> polygon = new ArrayList<PVector>();
+
         PVector start = system.obstacles.get(i)._location;
         PVector end = system.obstacles.get(i-1)._location;
         PVector d = PVector.sub(end,start);
         d.rotate(HALF_PI).setMag(system._obstacleRange); 
-        if (distance <= system._obstacleRange && 
-            (
-              (x0 >= min(x1+d.x,x2+d.x) && x0 <= max(x1+d.x,x2+d.x) && y0 >= min(y1+d.y,y2+d.y) && y0 <= max(y1+d.y,y2+d.y)) // Line above
-              ||
-              (x0 >= min(x1-d.x,x2-d.x) && x0 <= max(x1-d.x,x2-d.x) && y0 >= min(y1-d.y,y2-d.y) && y0 <= max(y1-d.y,y2-d.y)) // Line below            )
-            )
-          ){
+        polygon.add(PVector.add(start,d));
+        polygon.add(PVector.add(end,d));
+        polygon.add(PVector.sub(end,d));
+        polygon.add(PVector.sub(start,d));
+        if (distance <= system._obstacleRange && pointInRectangle(p._location,polygon)) {
           if (dir > 0) {
             result.add(d);
           } else {
@@ -224,8 +227,7 @@ abstract class PSystem {
         }
       }
     }
-//    return result.normalize().mult(-_obstacleBias);
-    return result.mult(-_obstacleBias);
+    return result;
   }
 
   float distBetweenPointAndLine(float x, float y, float x1, float y1, float x2, float y2) {
@@ -233,28 +235,33 @@ abstract class PSystem {
     // B - start point of the line segment (x1, y1)
     // C - end point of the line segment (x2, y2)
     // D - the crossing point between line from A to BC
-
     float AB = distBetween(x, y, x1, y1);
     float BC = distBetween(x1, y1, x2, y2);
     float AC = distBetween(x, y, x2, y2);
 
     // Heron's formula
+    float AD;
     float s = (AB + BC + AC) / 2;
     float area = (float) Math.sqrt(s * (s - AB) * (s - BC) * (s - AC));
-
-    // but also area == (BC * AD) / 2
-    // BC * AD == 2 * area
-    // AD == (2 * area) / BC
-    // TODO: check if BC == 0
-    float AD = (2 * area) / BC;
+    AD = (2 * area) / BC;
     return AD;
   }
 
   float distBetween(float x, float y, float x1, float y1) {
     float xx = x1 - x;
     float yy = y1 - y;
-
     return (float) Math.sqrt(xx * xx + yy * yy);
+  }
+
+  boolean pointInRectangle(PVector p, ArrayList<PVector> polygon) {
+    boolean isInside = false;
+    for (int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
+        if ( (polygon.get(i).y > p.y) != (polygon.get(j).y > p.y) &&
+                p.x < (polygon.get(j).x - polygon.get(i).x) * (p.y - polygon.get(i).y) / (polygon.get(j).y - polygon.get(i).y) + polygon.get(i).x ) {
+            isInside = !isInside;
+        }
+    }
+    return isInside;
   }
 
   void addDestination(float x, float y, float z) {
