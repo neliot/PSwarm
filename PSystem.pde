@@ -63,6 +63,7 @@ abstract class PSystem {
     this._directionBias = float(modelProperties.getProperty("directionBias"));
     this._obstacleBias = float(modelProperties.getProperty("obstacleBias"));
     this._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
+    this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
     this._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
     this._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
     this._dest = boolean(modelProperties.getProperty("dest"));

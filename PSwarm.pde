@@ -43,7 +43,6 @@ boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
 boolean _displayParticleFields = false; // Display Y/N
 boolean _lines = true; // Display Y/N
-boolean _obsLines = false; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _displayDestinations = true; // Display Y/N
 boolean _usePoint = false;
@@ -71,6 +70,7 @@ String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obst
 InfoBox menuInfo1 = new InfoBox(2,2,340,375,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox menuInfo2 = new InfoBox(344,2,350,127,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox directionInfo = new InfoBox(2,605,78,78,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
+InfoBox frameRateInfo = new InfoBox(2,800,95,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Frame Rate");
 
 InfoBox destinationInfo = new InfoBox(0,0,340,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
 InfoBox agentInfo = new InfoBox(0,0,340,160,25,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
@@ -81,7 +81,8 @@ void settings() {
 * Environment setup
 */ 
   String renderer = P2D;
-  logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
+//  logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
+  logo = loadImage("icons/logo6.png");
   try {
     properties.load( createReader("application.properties") );
   } catch(Exception e) {
@@ -91,7 +92,8 @@ void settings() {
   if (boolean(properties.getProperty("perspective"))) renderer=P3D;
   if (boolean(properties.getProperty("fullScreen"))) {
     fullScreen(renderer,int(properties.getProperty("screen")));
-    PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
+//    PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
+    PJOGL.setIcon("icons/logo6.png");
   } else {
     size(int(properties.getProperty("width")),int(properties.getProperty("height")),renderer);
   }
@@ -155,6 +157,7 @@ void setup() {
   }
   
   directionInfo._visible = boolean(properties.getProperty("directionBox"));
+  frameRateInfo._visible = boolean(properties.getProperty("frameRateBox"));
   _displayId = boolean(properties.getProperty("displayId"));
   _particleTicks = boolean(properties.getProperty("particleTicks"));
   _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
@@ -162,13 +165,12 @@ void setup() {
   _grid = boolean(properties.getProperty("grid"));
   _displayDestinations = boolean(properties.getProperty("displayDestinations"));
   _displayCentroid = boolean(properties.getProperty("displayCentroid"));
-  _obsLines = boolean(properties.getProperty("obsLines"));
   _usePoint = boolean(properties.getProperty("usePoint"));
-  system._obstacleLink = _obsLines;
 
   displayWindows.add(menuInfo1);
   displayWindows.add(menuInfo2);
   displayWindows.add(directionInfo);
+  displayWindows.add(frameRateInfo);
   background(theme.desktopTheme[theme._theme][0]);
 }
 
@@ -201,6 +203,7 @@ void draw() {
   if (_menu) { 
     generateMenu();
     generateDirectionInfo();
+    generateFrameRateInfo();
     for(InfoBox b : displayWindows) {
       if (b._visible) {
         b.draw();
@@ -407,7 +410,7 @@ void generateMenu() {
   menuInfo1.add("(1) Screen Grab");  
   menuInfo1.add("(ESC) EXIT");
 
-  menuInfo2.setTitle(system._model + " (" + frameRate + ")");
+  menuInfo2.setTitle(system._model);
   menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
   menuInfo2.clearData();
   menuInfo2.add("Agents:" + system.particles.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
@@ -428,6 +431,13 @@ void generateDirectionInfo() {
   directionInfo.setGraphic(swarmDirectionImage());
   directionInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
 }
+
+void generateFrameRateInfo() {
+  frameRateInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
+  frameRateInfo.clearData();
+  frameRateInfo.add(Float.toString(frameRate));
+}
+
 
 void displayAgentInfo(Particle agent) {
   agentInfo.setTitle("ID:" + agent._id + " [X:" + String.format("%.2f",agent._location.x) + ", Y:"+ String.format("%.2f",agent._location.y) +"]");
@@ -569,7 +579,7 @@ void displayObstacle(Obstacle o) {
   stroke(theme.obstacleTheme[theme._theme][2]);
   ellipse(transX(o._location.x),transY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
   if (_displayId) displayId(o);
-  if (_obsLines) displayObstacleLines();
+  if (system._obstacleLink) displayObstacleLines();
 }
 
 void displayObstacleLines(){
