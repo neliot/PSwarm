@@ -87,13 +87,11 @@ void settings() {
     println(e);
     exit();
   }
-  //if (System.getProperty("os.name").toLowerCase().equals("linux")) {
-    System.setProperty("jogl.disable.openglcore", "false");
-  //}
+  // FIX for linux default settings when using OpenGL
+  System.setProperty("jogl.disable.openglcore", "false");
   if (boolean(properties.getProperty("perspective"))) renderer=P3D;
   if (boolean(properties.getProperty("fullScreen"))) {
     fullScreen(renderer,int(properties.getProperty("screen")));
-//    PJOGL.setIcon("icons/logo" + (int(random(6))+ 1) + ".png");
     PJOGL.setIcon("icons/logo6.png");
   } else {
     size(int(properties.getProperty("width")),int(properties.getProperty("height")),renderer);
