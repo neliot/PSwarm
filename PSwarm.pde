@@ -80,18 +80,16 @@ void settings() {
 /** 
 * Video environment setup
 */ 
-  String renderer;
+  String renderer = P2D;
   try {
     properties.load( createReader("application.properties") );
   } catch(Exception e) {
     println(e);
     exit();
   }
-  if (System.getProperty("os.name") == "linux") {
-    renderer = JAVA2D;
-  } else {
-    renderer= P2D;
-  }  
+  //if (System.getProperty("os.name").toLowerCase().equals("linux")) {
+    System.setProperty("jogl.disable.openglcore", "false");
+  //}
   if (boolean(properties.getProperty("perspective"))) renderer=P3D;
   if (boolean(properties.getProperty("fullScreen"))) {
     fullScreen(renderer,int(properties.getProperty("screen")));
