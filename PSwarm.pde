@@ -78,17 +78,20 @@ InfoBox obstacleInfo = new InfoBox(0,0,340,103,25,theme.boxTheme[theme._theme][6
 
 void settings() {
 /** 
-* Environment setup
+* Video environment setup
 */ 
-  String renderer = P2D;
-//  logo = loadImage("icons/logo" + (int(random(6))+ 1) + ".png");
-  logo = loadImage("icons/logo6.png");
+  String renderer;
   try {
     properties.load( createReader("application.properties") );
   } catch(Exception e) {
     println(e);
     exit();
   }
+  if (System.getProperty("os.name") == "linux") {
+    renderer = JAVA2D;
+  } else {
+    renderer= P2D;
+  }  
   if (boolean(properties.getProperty("perspective"))) renderer=P3D;
   if (boolean(properties.getProperty("fullScreen"))) {
     fullScreen(renderer,int(properties.getProperty("screen")));
@@ -106,9 +109,10 @@ void settings() {
 
 void setup() {
 /** 
-* Sets up frame rate and the initial swarm
+* Load system images setup Swarm model
 * 
 */
+  logo = loadImage("icons/logo6.png");
   frameRate(int(properties.getProperty("frameRate")));
   if (!boolean(properties.getProperty("fullScreen"))) {
     surface.setTitle(_NAME + " : " +_VERSION);
@@ -171,6 +175,7 @@ void setup() {
   displayWindows.add(menuInfo2);
   displayWindows.add(directionInfo);
   displayWindows.add(frameRateInfo);
+  frameRateInfo.setPos(width-frameRateInfo._width+2,2);
   background(theme.desktopTheme[theme._theme][0]);
 }
 
