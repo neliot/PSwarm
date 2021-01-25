@@ -9,6 +9,7 @@ class InfoBox {
   int _width;
   int _height;
   int _lineHeight;
+  boolean _moveable = true;
   boolean _minimised = false;
   boolean _mouse = false;
   boolean _visible = true;
@@ -114,9 +115,34 @@ class InfoBox {
 * 
 * @param x Position
 * @param y Position
-*/    
+*/
+    if (this._moveable) {
+      this._posX = x;
+      this._posY = y;
+    }
+  }
+
+  void fixPos(int x, int y) {
+/* 
+* Set screen location of top right corner.
+* 
+* @param x Position
+* @param y Position
+*/
+    this._moveable = false;
     this._posX = x;
     this._posY = y;
+  }
+
+
+  void setMoveable(boolean state) {
+/* 
+* Set screen location of top right corner.
+* 
+* @param x Position
+* @param y Position
+*/
+    this._moveable = state; 
   }
 
   void setContent(ArrayList<String> content) {

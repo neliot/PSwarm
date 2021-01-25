@@ -131,7 +131,7 @@ class Model8 extends PSystem {
     for(Particle n : p._neighbours) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
       if (this._perimCompress && p._isPerimeter && n._isPerimeter) { 
-        dist = p._repulse/this._repulseProportion;
+        dist = p._repulse * this._repulseProportion;
       } else {
         dist = p._repulse;
       }
