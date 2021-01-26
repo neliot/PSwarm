@@ -20,6 +20,7 @@
 java.util.Properties properties = new java.util.Properties();
 PSystem system;
 Theme theme = new Theme(); 
+String renderer = P2D;
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
 ArrayList<PImage> mice2 = new ArrayList<PImage>();
 ArrayList<InfoBox> displayWindows = new ArrayList<InfoBox>();
@@ -46,6 +47,7 @@ boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _displayDestinations = true; // Display Y/N
 boolean _usePoint = false;
+boolean _shadow = false;
 boolean _loadSwarm = false;
 int _swarmSize = 0;
 int _gridSize = 40; // Size of canvas grid
@@ -80,7 +82,6 @@ void settings() {
     /** 
     * Video environment setup
     */ 
-    String renderer = P2D;
     try {
         properties.load(createReader("application.properties"));
     } catch(Exception e) {
@@ -166,6 +167,7 @@ void setup() {
     _displayDestinations = boolean(properties.getProperty("displayDestinations"));
     _displayCentroid = boolean(properties.getProperty("displayCentroid"));
     _usePoint = boolean(properties.getProperty("usePoint"));
+    _shadow = boolean(properties.getProperty("shadow"));
     
     displayWindows.add(menuInfo1);
     displayWindows.add(menuInfo2);
@@ -533,10 +535,15 @@ void displayParticle(Particle p) {
         stroke(theme.particleTheme[theme._theme][0]);
         if(p._isPerimeter) {
             fill(theme.particleTheme[theme._theme][1]);
-     } else {
+        } else {
             fill(theme.particleTheme[theme._theme][2]);
-     }
+        }
         ellipse(transX(p._location.x),transY(p._location.y),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+        if (renderer == P3D && _shadow) {
+            stroke(150,150,150,150);
+            fill(150,150,150,150);
+            ellipse(transX(p._location.x),transY(p._location.y+100),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+        }
         if(_particleTicks) displayTick(p);
         if(_displayId) displayId(p);
         if(_displayParticleFields) {
@@ -546,7 +553,7 @@ void displayParticle(Particle p) {
             ellipse(transX(p._location.x),transY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
             stroke(0,150,0);
             ellipse(transX(p._location.x),transY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
-     }
+        }
     }
 }
 
@@ -669,9 +676,13 @@ void displayParticleLines() {
                     strokeWeight(1);
                     stroke(100,100,100);
                 }
+                if (renderer == P3D && _shadow) {
+                    stroke(150,150,150,150);
+                    line(transX(start.x),transY(start.y+100),transX(end.x),transY(end.y+100));
+                }
                 line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
                 strokeWeight(1);
-        }
+            }
         }
     }
 }
