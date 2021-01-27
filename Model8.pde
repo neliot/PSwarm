@@ -137,7 +137,7 @@ class Model8 extends PSystem {
       }
       distance = PVector.dist(p._location,n._location);
       if (distance <= dist & p != n) {
-        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(this._repulsionBias);
+        temp = PVector.sub(p._location, n._location).setMag(p._repulse - distance).mult(this._repulsionBias);
         result.add(temp);
         if (this._loggingN && this._loggingP) {
           nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";

@@ -139,7 +139,7 @@ class Model3 extends PSystem {
       if (distance <= dist & p != n) {
 
         // set Mag(distance (dist - distance)  *)
-        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(this._repulsionBias);
+        temp = PVector.sub(p._location, n._location).setMag(p._repulse - distance).mult(this._repulsionBias);
         // temp = PVector.sub(p._location, n._location).mult(1/distance);
 
         result.add(temp);
