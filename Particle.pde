@@ -68,7 +68,7 @@ class Particle {
 * 
 * @param ArrayList of Destinations
 */
-    _destinations = (ArrayList<Destination>) destinations.clone();
+    _destinations = destinations;
   }
 
   void addDestination(Destination destination) {

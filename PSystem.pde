@@ -308,7 +308,7 @@ abstract class PSystem {
     try {
       // create agent in centred quartile.
       Particle p = new Particle(this._nextParticleId++,x,y,z,this._particleRange,this._particleRepulse);
-      p.setDestinations(this.destinations);
+      p.setDestinations((ArrayList<Destination>) this.destinations.clone());
       this.particles.add(p);
     } catch (Exception e) {
       println(e);
