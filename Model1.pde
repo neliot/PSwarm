@@ -123,16 +123,22 @@ class Model1 extends PSystem {
     float dist = 0f;
     float distance = 0f;
     String nData = "";
+    float _factor = 0;
     for(Particle n : p._neighbours) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
       if (this._perimCompress && p._isPerimeter && n._isPerimeter) { 
         dist = p._repulse * this._repulseProportion;
+        _factor = this._repulseProportion;
       } else {
         dist = p._repulse;
+        _factor = 1.0;
       }
       distance = PVector.dist(p._location,n._location);
       if (distance <= dist & p != n) {
-        temp = PVector.sub(p._location, n._location).setMag(p._repulse - distance).mult(this._repulsionBias);
+        count++;
+//        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(this._repulsionBias).mult(_factor);
+        temp = PVector.sub(p._location, n._location).setMag(dist - distance).mult(this._repulsionBias);
+//        temp = PVector.sub(p._location, n._location).setMag(p._repulse - distance).mult(this._repulsionBias);
         result.add(temp);
         if (this._loggingN && this._loggingP) {
           nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
@@ -142,6 +148,9 @@ class Model1 extends PSystem {
     if (this._loggingN && this._loggingP) {
       nRlog.dump(nData);
       nRlog.clean();
+    }
+    if (count > 0) {
+      result.div(count);
     }
     return result;
   }

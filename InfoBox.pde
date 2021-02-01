@@ -8,47 +8,38 @@ class InfoBox {
   int _posY;
   int _width;
   int _height;
-  int _lineHeight;
+  int _lineHeight = 25;
   boolean _moveable = true;
   boolean _minimised = false;
   boolean _mouse = false;
   boolean _visible = true;
   PImage _graphic;
 
-  InfoBox(int x, int y, int boxWidth, int boxHeight, int lineHeight, color borderColour, color fillColour, color textColour, String title, ArrayList<String> content, boolean mouse) {
+  InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title, ArrayList<String> content, boolean mouse) {
     this._posX = x;
     this._posY = y;
-    this._width = boxWidth;
-    this._height = boxHeight;
     this._title = title;
     this._data = content;
     this._fillColour = fillColour;
     this._borderColour = borderColour;
     this._textColour = textColour;
-    this._lineHeight = lineHeight;
     this._mouse = mouse;
   }
 
-  InfoBox(int x, int y, int boxWidth, int boxHeight, int lineHeight, color borderColour, color fillColour, color textColour, String title, ArrayList<String> content) {
+  InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title, ArrayList<String> content) {
     this._posX = x;
     this._posY = y;
-    this._width = boxWidth;
-    this._height = boxHeight;
     this._title = title;
     this._data = content;
     this._fillColour = fillColour;
     this._borderColour = borderColour;
     this._textColour = textColour;
-    this._lineHeight = lineHeight;
     this._mouse = false;
   }
 
-  InfoBox(int x, int y, int boxWidth, int boxHeight, int lineHeight, color borderColour, color fillColour, color textColour, String title, boolean mouse) {
+  InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title, boolean mouse) {
     this._posX = x;
     this._posY = y;
-    this._width = boxWidth;
-    this._height = boxHeight;
-    this._lineHeight = lineHeight;
     this._borderColour = borderColour;
     this._fillColour = fillColour;
     this._textColour = textColour;
@@ -56,12 +47,9 @@ class InfoBox {
     this._mouse = mouse;
   }
 
-  InfoBox(int x, int y, int boxWidth, int boxHeight, int lineHeight, color borderColour, color fillColour, color textColour, String title) {
+  InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title) {
     this._posX = x;
     this._posY = y;
-    this._width = boxWidth;
-    this._height = boxHeight;
-    this._lineHeight = lineHeight;
     this._borderColour = borderColour;
     this._fillColour = fillColour;
     this._textColour = textColour;
@@ -134,7 +122,6 @@ class InfoBox {
     this._posY = y;
   }
 
-
   void setMoveable(boolean state) {
 /* 
 * Set screen location of top right corner.
@@ -171,6 +158,22 @@ class InfoBox {
     this._data.clear();
   }
 
+  int maxWidth() {
+/* 
+* Maximum data width
+* 
+*/
+    textSize(16);
+    int max = (int)textWidth(this._title);
+    for (String d : this._data) { 
+      if (textWidth(d) > max) {
+        max = (int)textWidth(d);
+      }
+    }
+    return max;
+  }
+
+
   void draw() {
 /* 
 * Render InfoBox.
@@ -181,6 +184,9 @@ class InfoBox {
     if (_graphic != null) {
       this._height = this._graphic.height + 29;
       this._width = this._graphic.width + 4;
+    } else {
+      this._height = ((this._data.size() + 1) * 25);
+      this._width = this.maxWidth() + 4;
     }
     if (_mouse) { // If the InfoBox is dynamic it be displayed at the mouse pointer offset by the size of the box.
       this._posX = mouseX;
@@ -213,11 +219,6 @@ class InfoBox {
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
     } else {
-      if (this._graphic == null) {
-        this._height = ((this._data.size() + 1) * 25);
-      } else {
-        this._height = this._graphic.height + 25 + 2;
-      }
       rect(this._posX+offX,this._posY+offY,this._width,this._height);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);

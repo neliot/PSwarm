@@ -19,16 +19,16 @@ class Logger {
     }
   }
   
-  void dump(String data) {
+  public void dump(String data) {
     _output.print(data);
   }
   
-  void clean() {
+  public void clean() {
     _output.flush();
     _counter++;
   };
   
-  void quit() {
+  public void quit() {
     _output.flush();
     _output.close();
   }

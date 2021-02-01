@@ -39,6 +39,7 @@ int _clickedOffsetX = 0; // Swarm display offsetX
 int _clickedOffsetY = 0; // Swarm display offsetY
 int _clickedMouseX = 0;
 int _clickedMouseY = 0;
+boolean mousePresent;
 boolean _logo = true;
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
@@ -69,14 +70,14 @@ int _OBSTACLE = 2;
 int _WINDOW = 3;
 //
 String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
-InfoBox menuInfo1 = new InfoBox(2,2,340,375,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
-InfoBox menuInfo2 = new InfoBox(344,2,350,127,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
-InfoBox directionInfo = new InfoBox(2,605,78,78,25,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
-InfoBox frameRateInfo = new InfoBox(2,800,95,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Frame Rate");
+InfoBox menuInfo1 = new InfoBox(2,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
+InfoBox menuInfo2 = new InfoBox(346,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
+InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
+InfoBox frameRateInfo = new InfoBox(2,800,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Frame Rate");
 
-InfoBox destinationInfo = new InfoBox(0,0,340,78,25,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
-InfoBox agentInfo = new InfoBox(0,0,340,160,25,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
-InfoBox obstacleInfo = new InfoBox(0,0,340,103,25,theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8],"Obstacle",true);
+InfoBox destinationInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
+InfoBox agentInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
+InfoBox obstacleInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8],"Obstacle",true);
 
 void settings() {
     /** 
@@ -117,7 +118,6 @@ void setup() {
         surface.setLocation(0, 0);
         surface.setIcon(logo);
     }
-    noCursor();
     license = loadImage("icons/license.png");    
     mice1.add(loadImage("icons/1.png"));    
     mice2.add(loadImage("icons/2.png"));    
@@ -159,6 +159,10 @@ void setup() {
     
     directionInfo._visible = boolean(properties.getProperty("directionBox"));
     frameRateInfo._visible = boolean(properties.getProperty("frameRateBox"));
+    menuInfo1._visible = boolean(properties.getProperty("menu1Box"));
+    menuInfo2._visible = boolean(properties.getProperty("menu2Box"));
+    menuInfo1._minimised = boolean(properties.getProperty("menu1BoxMinimised"));
+    menuInfo2._minimised = boolean(properties.getProperty("menu2BoxMinimised"));
     _displayId = boolean(properties.getProperty("displayId"));
     _particleTicks = boolean(properties.getProperty("particleTicks"));
     _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
@@ -173,8 +177,16 @@ void setup() {
     displayWindows.add(menuInfo2);
     displayWindows.add(directionInfo);
     displayWindows.add(frameRateInfo);
-    frameRateInfo.fixPos(width - (frameRateInfo._width + 2),2);
+    frameRateInfo.setPos(width - (frameRateInfo._width + 2),2);
     background(theme.desktopTheme[theme._theme][0]);
+}
+
+public void mouseExited() {
+   	mousePresent = false;
+}
+    
+public void mouseEntered() {
+   	mousePresent = true;
 }
 
 void draw() {
@@ -189,6 +201,11 @@ void draw() {
         return;
     } else {
         background(theme.desktopTheme[theme._theme][0]);
+    }
+    if ( focused && mousePresent ) {
+        noCursor();
+    } else {
+        cursor();
     }
     if(boolean(properties.getProperty("perspective"))) {
         translate(height / 2,width / 2);
@@ -211,7 +228,7 @@ void draw() {
            if (b._visible) {
                 b.draw();
                 if (mouseOver(b)) _displayWindowInfo = b;
-        }
+            }
         }
     }
     if(_displayDestinations) {
@@ -441,9 +458,8 @@ void generateFrameRateInfo() {
     frameRateInfo.add(Float.toString(frameRate));
 }
 
-
 void displayAgentInfo(Particle agent) {
-    agentInfo.setTitle("ID:" + agent._id + " [X:" + String.format("%.2f",agent._location.x) + ", Y:" + String.format("%.2f",agent._location.y) + "]");
+    agentInfo.setTitle("ID:" + agent._id + " [X:" + String.format("%07.2f",agent._location.x) + " Y:" + String.format("%07.2f",agent._location.y) + " Z:" + String.format("%07.2f",agent._location.z) + "]");
     agentInfo.setColour(theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5]);
     agentInfo.clearData();
     agentInfo.add("Perim: [" + agent._isPerimeter + "]");
@@ -452,6 +468,17 @@ void displayAgentInfo(Particle agent) {
     agentInfo.add("Speed: [" + agent._topspeed + "]");
     agentInfo.add("Size: [" + agent._size + "]");
     agentInfo.add("Neighbours: [" + agent._neighbours.size() + "]");
+    int i = 1;
+    char tick;    
+    for (Particle n : agent._neighbours) {
+        if(n._isPerimeter) {
+            tick = '\u2713';
+        } else {
+            tick = ' ';
+        }
+        agentInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._location.x) + " Y:" + String.format("%07.2f",n._location.y) + " Z:" + String.format("%07.2f",n._location.z) + "] " + tick);
+    }
+
     agentInfo.draw();
 }
 

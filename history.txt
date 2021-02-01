@@ -131,8 +131,8 @@
  * 13/01/2021 - 0.1.5 - NE
  **************************************************
  * 1. Added Middle mouse button functionality.
- *  a. Middle pressed pan 
- *  b. Middle scroll zoom +/-
+ *    i.  Middle pressed pan 
+ *    ii. Middle scroll zoom +/-
  * 2. Finalised Obstacle linked repulsion.
  **************************************************
  * 18/01/2021 - 0.1.5 - NE
@@ -144,4 +144,9 @@
  **************************************************
  * 1. Fixed issue with boundary detection of linked
  *    Obstacles
+ **************************************************
+ * 01/02/2021 - 0.1.5 - NE
+ **************************************************
+ * 1. infoBox now autosizes height and width based 
+ *    on content.
  **************************************************/

@@ -1,3 +1,7 @@
+import java.lang.Math.*;
+import java.util.ArrayList; 
+
+
 class Particle {
   PVector _location;
   PVector _nextLocation;
@@ -6,12 +10,12 @@ class Particle {
   ArrayList<Destination> _destinations = new ArrayList<Destination>();
   ArrayList<Particle> _gap = new ArrayList<Particle>(); 
   int _id;
-  float _size = 10.0;
-  float _mass = 1.0;
-  float _range;
-  float _repulse;
-  float _topspeed = 3.0/_mass; 
-  float _sweepAngle;
+  float _size = 10.0f;
+  float _mass = 1.0f;
+  float _range = 0.0f;
+  float _repulse = 0.0f;
+  float _topspeed = 3.0f/_mass; 
+  float _sweepAngle = 0.0f;
   boolean _isPerimeter = true;
   
   Particle(int i, float x, float y, float z, float range, float repulse, float size, float mass) throws Exception {
@@ -62,7 +66,7 @@ class Particle {
     this._resultant = new PVector(0,0,0);
   }
 
-  void setDestinations(ArrayList<Destination> destinations) {
+  public void setDestinations(ArrayList<Destination> destinations) {
 /** 
 * Each agent has its own set of Desinations to allow for individual control of where agents must migrate.
 * 
@@ -71,7 +75,7 @@ class Particle {
     _destinations = destinations;
   }
 
-  void addDestination(Destination destination) {
+  public void addDestination(Destination destination) {
 /** 
 * Add a destination to and agents list.
 * 
@@ -80,7 +84,7 @@ class Particle {
     _destinations.add(destination);
   }
 
-  void removeDestination(Destination destination) {
+  public void removeDestination(Destination destination) {
 /** 
 * Remove specific destination from aent list.
 * 
@@ -93,7 +97,7 @@ class Particle {
     }
   }
 
-  boolean hasGap(){
+  public boolean hasGap(){
 /** 
 * Checks gap Array to see if has been populated by the neighbour check.
 */
@@ -104,18 +108,18 @@ class Particle {
     }
   };
 
-  void setPos(float x, float y, float z){
+  public void setPos(float x, float y, float z){
     this._location.set(x,y,z);
   }
 
-  String toString() {
+  public String toString() {
 /** 
 * Creates a formatted string of particle data.
 */
     return(this._id + "," + this._location.x + "," + this._location.y + ","+ this._location.z + "," + this._range + "," + this._repulse + "," + this._size + "," + this._mass + "," + this._isPerimeter);
   }
-  
-  void setChange(PVector change) {
+
+  public void setChange(PVector change) {
 /** 
 * Adds a vector to the particle.
 * 
@@ -126,7 +130,7 @@ class Particle {
     this._resultant.set(f);
   }
 
-  void update() {
+  public void update() {
 /** 
 * Updates the position of the particle based on the accumulated vectors.
 */
@@ -140,7 +144,7 @@ class Particle {
     this._nextLocation.add(_resultant);
   }
 
-  void move() {
+  public void move() {
 /** 
 * Updates the position of the particle based on the _acceleration.
 */
@@ -150,14 +154,14 @@ class Particle {
     this._location.z = _nextLocation.z;
   }
 
-  void reset() {
+  public void reset() {
 /** 
 * Updates the particle for next iteration.
 */
     _resultant.mult(0);
   }
 
-  void getNeighbours(ArrayList<Particle> s){
+  public void getNeighbours(ArrayList<Particle> s){
 /** 
 * Identify Partcle neighbours.
 */
@@ -171,14 +175,14 @@ class Particle {
     checkNeighbours();
   }
 
-  float calcAngle(float start, float end) {
+  public float calcAngle(float start, float end) {
     if (start < end) {
-      start += 360;
+      start += 360f;
     }
-    return abs(start - end);
+    return Math.abs(start - end);
   }
 
-  void checkNeighbours() {
+  public void checkNeighbours() {
 /** 
 * Examines the particles neighbours to determine if the agent is on an edge.
 * 
@@ -226,7 +230,7 @@ class Particle {
       }
       angle = calcAngle(this._neighbours.get(this._neighbours.size()-1)._sweepAngle,this._neighbours.get(0)._sweepAngle);
       dist = PVector.dist(this._neighbours.get(0)._location,this._neighbours.get(this._neighbours.size()-1)._location); 
-      if (dist > _range  || angle > 180) {
+      if (dist > _range  || angle > 180.0) {
         this._isPerimeter = true;
 //POPULATE GAP AGENTS
         _gap.clear();

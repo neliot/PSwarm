@@ -87,7 +87,7 @@ abstract class PSystem {
     this.init();  
   }
 
-  PVector getCentroid() {
+  public PVector getCentroid() {
     PVector center = new PVector(0,0);
     for(Particle p : this.particles) {
         center.add(p._location);
@@ -96,7 +96,7 @@ abstract class PSystem {
     return center;
   }
 
-  void saveSwarm() {
+  public void saveSwarm() {
 /** 
 * Save environment settings to file.
 * 
@@ -123,7 +123,7 @@ abstract class PSystem {
     output.close();
   }
 
-  void loadSwarm() {
+  public void loadSwarm() {
 /** 
 * Load environment settings from files.
 * 
@@ -171,7 +171,7 @@ abstract class PSystem {
     this.init(); 
   }
   
-  void moveReset() {
+  public void moveReset() {
     if(this._run) {
       for(Particle p : this.particles) {
         p.move();
@@ -180,7 +180,7 @@ abstract class PSystem {
     }
   }
   
-  PVector avoidObstacles(Particle p) {
+  public PVector avoidObstacles(Particle p) {
 /** 
 * obstacle avoidance calculation - Calculates the repulsion
 * 
@@ -197,7 +197,7 @@ abstract class PSystem {
     return result.mult(-_obstacleBias);
   }
 
-  PVector calcLineRepulsion(Particle p) {
+  public PVector calcLineRepulsion(Particle p) {
     PVector result = new PVector(0,0,0);
     if (system.obstacles.size() > 1 && this._obstacleLink) {
       for (int i = 1; i < this.obstacles.size(); i++) {
@@ -231,7 +231,7 @@ abstract class PSystem {
     return result;
   }
 
-  float distBetweenPointAndLine(float x, float y, float x1, float y1, float x2, float y2) {
+  public float distBetweenPointAndLine(float x, float y, float x1, float y1, float x2, float y2) {
     // A - the standalone point (x, y)
     // B - start point of the line segment (x1, y1)
     // C - end point of the line segment (x2, y2)
@@ -248,13 +248,13 @@ abstract class PSystem {
     return AD;
   }
 
-  float distBetween(float x, float y, float x1, float y1) {
+  public float distBetween(float x, float y, float x1, float y1) {
     float xx = x1 - x;
     float yy = y1 - y;
     return (float) Math.sqrt(xx * xx + yy * yy);
   }
 
-  boolean pointInRectangle(PVector p, ArrayList<PVector> polygon) {
+  public boolean pointInRectangle(PVector p, ArrayList<PVector> polygon) {
     boolean isInside = false;
     for (int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
         if ( (polygon.get(i).y > p.y) != (polygon.get(j).y > p.y) &&
@@ -265,7 +265,7 @@ abstract class PSystem {
     return isInside;
   }
 
-  void addDestination(float x, float y, float z) {
+  public void addDestination(float x, float y, float z) {
 /** 
 * Add Destination in 3D
 * 
@@ -280,7 +280,7 @@ abstract class PSystem {
     }
   }
 
-  void deleteDestination(Destination d) {
+  public void deleteDestination(Destination d) {
 /** 
 * Delete Destination
 * 
@@ -297,7 +297,7 @@ abstract class PSystem {
     }
   }
 
-  void addParticle(float x, float y, float z) {
+  public void addParticle(float x, float y, float z) {
 /** 
 * Add Particle/Agent in 3D
 * 
@@ -316,7 +316,7 @@ abstract class PSystem {
     }
   }
   
-  void deleteParticle(Particle p) {
+  public void deleteParticle(Particle p) {
 /** 
 * Delete Particle/Agent
 * 
@@ -330,7 +330,7 @@ abstract class PSystem {
     }
   }
 
-  void deleteObstacle(Obstacle o) {
+  public void deleteObstacle(Obstacle o) {
 /** 
 * Delete Obstacle
 * 
@@ -344,7 +344,7 @@ abstract class PSystem {
     }
   }
 
-  void addObstacle(float x, float y, float z) {
+  public void addObstacle(float x, float y, float z) {
 /** 
 * Add Destination in 3D
 * 
@@ -355,7 +355,7 @@ abstract class PSystem {
     this.obstacles.add(new Obstacle(_nextObsId++,x,y,z,this._obstacleRange));
   }
 
-  boolean hasObstacles() {
+  public boolean hasObstacles() {
     return (this.obstacles.size() > 0);
   }
 }

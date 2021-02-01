@@ -52,11 +52,11 @@ class Obstacle {
     this._location = new PVector(x,y,z);
   }
 
-  void setPos(float x, float y, float z) {
+  public void setPos(float x, float y, float z) {
     this._location.set(x,y,z);
   }
 
-  String toString() {
+  public String toString() {
 /** 
 * Creates a formatted string of destination.
 */
