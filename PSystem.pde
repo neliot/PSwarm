@@ -1,19 +1,19 @@
 abstract class PSystem {
   java.util.Properties modelProperties = new java.util.Properties();
-  ArrayList<Particle> particles = new ArrayList<Particle>();
+  ArrayList<Particle> S = new ArrayList<Particle>();
   ArrayList<Destination> destinations = new ArrayList<Destination>();
   ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
   boolean _lines = true;
   int _swarmSize = 0;
-  float _cohesionBias = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
-  float _repulsionBias = 300f; // Must be > _cohesionBias to prevent the swarm collapsing.
-  float _directionBias = 80f; // Must be > particle._topspeed to allow free particles to coalesce.
-  float _obstacleBias = 500f; // Stay away from those obstacles Eugene.
-  float _particleRange = 70f; // Cohesion range, Must be greater than range to repulsion range.
-  float _particleRepulse = 50f; // Repulsion range, Must be less than range to allow cohesion.
-  float _obstacleRange = 75f; // Obstacle range
-  float _repulseProportion = 1f; // Compressed perimeter reduction divisor
-  float _cohesionProportion = 1f; // Compressed perimeter reduction divisor
+  float _kc = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
+  float _kr = 300f; // Must be > _kc to prevent the swarm collapsing.
+  float _kd = 80f; // Must be > particle._topspeed to allow free S to coalesce.
+  float _ko = 500f; // Stay away from those obstacles Eugene.
+  float _Cb = 70f; // Cohesion range, Must be greater than range to repulsion range.
+  float _Rb = 50f; // Repulsion range, Must be less than range to allow cohesion.
+  float _Ob = 75f; // Obstacle range
+  float _pr = 1f; // Compressed perimeter reduction divisor
+  float _pc = 1f; // Compressed perimeter reduction divisor
   boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
@@ -56,16 +56,16 @@ abstract class PSystem {
     }
 
     this._swarmSize = int(modelProperties.getProperty("size"));
-    this._particleRange = float(modelProperties.getProperty("particleRange"));
-    this._particleRepulse = float(modelProperties.getProperty("particleRepulse"));
-    this._repulsionBias = float(modelProperties.getProperty("repulsionBias"));
-    this._cohesionBias = float(modelProperties.getProperty("cohesionBias"));
-    this._directionBias = float(modelProperties.getProperty("directionBias"));
-    this._obstacleBias = float(modelProperties.getProperty("obstacleBias"));
-    this._obstacleRange = float(modelProperties.getProperty("obstacleRange"));
+    this._Cb = float(modelProperties.getProperty("Cb"));
+    this._Rb = float(modelProperties.getProperty("Rb"));
+    this._kr = float(modelProperties.getProperty("kr"));
+    this._kc = float(modelProperties.getProperty("kc"));
+    this._kd = float(modelProperties.getProperty("kd"));
+    this._ko = float(modelProperties.getProperty("ko"));
+    this._Ob = float(modelProperties.getProperty("Ob"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
-    this._repulseProportion = float(modelProperties.getProperty("repulseProportion"));
-    this._cohesionProportion = float(modelProperties.getProperty("cohesionProportion"));
+    this._pr = float(modelProperties.getProperty("pr"));
+    this._pc = float(modelProperties.getProperty("pc"));
     this._dest = boolean(modelProperties.getProperty("dest"));
     this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
     this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
@@ -89,10 +89,10 @@ abstract class PSystem {
 
   public PVector getCentroid() {
     PVector center = new PVector(0,0);
-    for(Particle p : this.particles) {
-        center.add(p._location);
+    for(Particle p : this.S) {
+        center.add(p._loc);
     }    
-    center.div(this.particles.size());
+    center.div(this.S.size());
     return center;
   }
 
@@ -103,8 +103,8 @@ abstract class PSystem {
 */     
     PrintWriter output;
     output = createWriter("save/P-"+_modelId+"-agents.dat"); 
-    output.println(this.particles.size() + "," + this._particleRange + "," + this._particleRepulse + "," + this._repulsionBias + "," + this._cohesionBias + "," + this._directionBias +  "," + this._cohesionProportion + "," + this._repulseProportion);
-    for(Particle p : particles) {
+    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
+    for(Particle p : S) {
         output.println(p.toString());
     }        
     output.flush();
@@ -130,19 +130,19 @@ abstract class PSystem {
 */    
     String[] lines = loadStrings("save/P-"+_modelId+"-agents.dat");
     float[] params = float(split(lines[0], ','));
-    this._particleRange = params[1];
-    this._particleRepulse = params[2];
-    this._repulsionBias = params[3];
-    this._cohesionBias = params[4];
-    this._directionBias = params[5];
-    this._cohesionProportion = params[6];
-    this._repulseProportion = params[7];
+    this._Cb = params[1];
+    this._Rb = params[2];
+    this._kr = params[3];
+    this._kc = params[4];
+    this._kd = params[5];
+    this._pc = params[6];
+    this._pr = params[7];
 
-    this.particles.clear();
+    this.S.clear();
     for (int i = 1 ; i < lines.length; i++) {
       float[] nums = float(split(lines[i], ','));
       try {
-        particles.add(new Particle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6], nums[7]));
+        S.add(new Particle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6], nums[7]));
         this._nextParticleId = int(nums[0]) + 1;
       } catch (Exception e) {
         println(e);
@@ -164,7 +164,7 @@ abstract class PSystem {
       Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
       destinations.add(d);
       this._nextDestId = int(nums[0]) + 1;
-      for(Particle p : particles) {
+      for(Particle p : S) {
         p.addDestination(d);
       }
     }
@@ -173,7 +173,7 @@ abstract class PSystem {
   
   public void moveReset() {
     if(this._run) {
-      for(Particle p : this.particles) {
+      for(Particle p : this.S) {
         p.move();
         p.reset();
       }
@@ -189,37 +189,37 @@ abstract class PSystem {
     PVector result = new PVector(0,0,0);
 // GET ALL THE IN RANGE OBSTACLES
     for(Obstacle o : this.obstacles) {
-      if (PVector.dist(p._location,o._location) <= o._range) {
-         result.add(PVector.sub(o._location,p._location));
+      if (PVector.dist(p._loc,o._loc) <= o._Ob) {
+         result.add(PVector.sub(o._loc,p._loc));
       }
     }
     result.add(calcLineRepulsion(p));
-    return result.mult(-_obstacleBias);
+    return result.mult(-_ko);
   }
 
   public PVector calcLineRepulsion(Particle p) {
     PVector result = new PVector(0,0,0);
     if (system.obstacles.size() > 1 && this._obstacleLink) {
       for (int i = 1; i < this.obstacles.size(); i++) {
-        float x0 = p._location.x;
-        float y0 = p._location.y;
-        float x1 = this.obstacles.get(i)._location.x;
-        float y1 = this.obstacles.get(i)._location.y;
-        float x2 = this.obstacles.get(i-1)._location.x;
-        float y2 = this.obstacles.get(i-1)._location.y;
+        float x0 = p._loc.x;
+        float y0 = p._loc.y;
+        float x1 = this.obstacles.get(i)._loc.x;
+        float y1 = this.obstacles.get(i)._loc.y;
+        float x2 = this.obstacles.get(i-1)._loc.x;
+        float y2 = this.obstacles.get(i-1)._loc.y;
         float dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1)); // above or below line segment
         float distance = distBetweenPointAndLine(x0,y0,x1,y1,x2,y2);
         ArrayList<PVector> polygon = new ArrayList<PVector>();
 
-        PVector start = system.obstacles.get(i)._location;
-        PVector end = system.obstacles.get(i-1)._location;
+        PVector start = system.obstacles.get(i)._loc;
+        PVector end = system.obstacles.get(i-1)._loc;
         PVector d = PVector.sub(end,start);
-        d.rotate(HALF_PI).setMag(system._obstacleRange); 
+        d.rotate(HALF_PI).setMag(system._Ob); 
         polygon.add(PVector.add(start,d));
         polygon.add(PVector.add(end,d));
         polygon.add(PVector.sub(end,d));
         polygon.add(PVector.sub(start,d));
-        if (distance <= system._obstacleRange && pointInRectangle(p._location,polygon)) {
+        if (distance <= system._Ob && pointInRectangle(p._loc,polygon)) {
           if (dir > 0) {
             result.add(d);
           } else {
@@ -275,7 +275,7 @@ abstract class PSystem {
 */
     Destination d = new Destination(_nextDestId++,x,y,z);
     this.destinations.add(d);
-    for(Particle p : particles) {
+    for(Particle p : S) {
       p.addDestination(d);
     }
   }
@@ -289,7 +289,7 @@ abstract class PSystem {
     for (int i = this.destinations.size() - 1; i >= 0; i--) {
       Destination dest = this.destinations.get(i);
       if (d == dest) {
-        for(Particle p : particles) {
+        for(Particle p : S) {
           p.removeDestination(d);
         }
         this.destinations.remove(i);
@@ -307,9 +307,9 @@ abstract class PSystem {
 */
     try {
       // create agent in centred quartile.
-      Particle p = new Particle(this._nextParticleId++,x,y,z,this._particleRange,this._particleRepulse);
+      Particle p = new Particle(this._nextParticleId++,x,y,z,this._Cb,this._Rb);
       p.setDestinations((ArrayList<Destination>) this.destinations.clone());
-      this.particles.add(p);
+      this.S.add(p);
     } catch (Exception e) {
       println(e);
       exit();
@@ -322,10 +322,10 @@ abstract class PSystem {
 * 
 * @param p Particle
 */
-    for (int i = this.particles.size() - 1; i >= 0; i--) {
-      Particle part = this.particles.get(i);
+    for (int i = this.S.size() - 1; i >= 0; i--) {
+      Particle part = this.S.get(i);
       if (part == p) {
-        this.particles.remove(i);
+        this.S.remove(i);
       }
     }
   }
@@ -352,7 +352,7 @@ abstract class PSystem {
 * @param y Y Position
 * @param z Z Position
 */
-    this.obstacles.add(new Obstacle(_nextObsId++,x,y,z,this._obstacleRange));
+    this.obstacles.add(new Obstacle(_nextObsId++,x,y,z,this._Ob));
   }
 
   public boolean hasObstacles() {

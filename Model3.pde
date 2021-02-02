@@ -9,7 +9,7 @@ class Model3 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        particles.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._particleRange,this._particleRepulse));
+        S.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._Cb,this._Rb));
       } catch (Exception e) {
         println(e);
         exit();
@@ -28,14 +28,14 @@ class Model3 extends PSystem {
     PVector coh = new PVector(0,0,0);
     PVector rep = new PVector(0,0,0);
     PVector inter = new PVector(0,0,0);
-    for(Particle p : particles) {      
+    for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
       change.set(0,0,0); 
 
-      p.getNeighbours(particles);
+      p.nbr(S);
 
-      if (p._neighbours.size() == 0) {
+      if (p._nbr.size() == 0) {
         coh = PVector.random2D();
         rep = PVector.random2D();
       } else {
@@ -69,7 +69,7 @@ class Model3 extends PSystem {
     }
     if (this._run) {
       _swarmDirection.set(0,0,0);
-      for(Particle p : particles) {
+      for(Particle p : S) {
         _swarmDirection.add(p._resultant);
         p.update();
       }
@@ -89,16 +89,16 @@ class Model3 extends PSystem {
     PVector result = new PVector(0,0,0);
     PVector temp = new PVector(0,0,0);
     float distance = 0f;
-//    p._neighbours.clear();
+//    p._nbr.clear();
     String nData = "";
     
 // GET ALL THE NEIGHBOURS
-    for(Particle n : p._neighbours) {
-      distance = PVector.dist(p._location,n._location);
-      if (this._perimCompress && p._isPerimeter && n._isPerimeter) {
-        temp = PVector.sub(n._location,p._location).mult(this._cohesionProportion).mult(this._cohesionBias);
+    for(Particle n : p._nbr) {
+      distance = PVector.dist(p._loc,n._loc);
+      if (this._perimCompress && p._isPerim && n._isPerim) {
+        temp = PVector.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);
       } else {
-        temp = PVector.sub(n._location,p._location).mult(this._cohesionBias);
+        temp = PVector.sub(n._loc,p._loc).mult(this._kc);
       }
       result.add(temp);
       if (this._loggingN && this._loggingP) {
@@ -110,8 +110,8 @@ class Model3 extends PSystem {
       nClog.clean();
     }
 
-    if (p._neighbours.size() > 0) {
-      result.div(p._neighbours.size());
+    if (p._nbr.size() > 0) {
+      result.div(p._nbr.size());
     }
     return result;
   }
@@ -128,20 +128,16 @@ class Model3 extends PSystem {
     float dist = 0f;
     float distance = 0f;
     String nData = "";
-    for(Particle n : p._neighbours) {
+    for(Particle n : p._nbr) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
-      if (this._perimCompress && p._isPerimeter && n._isPerimeter) { 
-        dist = p._repulse * this._repulseProportion;
+      if (this._perimCompress && p._isPerim && n._isPerim) { 
+        dist = p._Rb * this._pr;
       } else {
-        dist = p._repulse;
+        dist = p._Rb;
       }
-      distance = PVector.dist(p._location,n._location);
+      distance = PVector.dist(p._loc,n._loc);
       if (distance <= dist & p != n) {
-
-        // set Mag(distance (dist - distance)  *)
-        temp = PVector.sub(p._location, n._location).setMag(p._repulse - distance).mult(this._repulsionBias);
-        // temp = PVector.sub(p._location, n._location).mult(1/distance);
-
+        temp = PVector.sub(p._loc, n._loc).setMag(p._Rb - distance).mult(this._kr);
         result.add(temp);
         if (this._loggingN && this._loggingP) {
           nData = plog._counter + "," + p._id + "," + n.toString() + "," + temp.x + "," + temp.y + "," + temp.z + "," + temp.mag() + "," + distance + "\n";
@@ -164,21 +160,21 @@ class Model3 extends PSystem {
     PVector destination = new PVector(0,0,0);
     PVector dir = new PVector(0,0,0);
     if (p._destinations.size() > 0) {
-      destination = p._destinations.get(0)._location;      
+      destination = p._destinations.get(0)._loc;      
       for (int i = 1; i < p._destinations.size(); i++) {
-        if (PVector.dist(p._location,destination) > PVector.dist(p._location,p._destinations.get(i)._location)) {
-          destination = p._destinations.get(i)._location;
+        if (PVector.dist(p._loc,destination) > PVector.dist(p._loc,p._destinations.get(i)._loc)) {
+          destination = p._destinations.get(i)._loc;
         }
       }   
     }    
     if (!this._perimCoord) {
-      dir = PVector.sub(destination,p._location);
+      dir = PVector.sub(destination,p._loc);
     } else {
       /* Perimeter only control */
-      if (p._isPerimeter) {
-        dir = PVector.sub(destination,p._location);
+      if (p._isPerim) {
+        dir = PVector.sub(destination,p._loc);
       }
     }
-    return dir.setMag(_directionBias);
+    return dir.setMag(_kd);
   }
 }

@@ -1,6 +1,6 @@
 class Destination {
   int _id;
-  PVector _location;
+  PVector _loc;
   float _size = 10.0f;
   float _mass = 1.0f;
 
@@ -14,7 +14,7 @@ class Destination {
 * @param z location
 */
     this._id = i;
-    this._location = new PVector(x,y,z);
+    this._loc = new PVector(x,y,z);
   }
   
   Destination(int i, float x, float y, float z, float size, float mass) {
@@ -31,17 +31,17 @@ class Destination {
     this._id = i;
     this._size = size;
     this._mass = mass;
-    this._location = new PVector(x,y,z);
+    this._loc = new PVector(x,y,z);
   }
 
   public void setPos(float x, float y, float z) {
-    this._location.set(x,y,z);
+    this._loc.set(x,y,z);
   }
 
   public String toString() {
 /** 
 * Creates a formatted string of destination.
 */
-    return(this._id + "," + this._location.x + "," + this._location.y + "," + this._location.z + "," + this._size + "," + this._mass);
+    return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._size + "," + this._mass);
   }  
 }

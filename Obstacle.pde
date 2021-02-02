@@ -1,9 +1,9 @@
 class Obstacle {
   int _id;
-  PVector _location;
+  PVector _loc;
   float _size = 10.0f;
   float _mass = 1.0f;
-  float _range = 50f;
+  float _Ob = 50f;
   
   Obstacle(int i, float x, float y, float z) {
 /** 
@@ -15,10 +15,10 @@ class Obstacle {
 * @param z location
 */
     this._id = i;
-    this._location = new PVector(x,y,z);
+    this._loc = new PVector(x,y,z);
   }
   
-  Obstacle(int i, float x, float y, float z, float range) {
+  Obstacle(int i, float x, float y, float z, float Ob) {
 /** 
 * Creates a desination
 * 
@@ -29,11 +29,11 @@ class Obstacle {
 * @param range repulsion range of Obstacle
 */
     this._id = i;
-    this._range = range;
-    this._location = new PVector(x,y,z);
+    this._Ob = Ob;
+    this._loc = new PVector(x,y,z);
   }
 
-  Obstacle(int i, float x, float y, float z, float range, float size, float mass) {
+  Obstacle(int i, float x, float y, float z, float Ob, float size, float mass) {
 /** 
 * Creates a desination
 * 
@@ -48,18 +48,18 @@ class Obstacle {
     this._id = i;
     this._size = size;
     this._mass = mass;
-    this._range = range;
-    this._location = new PVector(x,y,z);
+    this._Ob = Ob;
+    this._loc = new PVector(x,y,z);
   }
 
   public void setPos(float x, float y, float z) {
-    this._location.set(x,y,z);
+    this._loc.set(x,y,z);
   }
 
   public String toString() {
 /** 
 * Creates a formatted string of destination.
 */
-    return(this._id + "," + this._location.x + "," + this._location.y + "," + this._location.z + "," + this._range +"," + this._size + "," + this._mass);
+    return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._Ob +"," + this._size + "," + this._mass);
   }  
 }

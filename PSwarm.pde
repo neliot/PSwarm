@@ -76,7 +76,7 @@ InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme
 InfoBox frameRateInfo = new InfoBox(2,800,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Frame Rate");
 
 InfoBox destinationInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
-InfoBox agentInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
+InfoBox pInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
 InfoBox obstacleInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8],"Obstacle",true);
 
 void settings() {
@@ -242,7 +242,7 @@ void draw() {
         if (mouseOver(o)) _currentObstacle = o;
     } 
     if(_lines) displayLines();
-    for (Particle p : system.particles) {
+    for (Particle p : system.S) {
         displayParticle(p);
         if (mouseOver(p)) _currentParticle = p;
     }
@@ -433,18 +433,18 @@ void generateMenu() {
     menuInfo2.setTitle(system._model);
     menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     menuInfo2.clearData();
-    menuInfo2.add("Agents:" + system.particles.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
+    menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
     menuInfo2.add("==========================");  
-    menuInfo2.add("Cohesion Range: " + system._particleRange);
-    menuInfo2.add("Cohesion Bias: " + system._cohesionBias);
-    menuInfo2.add("Repulsion Range: " + system._particleRepulse);
-    menuInfo2.add("Repulsion Bias: " + system._repulsionBias);
-    menuInfo2.add("Obstacle Range: " + system._obstacleRange);
-    menuInfo2.add("Obstacle Bias: " + system._obstacleBias);
-    menuInfo2.add("Direction Bias: " + system._directionBias);
+    menuInfo2.add("Cohesion Range: " + system._Cb);
+    menuInfo2.add("Cohesion Bias: " + system._kc);
+    menuInfo2.add("Repulsion Range: " + system._Rb);
+    menuInfo2.add("Repulsion Bias: " + system._kr);
+    menuInfo2.add("Obstacle Range: " + system._Ob);
+    menuInfo2.add("Obstacle Bias: " + system._ko);
+    menuInfo2.add("Direction Bias: " + system._kd);
     menuInfo2.add("==========================");  
-    menuInfo2.add("Repulsion Proportion: " + system._repulseProportion);
-    menuInfo2.add("Cohesion Proportion: " + system._cohesionProportion);
+    menuInfo2.add("Repulsion Proportion: " + system._pr);
+    menuInfo2.add("Cohesion Proportion: " + system._pc);
 }
 
 void generateDirectionInfo() {
@@ -458,32 +458,36 @@ void generateFrameRateInfo() {
     frameRateInfo.add(Float.toString(frameRate));
 }
 
-void displayAgentInfo(Particle agent) {
-    agentInfo.setTitle("ID:" + agent._id + " [X:" + String.format("%07.2f",agent._location.x) + " Y:" + String.format("%07.2f",agent._location.y) + " Z:" + String.format("%07.2f",agent._location.z) + "]");
-    agentInfo.setColour(theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5]);
-    agentInfo.clearData();
-    agentInfo.add("Perim: [" + agent._isPerimeter + "]");
-    agentInfo.add("Mass: [" + agent._mass + "]");
-    agentInfo.add("R Range: [" + agent._repulse + "]");
-    agentInfo.add("Speed: [" + agent._topspeed + "]");
-    agentInfo.add("Size: [" + agent._size + "]");
-    agentInfo.add("Neighbours: [" + agent._neighbours.size() + "]");
-    int i = 1;
+void displayAgentInfo(Particle p) {
     char tick;    
-    for (Particle n : agent._neighbours) {
-        if(n._isPerimeter) {
+    if (p._isPerim) {
+        tick = '\u2713';
+    } else {
+        tick = ' ';
+    }
+    pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + " Z:" + String.format("%07.2f",p._loc.z) + "] " + tick);
+    pInfo.setColour(theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5]);
+    pInfo.clearData();
+    pInfo.add("Mass: [" + p._mass + "]");
+    pInfo.add("Rb : [" + p._Rb + "]");
+    pInfo.add("Cb : [" + p._Cb + "]");
+    pInfo.add("Speed: [" + p._topspeed + "]");
+    pInfo.add("Size: [" + p._size + "]");
+    pInfo.add("Neighbours: [" + p._nbr.size() + "]");
+    int i = 1;
+    for (Particle n : p._nbr) {
+        if(n._isPerim) {
             tick = '\u2713';
         } else {
             tick = ' ';
         }
-        agentInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._location.x) + " Y:" + String.format("%07.2f",n._location.y) + " Z:" + String.format("%07.2f",n._location.z) + "] " + tick);
+        pInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._loc.x) + " Y:" + String.format("%07.2f",n._loc.y) + " Z:" + String.format("%07.2f",n._loc.z) + "] " + tick);
     }
-
-    agentInfo.draw();
+    pInfo.draw();
 }
 
 void displayDestinationInfo(Destination dest) {
-    destinationInfo.setTitle("ID:" + dest._id + " [X:" + String.format("%.2f",dest._location.x) + ", Y:" + String.format("%.2f",dest._location.y) + "]");
+    destinationInfo.setTitle("ID:" + dest._id + " [X:" + String.format("%.2f",dest._loc.x) + ", Y:" + String.format("%.2f",dest._loc.y) + "]");
     destinationInfo.setColour(theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2]);
     destinationInfo.clearData();
     destinationInfo.add("Size: [" + dest._size + "]");
@@ -492,11 +496,11 @@ void displayDestinationInfo(Destination dest) {
 }
 
 void displayObstacleInfo(Obstacle o) {
-    obstacleInfo.setTitle("ID:" + o._id + " [X:" + String.format("%.2f",o._location.x) + ", Y:" + String.format("%.2f",o._location.y) + "]");
+    obstacleInfo.setTitle("ID:" + o._id + " [X:" + String.format("%.2f",o._loc.x) + ", Y:" + String.format("%.2f",o._loc.y) + "]");
     obstacleInfo.setColour(theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8]);
     obstacleInfo.clearData();
     obstacleInfo.add("Size: [" + o._size + "]");
-    obstacleInfo.add("Range: [" + o._range + "]");
+    obstacleInfo.add("Range: [" + o._Ob + "]");
     obstacleInfo.add("Mass: [" + o._mass + "]");
     obstacleInfo.draw();
 }
@@ -556,20 +560,20 @@ void displayParticle(Particle p) {
     * 
     */
     if (_usePoint) {
-        point(transX(p._location.x),transY(p._location.y));
+        point(transX(p._loc.x),transY(p._loc.y));
     } else {
         strokeWeight(1);
         stroke(theme.particleTheme[theme._theme][0]);
-        if(p._isPerimeter) {
+        if(p._isPerim) {
             fill(theme.particleTheme[theme._theme][1]);
         } else {
             fill(theme.particleTheme[theme._theme][2]);
         }
-        ellipse(transX(p._location.x),transY(p._location.y),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+        ellipse(transX(p._loc.x),transY(p._loc.y),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
         if (renderer == P3D && _shadow) {
             stroke(150,150,150,150);
             fill(150,150,150,150);
-            ellipse(transX(p._location.x),transY(p._location.y+100),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+            ellipse(transX(p._loc.x),transY(p._loc.y+100),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
         }
         if(_particleTicks) displayTick(p);
         if(_displayId) displayId(p);
@@ -577,9 +581,9 @@ void displayParticle(Particle p) {
             noFill();
             strokeWeight(1);
             stroke(150,0,0);
-            ellipse(transX(p._location.x),transY(p._location.y), p._repulse * 2 * _scale, p._repulse * 2 * _scale);
+            ellipse(transX(p._loc.x),transY(p._loc.y), p._Rb* 2 * _scale, p._Rb* 2 * _scale);
             stroke(0,150,0);
-            ellipse(transX(p._location.x),transY(p._location.y), p._range * 2 * _scale, p._range * 2 * _scale);
+            ellipse(transX(p._loc.x),transY(p._loc.y), p._Cb * 2 * _scale, p._Cb * 2 * _scale);
         }
     }
 }
@@ -594,7 +598,7 @@ void displayDestination(Destination d) {
     strokeWeight(constrain(2 * _scale,1,4));
     stroke(theme.destinationTheme[theme._theme][0]);
     fill(theme.destinationTheme[theme._theme][1]);
-    ellipse(transX(d._location.x),transY(d._location.y),constrain(20 * _scale,10,25),constrain(20 * _scale,10,25));
+    ellipse(transX(d._loc.x),transY(d._loc.y),constrain(20 * _scale,10,25),constrain(20 * _scale,10,25));
     if(_displayId) displayId(d);
 }
 
@@ -608,11 +612,11 @@ void displayObstacle(Obstacle o) {
     strokeWeight(constrain(2 * _scale,1,4));
     stroke(theme.obstacleTheme[theme._theme][0]);
     fill(theme.obstacleTheme[theme._theme][1]);
-    ellipse(transX(o._location.x),transY(o._location.y),constrain(20 * _scale,10,25),constrain(20 * _scale,10,25));
+    ellipse(transX(o._loc.x),transY(o._loc.y),constrain(20 * _scale,10,25),constrain(20 * _scale,10,25));
     noFill();
     strokeWeight(1);
     stroke(theme.obstacleTheme[theme._theme][2]);
-    ellipse(transX(o._location.x),transY(o._location.y), o._range * 2 * _scale, o._range * 2 * _scale);
+    ellipse(transX(o._loc.x),transY(o._loc.y), o._Ob * 2 * _scale, o._Ob * 2 * _scale);
     if(_displayId) displayId(o);
     if(system._obstacleLink) displayObstacleLines();
 }
@@ -622,10 +626,10 @@ void displayObstacleLines() {
         for (int i = 1; i < system.obstacles.size(); i++) {
             strokeWeight(1);
             stroke(theme.obstacleTheme[theme._theme][2]);
-            PVector start = system.obstacles.get(i)._location;
-            PVector end = system.obstacles.get(i - 1)._location;
+            PVector start = system.obstacles.get(i)._loc;
+            PVector end = system.obstacles.get(i - 1)._loc;
             PVector d = PVector.sub(end,start);
-            d.rotate(HALF_PI).setMag(system._obstacleRange);
+            d.rotate(HALF_PI).setMag(system._Ob);
             line(transX(start.x),transY(start.y),transX(end.x),transY(end.y));
             line(transX(start.x + d.x),transY(start.y + d.y),transX(end.x + d.x),transY(end.y + d.y));
             line(transX(start.x - d.x),transY(start.y - d.y),transX(end.x - d.x),transY(end.y - d.y));
@@ -682,22 +686,22 @@ void displayParticleLines() {
     * Start and endpoints moved to particle borders 
     * Slower?
     */ 
-    for (Particle i : system.particles) {
-        for (Particle j : system.particles) {
-           if (PVector.dist(i._location,j._location) < i._range & i != j) {
+    for (Particle i : system.S) {
+        for (Particle j : system.S) {
+           if (PVector.dist(i._loc,j._loc) < i._Cb & i != j) {
                // Calculate start point
-                PVector atb = PVector.sub(i._location,j._location);
+                PVector atb = PVector.sub(i._loc,j._loc);
                 atb.normalize().setMag(i._mass * j._size / 2);
-                PVector start = i._location.copy();
+                PVector start = i._loc.copy();
                 start.sub(atb);
                // Calculate endpoint  
-                PVector bta = PVector.sub(j._location,i._location);
+                PVector bta = PVector.sub(j._loc,i._loc);
                 bta.normalize().setMag(j._mass * j._size / 2);
-                PVector end = j._location.copy();
+                PVector end = j._loc.copy();
                 end.sub(bta);
                 // Enbolden perimeter lines
                 stroke(theme.lineTheme[theme._theme]);
-                if (i._isPerimeter && j._isPerimeter) {
+                if (i._isPerim && j._isPerim) {
                     strokeWeight(2);
             } else {
                     strokeWeight(1);
@@ -720,20 +724,20 @@ void displayPointLines() {
     * From centre to centre
     * Faster?
     */ 
-    for (Particle i : system.particles) {
-        for (Particle j : system.particles) {
-            if (PVector.dist(i._location,j._location) < i._range & i != j) {
+    for (Particle i : system.S) {
+        for (Particle j : system.S) {
+            if (PVector.dist(i._loc,j._loc) < i._Cb & i != j) {
                 // Calculate start point
-                PVector atb = PVector.sub(i._location,j._location);
-                PVector start = i._location.copy();
+                PVector atb = PVector.sub(i._loc,j._loc);
+                PVector start = i._loc.copy();
                 start.sub(atb);
                 // Calculate end point  
-                PVector bta = PVector.sub(j._location,i._location);
-                PVector end = j._location.copy();
+                PVector bta = PVector.sub(j._loc,i._loc);
+                PVector end = j._loc.copy();
                 end.sub(bta);
                // Enbolden perimeter lines
                 stroke(theme.lineTheme[theme._theme]);
-                if (i._isPerimeter && j._isPerimeter) {
+                if (i._isPerim && j._isPerim) {
                     strokeWeight(2);
             } else {
                     strokeWeight(1);
@@ -746,16 +750,16 @@ void displayPointLines() {
     }
 }
 
-void displayId(Particle agent) {
+void displayId(Particle p) {
     /** 
     * Renders the particleId onto the canvas
     *
-    * @param agent to apply Id
+    * @param p to apply Id
     */
     textSize(12);
     textAlign(CENTER,CENTER);
     fill(0, 0, 0,255);
-    text(agent._id,transX(agent._location.x),transY(agent._location.y));
+    text(p._id,transX(p._loc.x),transY(p._loc.y));
 }
 
 void displayId(Destination d) {
@@ -768,7 +772,7 @@ void displayId(Destination d) {
     textSize(12);
     textAlign(CENTER,CENTER);
     fill(0, 0, 0,255);
-    text(d._id,transX(d._location.x),transY(d._location.y));
+    text(d._id,transX(d._loc.x),transY(d._loc.y));
 }
 
 void displayId(Obstacle o) {
@@ -781,24 +785,24 @@ void displayId(Obstacle o) {
     textSize(12);
     textAlign(CENTER,CENTER);
     fill(255,255,255,255);
-    text(o._id,transX(o._location.x),transY(o._location.y));
+    text(o._id,transX(o._loc.x),transY(o._loc.y));
 }
 
 
-void displayTick(Particle agent) {
+void displayTick(Particle p) {
     /** 
     * Renders the particle's tick onto the canvas
     *
-    * @param agent Agent/Particle to apply tick to.
+    * @param p Agent/Particle to apply tick to.
     * 
     */
     float _tickSize = 5.0;
     stroke(0);
-    PVector tick = PVector.sub(agent._nextLocation,agent._location);
-    tick.setMag((agent._mass * agent._size / 2) + _tickSize);
-    tick.add(agent._location);
+    PVector tick = PVector.sub(p._nextLocation,p._loc);
+    tick.setMag((p._mass * p._size / 2) + _tickSize);
+    tick.add(p._loc);
     strokeWeight(2);
-    line(transX(agent._location.x), transY(agent._location.y), transX(tick.x), transY(tick.y));
+    line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));
     strokeWeight(1);
 }
 
@@ -868,8 +872,8 @@ boolean mouseOver(Particle p) {
     * @param p Particle.
     * 
     */
-    float x = transX(p._location.x);
-    float y = transY(p._location.y);
+    float x = transX(p._loc.x);
+    float y = transY(p._loc.y);
     int w = 10;
     int h = 10;
     if(mouseX >= x - w && mouseX <= x + w && 
@@ -887,8 +891,8 @@ boolean mouseOver(Destination d) {
     * @param p Particle.
     * 
     */
-    float x = transX(d._location.x);
-    float y = transY(d._location.y);
+    float x = transX(d._loc.x);
+    float y = transY(d._loc.y);
     int w = 10;
     int h = 10;  
     if(mouseX >= x - w && mouseX <= x + w && 
@@ -906,8 +910,8 @@ boolean mouseOver(Obstacle o) {
     * @param o Obstacle.
     * 
     */
-    float x = transX(o._location.x);
-    float y = transY(o._location.y);
+    float x = transX(o._loc.x);
+    float y = transY(o._loc.y);
     int w = 10;
     int h = 10;  
     if(mouseX >= x - w && mouseX <= x + w && 
