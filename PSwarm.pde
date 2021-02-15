@@ -31,7 +31,7 @@ PImage logo;
 PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2021";
-String _VERSION = "0.1.5";
+String _VERSION = "0.1.6";
 float _scale = 1f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
@@ -153,8 +153,11 @@ void setup() {
         case 7:
         system = new Model7(); 
         break;
-        default:
+        case 8:
         system = new Model8(); 
+        break;
+        default:
+        system = new Model9(); 
     }
     
     directionInfo._visible = boolean(properties.getProperty("directionBox"));

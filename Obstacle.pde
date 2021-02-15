@@ -52,6 +52,15 @@ class Obstacle {
     this._loc = new PVector(x,y,z);
   }
 
+  public JSONObject getJSONProps() {
+    JSONObject o = new JSONObject();
+    o.put("id", this._id);
+    o.put("size",_size);
+    o.put("mass",_mass);
+    o.put("ob",_Ob);
+    return o;
+  }
+
   public void setPos(float x, float y, float z) {
     this._loc.set(x,y,z);
   }

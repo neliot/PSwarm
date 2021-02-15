@@ -14,6 +14,9 @@ abstract class PSystem {
   float _Ob = 75f; // Obstacle range
   float _pr = 1f; // Compressed perimeter reduction divisor
   float _pc = 1f; // Compressed perimeter reduction divisor
+  int _seed = 1234;
+  int _grid = 500;
+  PSVector test = new PSVector();
   boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
@@ -56,6 +59,8 @@ abstract class PSystem {
     }
 
     this._swarmSize = int(modelProperties.getProperty("size"));
+    this._seed = int(modelProperties.getProperty("seed"));
+    this._grid = int(modelProperties.getProperty("grid"));
     this._Cb = float(modelProperties.getProperty("Cb"));
     this._Rb = float(modelProperties.getProperty("Rb"));
     this._kr = float(modelProperties.getProperty("kr"));
@@ -100,74 +105,231 @@ abstract class PSystem {
 /** 
 * Save environment settings to file.
 * 
-*/     
+*/  
+    int i = 0;
+    JSONObject json = new JSONObject();
+    JSONObject jsonParams = new JSONObject();
+
+    JSONObject jsonAgents = new JSONObject();
+    JSONArray jsonAgentsProps = new JSONArray();
+    JSONArray jsonAgentsCoords = new JSONArray();
+    JSONArray jsonAgentsX = new JSONArray();
+    JSONArray jsonAgentsY = new JSONArray();
+    JSONArray jsonAgentsZ = new JSONArray();
+
+    JSONObject jsonDestinations = new JSONObject();
+    JSONArray jsonDestinationsProps = new JSONArray();
+    JSONArray jsonDestinationsCoords = new JSONArray();
+    JSONArray jsonDestinationsX = new JSONArray();
+    JSONArray jsonDestinationsY = new JSONArray();
+    JSONArray jsonDestinationsZ = new JSONArray();
+
+    JSONObject jsonObstacles = new JSONObject();
+    JSONArray jsonObstaclesProps = new JSONArray();
+    JSONArray jsonObstaclesCoords = new JSONArray();
+    JSONArray jsonObstaclesX = new JSONArray();
+    JSONArray jsonObstaclesY = new JSONArray();
+    JSONArray jsonObstaclesZ = new JSONArray();
+    
     PrintWriter output;
-    output = createWriter("save/P-"+_modelId+"-agents.dat"); 
-    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
+//    output = createWriter("save/P-"+_modelId+"-agents.dat"); 
+//    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
+    jsonParams.put("cb",this._Cb);
+//    jsonParams.put("seed",this._seed);
+//    jsonParams.put("grid",this._grid);
+    jsonParams.put("rb",this._Rb);
+    jsonParams.put("kr",this._kr);
+    jsonParams.put("kc",this._kc);
+    jsonParams.put("kd",this._kd);
+    jsonParams.put("ko",this._ko);
+    jsonParams.put("ob",this._Ob);
+    jsonParams.put("pr",this._pr);
+    jsonParams.put("pc",this._pc);
+    jsonParams.put("perim_coord",this._perimCoord);
+
+    i = 0;
     for(Particle p : S) {
-        output.println(p.toString());
-    }        
-    output.flush();
-    output.close();
-    output = createWriter("save/P-"+_modelId+"-obstacles.dat"); 
+      jsonAgentsProps.setJSONObject(i,p.getJSONProps());
+      jsonAgentsX.setFloat(i,p._loc.x);
+      jsonAgentsY.setFloat(i,p._loc.y);
+      jsonAgentsZ.setFloat(i,p._loc.z);
+      i++;
+//      output.println(p.toString());
+    }
+    
+    jsonAgentsCoords.setJSONArray(0,jsonAgentsX);
+    jsonAgentsCoords.setJSONArray(1,jsonAgentsY);
+    jsonAgentsCoords.setJSONArray(2,jsonAgentsZ);
+
+    jsonAgents.put("coords",jsonAgentsCoords);
+    jsonAgents.put("props",jsonAgentsProps);
+
+//    output.flush();
+//    output.close();
+//    output = createWriter("save/P-"+_modelId+"-obstacles.dat");
+
+     i = 0;
     for(Obstacle o : obstacles) {
-        output.println(o.toString());
-    }        
-    output.flush();
-    output.close();
-    output = createWriter("save/P-"+_modelId+"-destinations.dat"); 
+      jsonObstaclesProps.setJSONObject(i,o.getJSONProps());
+      jsonObstaclesX.setFloat(i,o._loc.x);
+      jsonObstaclesY.setFloat(i,o._loc.y);
+      jsonObstaclesZ.setFloat(i,o._loc.z);
+      i++;
+//      output.println(o.toString());
+    } 
+
+    jsonObstaclesCoords.setJSONArray(0,jsonObstaclesX);
+    jsonObstaclesCoords.setJSONArray(1,jsonObstaclesY);
+    jsonObstaclesCoords.setJSONArray(2,jsonObstaclesZ);
+
+    jsonObstacles.put("coords",jsonObstaclesCoords);
+    jsonObstacles.put("props",jsonObstaclesProps);
+
+//    output.flush();
+//    output.close();
+//    output = createWriter("save/P-"+_modelId+"-destinations.dat"); 
+    i = 0;
     for(Destination d : destinations) {
-        output.println(d.toString());
+      jsonDestinationsProps.setJSONObject(i,d.getJSONProps());
+      jsonDestinationsX.setFloat(i,d._loc.x);
+      jsonDestinationsY.setFloat(i,d._loc.y);
+      jsonDestinationsZ.setFloat(i,d._loc.z);
+      i++;
+//      output.println(d.toString());
     }        
-    output.flush();
-    output.close();
+
+    jsonDestinationsCoords.setJSONArray(0,jsonDestinationsX);
+    jsonDestinationsCoords.setJSONArray(1,jsonDestinationsY);
+    jsonDestinationsCoords.setJSONArray(2,jsonDestinationsZ);
+
+    jsonDestinations.put("coords",jsonDestinationsCoords);
+    jsonDestinations.put("props",jsonDestinationsProps);
+
+//    output.flush();
+//    output.close();
+
+    json.put("obstacles",jsonObstacles);
+    json.put("destinations",jsonDestinations);
+    json.put("agents",jsonAgents);
+    json.put("params",jsonParams);
+    saveJSONObject(json, "save/pswarm"+_modelId+".json");
   }
 
   public void loadSwarm() {
 /** 
 * Load environment settings from files.
 * 
-*/    
-    String[] lines = loadStrings("save/P-"+_modelId+"-agents.dat");
-    float[] params = float(split(lines[0], ','));
-    this._Cb = params[1];
-    this._Rb = params[2];
-    this._kr = params[3];
-    this._kc = params[4];
-    this._kd = params[5];
-    this._pc = params[6];
-    this._pr = params[7];
+*/   
+    JSONObject json = new JSONObject();
+    json = loadJSONObject("save/pswarm"+_modelId+".json");
+    println("cb:" + json.getJSONObject("params").getFloat("cb"));
+    println("rb:" + json.getJSONObject("params").getFloat("rb"));
+    println("ob:" + json.getJSONObject("params").getFloat("ob"));
+    println("kd:" + json.getJSONObject("params").getFloat("kd"));
+    println("ko:" + json.getJSONObject("params").getFloat("ko"));
+    println("kc:" + json.getJSONObject("params").getFloat("kc"));
+    println("kr:" + json.getJSONObject("params").getFloat("kr"));
+    println("pc:" + json.getJSONObject("params").getFloat("pc"));
+    println("pr:" + json.getJSONObject("params").getFloat("pr"));
+    println("PerimCoord:" + json.getJSONObject("params").getBoolean("perim_coord"));
 
+//    println("AGENTS:");
     this.S.clear();
-    for (int i = 1 ; i < lines.length; i++) {
-      float[] nums = float(split(lines[i], ','));
+
+    JSONArray props = json.getJSONObject("agents").getJSONArray("props");
+    JSONArray coords = json.getJSONObject("agents").getJSONArray("coords");
+
+    for (int i = 0; i < props.size(); i++) {
+      JSONObject p = props.getJSONObject(i);
+      JSONArray x = coords.getJSONArray(0);
+      JSONArray y = coords.getJSONArray(1);
+      JSONArray z = coords.getJSONArray(2);
       try {
-        S.add(new Particle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6], nums[7]));
-        this._nextParticleId = int(nums[0]) + 1;
+//        Particle(int i, float x, float y, float z, float Cb, float Rb, float size, float mass)
+        S.add(new Particle(p.getInt("id"), (float)x.getDouble(i), (float)y.getDouble(i), (float)z.getDouble(i), (float)p.getDouble("cb"), (float)p.getDouble("rb"), (float)p.getDouble("size"), (float)p.getDouble("mass")));
+        this._nextParticleId = p.getInt("id") + 1;
       } catch (Exception e) {
         println(e);
         exit();
       }
-    }
-    lines = loadStrings("save/P-"+_modelId+"-obstacles.dat");
-    this.obstacles.clear();
-    for (String data : lines) {
-      float[] nums = float(split(data, ','));
-      obstacles.add(new Obstacle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6]));
-      this._nextObsId = int(nums[0]) + 1;
+//      println(p.getInt("id") + ":" + p.getFloat("rb") + " x:" + x.getDouble(i) + " y:" + y.getDouble(i) + " z:" + z.getDouble(i));
     }
 
-    lines = loadStrings("save/P-"+_modelId+"-destinations.dat");
-    this.destinations.clear();
-    for (String data : lines) {
-      float[] nums = float(split(data, ','));
-      Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
-      destinations.add(d);
-      this._nextDestId = int(nums[0]) + 1;
+//    println("DESTINATIONS:");
+    props = json.getJSONObject("destinations").getJSONArray("props");
+    coords = json.getJSONObject("destinations").getJSONArray("coords");
+
+    for (int i = 0; i < props.size(); i++) {
+      JSONObject d = props.getJSONObject(i);
+      JSONArray x = coords.getJSONArray(0);
+      JSONArray y = coords.getJSONArray(1);
+      JSONArray z = coords.getJSONArray(2);
+//  Destination(int i, float x, float y, float z, float size, float mass) {
+
+      Destination dest = new Destination(d.getInt("id"), (float)x.getDouble(i), (float)y.getDouble(i), (float)z.getDouble(i), (float)d.getDouble("size"), (float)d.getDouble("mass"));
+      destinations.add(dest);
+      this._nextDestId = d.getInt("id") + 1;
       for(Particle p : S) {
-        p.addDestination(d);
+        p.addDestination(dest);
       }
+//      println(d.getInt("id") + ":" + d.getFloat("size") + " x:" + x.getDouble(i) + " y:" + y.getDouble(i) + " z:" + z.getDouble(i));
     }
+
+//    println("OBSTACLES:");
+    props = json.getJSONObject("obstacles").getJSONArray("props");
+    coords = json.getJSONObject("obstacles").getJSONArray("coords");
+
+    for (int i = 0; i < props.size(); i++) {
+      JSONObject o = props.getJSONObject(i);
+      JSONArray x = coords.getJSONArray(0);
+      JSONArray y = coords.getJSONArray(1);
+      JSONArray z = coords.getJSONArray(2);
+//      Obstacle(int i, float x, float y, float z, float Ob, float size, float mass) {
+      obstacles.add(new Obstacle(o.getInt("id"), (float)x.getDouble(i), (float)y.getDouble(i), (float)z.getDouble(i), (float)o.getDouble("ob"), (float)o.getDouble("size"), (float)o.getDouble("mass")));
+      this._nextObsId = o.getInt("id") + 1;
+//      println(o.getInt("id") + ":" + o.getFloat("size") + " x:" + x.getDouble(i) + " y:" + y.getDouble(i) + " z:" + z.getDouble(i));
+    }
+
+    // String[] lines = loadStrings("save/P-"+_modelId+"-agents.dat");
+    // float[] params = float(split(lines[0], ','));
+    // this._Cb = params[1];
+    // this._Rb = params[2];
+    // this._kr = params[3];
+    // this._kc = params[4];
+    // this._kd = params[5];
+    // this._pc = params[6];
+    // this._pr = params[7];
+
+    // this.S.clear();
+    // for (int i = 1 ; i < lines.length; i++) {
+    //   float[] nums = float(split(lines[i], ','));
+    //   try {
+    //     S.add(new Particle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6], nums[7]));
+    //     this._nextParticleId = int(nums[0]) + 1;
+    //   } catch (Exception e) {
+    //     println(e);
+    //     exit();
+    //   }
+    // }
+    // lines = loadStrings("save/P-"+_modelId+"-obstacles.dat");
+    // this.obstacles.clear();
+    // for (String data : lines) {
+    //   float[] nums = float(split(data, ','));
+    //   obstacles.add(new Obstacle(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5], nums[6]));
+    //   this._nextObsId = int(nums[0]) + 1;
+    // }
+
+    // lines = loadStrings("save/P-"+_modelId+"-destinations.dat");
+    // this.destinations.clear();
+    // for (String data : lines) {
+    //   float[] nums = float(split(data, ','));
+    //   Destination d = new Destination(int(nums[0]), nums[1], nums[2], nums[3], nums[4], nums[5]);
+    //   destinations.add(d);
+    //   this._nextDestId = int(nums[0]) + 1;
+    //   for(Particle p : S) {
+    //     p.addDestination(d);
+    //   }
+    // }
     this.init(); 
   }
   

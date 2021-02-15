@@ -13,7 +13,7 @@ class Particle {
   float _size = 10.0f;
   float _mass = 1.0f;
   float _Cb = 0.0f;
-  float _Rb= 0.0f;
+  float _Rb = 0.0f;
   float _topspeed = 3.0f/_mass; 
   float _sweepAngle = 0.0f;
   boolean _isPerim = true;
@@ -65,6 +65,17 @@ class Particle {
     this._nextLocation = new PVector(x,y,z);
     this._resultant = new PVector(0,0,0);
   }
+
+  public JSONObject getJSONProps() {
+    JSONObject p = new JSONObject();
+    p.put("size",this._size);
+    p.put("mass",this._mass);
+    p.put("cb",this._Cb);
+    p.put("rb",this._Rb);
+    p.put("top_speed",this._topspeed); 
+    p.put("id", this._id);
+    return p;
+  };
 
   public void setDestinations(ArrayList<Destination> destinations) {
 /** 

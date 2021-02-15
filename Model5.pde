@@ -12,10 +12,11 @@ class Model5 extends PSystem {
   }
 
   void populate() {
+    PRNG rand = new PRNG(_seed);
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,random((width * 0.2),(width * 0.8)),random((height * 0.2),(height * 0.8)),0,this._Cb,this._Rb));
+        S.add(new Particle(this._nextParticleId++,(width/2 - _grid/2) + rand.nextInt(_grid),(height/2 - _grid/2) + rand.nextInt(_grid),0,this._Cb,this._Rb));
       } catch (Exception e) {
         println(e);
         exit();

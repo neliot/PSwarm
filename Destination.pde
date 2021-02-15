@@ -38,6 +38,14 @@ class Destination {
     this._loc.set(x,y,z);
   }
 
+  public JSONObject getJSONProps() {
+    JSONObject o = new JSONObject();
+    o.put("id", this._id);
+    o.put("size",_size);
+    o.put("mass",_mass);
+    return o;
+  }
+
   public String toString() {
 /** 
 * Creates a formatted string of destination.

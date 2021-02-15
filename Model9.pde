@@ -1,6 +1,6 @@
-class Model1 extends PSystem {
-  Model1() {
-    super("Linear Vector","1");
+class Model9 extends PSystem {
+  Model9() {
+    super("Linear Vector - Adversarial","9");
   }
 
   void init() {};
@@ -10,7 +10,7 @@ class Model1 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,(width/2 - _grid/2) + rand.nextInt(_grid),(height/2 - _grid/2) + rand.nextInt(_grid),0,this._Cb,this._Rb));
+        S.add(new Particle(this._nextParticleId++,rand.nextInt(width),rand.nextInt(height),0,this._Cb,this._Rb));
       } catch (Exception e) {
         println(e);
         exit();
@@ -157,22 +157,36 @@ class Model1 extends PSystem {
 */
     PVector destination = new PVector(0,0,0);
     PVector vd = new PVector(0,0,0);
+    PVector vad = new PVector(0,0,0);
+    int id = 0;
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._loc;      
       for (int i = 1; i < p._destinations.size(); i++) {
         if (PVector.dist(p._loc,destination) > PVector.dist(p._loc,p._destinations.get(i)._loc)) {
           destination = p._destinations.get(i)._loc;
+          id = p._destinations.get(i)._id;
         }
       }   
     }    
     if (!this._perimCoord) {
       vd = PVector.sub(destination,p._loc);
+      if (id % 2 == 0) {
+        vad = vd.copy().rotate(-HALF_PI).mult(2);
+      } else {
+        vad = vd.copy().rotate(HALF_PI).mult(2);
+      }
     } else {
       /* Perimeter only control */
       if (p._isPerim) {
         vd = PVector.sub(destination,p._loc);
+        if (id % 2 == 0) {
+          vad = vd.copy().rotate(-HALF_PI).mult(2);
+        } else {
+          vad = vd.copy().rotate(HALF_PI).mult(2);
+        }
       }
     }
+    vd.add(vad);
     return vd.setMag(this._kd);
   }
 }
