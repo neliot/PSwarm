@@ -220,19 +220,7 @@ abstract class PSystem {
 * Load environment settings from files.
 * 
 */   
-    JSONObject json = new JSONObject();
-    json = loadJSONObject("save/pswarm"+_modelId+".json");
-    println("cb:" + json.getJSONObject("params").getFloat("cb"));
-    println("rb:" + json.getJSONObject("params").getFloat("rb"));
-    println("ob:" + json.getJSONObject("params").getFloat("ob"));
-    println("kd:" + json.getJSONObject("params").getFloat("kd"));
-    println("ko:" + json.getJSONObject("params").getFloat("ko"));
-    println("kc:" + json.getJSONObject("params").getFloat("kc"));
-    println("kr:" + json.getJSONObject("params").getFloat("kr"));
-    println("pc:" + json.getJSONObject("params").getFloat("pc"));
-    println("pr:" + json.getJSONObject("params").getFloat("pr"));
-    println("PerimCoord:" + json.getJSONObject("params").getBoolean("perim_coord"));
-
+    JSONObject json = loadJSONObject("save/pswarm"+_modelId+".json");
 //    println("AGENTS:");
     this.S.clear();
 
