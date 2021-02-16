@@ -10,7 +10,7 @@ class Model9 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,rand.nextInt(width),rand.nextInt(height),0,this._Cb,this._Rb));
+        S.add(new Particle(this._nextParticleId++,rand.nextInt(width),rand.nextInt(height),0,this._Cb,this._Rb,this._speed));
       } catch (Exception e) {
         println(e);
         exit();

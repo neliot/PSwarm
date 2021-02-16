@@ -264,7 +264,7 @@ abstract class PSystem {
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
       try {
-        S.add(new Particle(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), this._Cb, this._Rb, 10.0f, 1.0f, this._speed));
+        S.add(new Particle(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), this._Cb, this._Rb, this._speed));
         this._nextParticleId = i + 1;
       } catch (Exception e) {
         println(e);
@@ -281,7 +281,7 @@ abstract class PSystem {
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
 
-      Destination dest = new Destination(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), 10.0f, 1.0f);
+      Destination dest = new Destination(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i));
       destinations.add(dest);
       this._nextDestId = i + 1;
       for(Particle p : S) {
@@ -297,7 +297,7 @@ abstract class PSystem {
       JSONArray x = coords.getJSONArray(0);
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
-      obstacles.add(new Obstacle(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), this._Ob, 10.0f, 1.0f));
+      obstacles.add(new Obstacle(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), this._Ob));
       this._nextObsId = i + 1;
     }
     this.init(); 

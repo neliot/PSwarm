@@ -11,7 +11,7 @@ class Model6 extends PSystem {
     for(int i = 0; i < destinations.size(); i++) {
       try {
         // create agent in centred quartile.
-        Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._Cb,this._Rb);
+        Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._Cb,this._Rb,this._speed);
         S.add(p);
         p._destinations.clear();
         p._destinations.add(this.destinations.get(i));

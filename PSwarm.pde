@@ -438,6 +438,7 @@ void generateMenu() {
     menuInfo2.clearData();
     menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
     menuInfo2.add("==========================");  
+    menuInfo2.add("Agent Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._Cb);
     menuInfo2.add("Cohesion Bias: " + system._kc);
     menuInfo2.add("Repulsion Range: " + system._Rb);

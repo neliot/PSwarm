@@ -16,7 +16,7 @@ class Model5 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,(width/2 - _grid/2) + rand.nextInt(_grid),(height/2 - _grid/2) + rand.nextInt(_grid),0,this._Cb,this._Rb));
+        S.add(new Particle(this._nextParticleId++,(width/2 - _grid/2) + rand.nextInt(_grid),(height/2 - _grid/2) + rand.nextInt(_grid),0,this._Cb,this._Rb,this._speed));
       } catch (Exception e) {
         println(e);
         exit();

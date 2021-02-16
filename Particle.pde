@@ -60,6 +60,32 @@ class Particle {
     _resultant = new PVector(0,0,0);
   }
 
+  Particle(int i, float x, float y, float z, float Cb, float Rb, float speed) throws Exception {
+/** 
+* Creates a particle
+* 
+* @param i Agent Id
+* @param x location
+* @param y location
+* @param z location
+* @param Cb cohesion range of agents
+* @param Rb repulse repulsion range of agents
+* @param size diameter of agent
+* @param mass mass of agent (can be used to effect speed)
+*/
+    this._id = i;
+    this._Cb = Cb;
+    this._Rb = Rb;
+    this._topspeed = speed;
+    if (_Rb >= Cb) {
+      throw new Exception("Range must be greater than Repulsion");
+    }
+    _loc = new PVector(x,y,z);
+    _nextLocation = new PVector(x,y,z);
+    _resultant = new PVector(0,0,0);
+  }
+
+
   Particle(int i, float x, float y, float z, float Cb, float Rb) throws Exception {
 /** 
 * Creates a particle
