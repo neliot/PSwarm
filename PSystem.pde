@@ -1,3 +1,17 @@
+/************************************************
+* Psystem Class - abstract class for 
+*                 implementation of models
+*************************************************
+* V 0.1
+*************************************************
+* Author: Neil Eliot
+*************************************************
+* Date: 16/02/2021
+*************************************************
+* Modified import export to JSON
+*************************************************
+*/
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,7 +34,6 @@ abstract class PSystem {
   int _seed = 1234;
   int _grid = 500;
   float _speed = 3.0f; // Global agent speed (stored in each agent for future work)
-  PSVector test = new PSVector();
   boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
