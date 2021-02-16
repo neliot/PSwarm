@@ -18,7 +18,7 @@ class Particle {
   float _sweepAngle = 0.0f;
   boolean _isPerim = true;
   
-  Particle(int i, float x, float y, float z, float Cb, float Rb, float size, float mass) throws Exception {
+  Particle(int i, float x, float y, float z, float Cb, float Rb, float size, float mass, float speed) throws Exception {
 /** 
 * Creates a particle
 * 
@@ -36,6 +36,7 @@ class Particle {
     this._Rb = Rb;
     this._size = size;
     this._mass = mass;
+    this._topspeed = speed;
     if (_Rb >= Cb) {
       throw new Exception("Range must be greater than Repulsion");
     }
