@@ -20,7 +20,7 @@
  **************************************************
  * 18/09/2020 - NE
  **************************************************
- * 1. Move all graphics into main body of 
+ * 1. Moved all graphics into main body of 
  *    application.
  * 2. Refactored PSystem and Particle to be model 
  *    only.
@@ -78,7 +78,7 @@
  **************************************************
  * 03/12/2020 - 0.1.1 - NE
  **************************************************
- * 1. Added themes framework activted with 0 key
+ * 1. Added themes framework activated with 0 key
  **************************************************
  * 03/12/2020 - 0.1.2 - NE
  **************************************************
@@ -152,5 +152,11 @@
  **************************************************
  * 15/02/2021 - 0.1.6 - NE
  **************************************************
- * 1. Converted swarm file saving to JSON format.
+ * 1. Converted import/export to JSON format.
+ **************************************************
+ * 16/02/2021 - 0.1.6 - NE
+ **************************************************
+ * 1. Removed "props" from JSON to make compatible 
+ * with Python simulator. (Global settings (params)
+ * added to imported objects)
  **************************************************/
