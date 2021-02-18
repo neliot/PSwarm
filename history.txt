@@ -159,4 +159,9 @@
  * 1. Removed "props" from JSON to make compatible 
  * with Python simulator. (Global settings (params)
  * added to imported objects)
- **************************************************/
+ **************************************************
+ * 17/02/2021 - 0.1.6 - NE
+ **************************************************
+ * 1. Added ofset and scaling to properties for
+ *    compatability with Python simulator
+ **************************************************//

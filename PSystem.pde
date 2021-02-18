@@ -124,7 +124,7 @@ abstract class PSystem {
 
   public void saveSwarm() {
 /** 
-* Save environment settings to file.
+* Save environment settings to JSON file.
 * 
 */  
     int i = 0;
@@ -234,7 +234,7 @@ abstract class PSystem {
 
   public void loadSwarm() {
 /** 
-* Load environment settings from files.
+* Load environment settings from JSON file.
 * 
 */   
     JSONObject json = loadJSONObject("save/pswarm"+_modelId+".json");
@@ -300,6 +300,7 @@ abstract class PSystem {
       obstacles.add(new Obstacle(i, (float)x.getFloat(i), (float)y.getFloat(i), (float)z.getFloat(i), this._Ob));
       this._nextObsId = i + 1;
     }
+// Initialise the swarm based on current model requirements.    
     this.init(); 
   }
   

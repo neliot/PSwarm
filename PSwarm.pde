@@ -1,6 +1,6 @@
 /**************************************************
 * PSwarm
-**************************************************
+***************************************************
 * AUTHOR: Dr. Neil Eliot 
 * See history.txt
 ***************************************************************************
@@ -32,7 +32,7 @@ PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2021";
 String _VERSION = "0.1.6";
-float _scale = 1f; // Scaling factor
+float _scale = 1.0f; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
 int _clickedOffsetX = 0; // Swarm display offsetX
@@ -130,6 +130,8 @@ void setup() {
     mouse1 = mice1.get(_mode);
     mouse2 = mice2.get(_mode);
     mouse = mouse1;
+    _offsetX = width/2;
+    _offsetY = height/2;
     
     switch(int(properties.getProperty("model"))) {
         case 1:
@@ -168,6 +170,7 @@ void setup() {
     menuInfo2._minimised = boolean(properties.getProperty("menu2BoxMinimised"));
     _displayId = boolean(properties.getProperty("displayId"));
     _particleTicks = boolean(properties.getProperty("particleTicks"));
+    _scale = float(properties.getProperty("scale"));
     _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
     _lines = boolean(properties.getProperty("lines"));
     _grid = boolean(properties.getProperty("grid"));
@@ -203,6 +206,7 @@ void draw() {
         text("V:" + _VERSION + " - " + system._model,(width - logo.width) / 2,((height - logo.height) / 2) - 5);
         return;
     } else {
+//        scale(1,-1);
         background(theme.desktopTheme[theme._theme][0]);
     }
     if ( focused && mousePresent ) {
@@ -304,8 +308,8 @@ void mouseReleased() {
 
 void mouseWheel(MouseEvent event) {
     float e = event.getCount();
-    if(e > 0) {if (_scale >= 0.2) _scale -= 0.01;}
-    if(e < 0) {if (_scale <= 5.0) _scale += 0.01;}
+    if(e > 0) {if (_scale > 0.2) _scale -= 0.1;}
+    if(e < 0) {if (_scale < 100.0) _scale += 0.1;}
 }
 
 void mouseDragged() {
@@ -324,8 +328,8 @@ void mouseDragged() {
     if(mouseButton == CENTER) {
         int moveX = mouseX - _clickedMouseX;
         int moveY = mouseY - _clickedMouseY;
-        if (_offsetX + moveX >= - 10000 && _offsetX + moveX <= 10000) _offsetX = _clickedOffsetX + moveX;
-        if (_offsetY + moveY >= - 10000 && _offsetY + moveY <= 10000) _offsetY = _clickedOffsetY + moveY;
+        if (_offsetX + moveX >= -10000 && _offsetX + moveX <= 10000) _offsetX = _clickedOffsetX + moveX;
+        if (_offsetY + moveY >= -10000 && _offsetY + moveY <= 10000) _offsetY = _clickedOffsetY + moveY;
     }
 }
 
@@ -338,8 +342,8 @@ void keyPressed() {
     if(key == '?') {_menu = !_menu;}
     if(key == 'r') {system._run = !system._run;}
     if(key == ' ') {system._dest = !system._dest;}
-    if(key == 'q') {if (_gridSize > 10) _gridSize -= 10;}
-    if(key == 'w') {if (_gridSize < 100) _gridSize += 10;}
+    if(key == 'q') {if (_gridSize > 20) _gridSize -= 20;}
+    if(key == 'w') {if (_gridSize < 120) _gridSize += 20;}
     if(key == 'p') {system._perimCoord = !system._perimCoord;}  
     if(key == 'c') {system._perimCompress = !system._perimCompress;} 
     if(key == 'g') {_grid = !_grid;}
@@ -391,10 +395,10 @@ void scalers() {
     if(key == 'k') {if (_offsetX <= (width + 10000)) _offsetX += 15;}
     if(key == 'u') {if (_offsetY >= - 10000) _offsetY -= 15;}
     if(key == 'n') {if (_offsetY <= (height + 10000)) _offsetY += 15;}
-    if(key == 'j') {_offsetX = 0; _offsetY = 0;}
-    if(key == 'a') {if (_scale >= 0.2) _scale -= 0.01;}
+    if(key == 'j') {_offsetX = width/2; _offsetY = height/2;}
+    if(key == 'a') {if (_scale > 0.2) _scale -= 0.1;}
     if(key == 's') {_scale = 1;}
-    if(key == 'd') {if (_scale <= 5.0) _scale += 0.01;}
+    if(key == 'd') {if (_scale < 100.0) _scale += 0.1;}
 }
 
 void generateMenu() {
@@ -421,13 +425,13 @@ void generateMenu() {
     menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
     menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
     menuInfo1.add("===========PAN============");
-    menuInfo1.add("(h/k) X:" + _offsetX);
-    menuInfo1.add("(u/n) Y:" + _offsetY);
+    menuInfo1.add("(h/k) X:" + (_offsetX - width/2));
+    menuInfo1.add("(u/n) Y:" + (_offsetY - height/2));
     menuInfo1.add("(j) RESET - Offset");  
     menuInfo1.add("===========ZOOM===========");
     menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : " + String.format("%.2f",_scale));
     menuInfo1.add("==========================");
-    menuInfo1.add("(q) -10 (w) +10 - Grid :" + _gridSize);  
+    menuInfo1.add("(q) -20 (w) +20 - Grid :" + _gridSize);  
     menuInfo1.add("(y) load (o) Save - Snapshot");
     menuInfo1.add("(m) MODE:" + _modes[_mode]);  
     menuInfo1.add("(1) Screen Grab");  
@@ -438,7 +442,7 @@ void generateMenu() {
     menuInfo2.clearData();
     menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
     menuInfo2.add("==========================");  
-    menuInfo2.add("Agent Speed: " + system._speed);
+    menuInfo2.add("Default Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._Cb);
     menuInfo2.add("Cohesion Bias: " + system._kc);
     menuInfo2.add("Repulsion Range: " + system._Rb);
@@ -449,6 +453,8 @@ void generateMenu() {
     menuInfo2.add("==========================");  
     menuInfo2.add("Repulsion Proportion: " + system._pr);
     menuInfo2.add("Cohesion Proportion: " + system._pc);
+    menuInfo2.add("==========================");  
+    menuInfo2.add("Average Magnitude: " + String.format("%015.4f",system._swarmDirection.mag()));
 }
 
 void generateDirectionInfo() {
@@ -529,9 +535,13 @@ void displayGrid() {
     /** 
     * Display the grid
     */ 
+    stroke(theme.desktopTheme[theme._theme][2]);
+    strokeWeight(5);
+    noFill();
+    circle(_offsetX,_offsetY,10*_scale);
     boolean alt = true;
-    for (int x = - width; x < width * 2; x = x + _gridSize) {
-        if (alt) {
+    for (int x = - width * 2 + _offsetX; x < width * 2 + _offsetX; x += _gridSize) {
+        if (!alt) {
             strokeWeight(1);
             stroke(theme.desktopTheme[theme._theme][1]);
         } else {
@@ -539,10 +549,14 @@ void displayGrid() {
             stroke(theme.desktopTheme[theme._theme][2]);
         }
         alt = !alt;
+        if (x - _offsetX == 0) {
+            strokeWeight(1.5);
+            stroke(0);
+        }
         line(x, - height * 2,x,height);      
     }
     alt = true;
-    for (int y = - height * 2; y < height; y = y + _gridSize) {
+    for (int y = -height * 2 + _offsetY; y < height * 2  + _offsetY; y += _gridSize) {
         if (alt) {
             strokeWeight(1);
             stroke(theme.desktopTheme[theme._theme][1]);
@@ -551,6 +565,10 @@ void displayGrid() {
             stroke(theme.desktopTheme[theme._theme][2]);
         }
         alt = !alt;
+        if (y - _offsetY == 0) {
+            strokeWeight(1.5);
+            stroke(0);
+        }
         line( - width,y,width * 2,y);      
     }
     strokeWeight(1);
@@ -573,11 +591,11 @@ void displayParticle(Particle p) {
         } else {
             fill(theme.particleTheme[theme._theme][2]);
         }
-        ellipse(transX(p._loc.x),transY(p._loc.y),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+        ellipse(transX(p._loc.x),transY(p._loc.y),constrain((p._size * p._mass * _scale),3,25),constrain((p._size * p._mass * _scale),3,25));
         if (renderer == P3D && _shadow) {
             stroke(150,150,150,150);
             fill(150,150,150,150);
-            ellipse(transX(p._loc.x),transY(p._loc.y+100),(p._size * p._mass * _scale),(p._size * p._mass * _scale));
+            ellipse(transX(p._loc.x),transY(p._loc.y+100),constrain((p._size * p._mass * _scale),3,25),constrain((p._size * p._mass * _scale),3,25));
         }
         if(_particleTicks) displayTick(p);
         if(_displayId) displayId(p);
@@ -602,7 +620,7 @@ void displayDestination(Destination d) {
     strokeWeight(constrain(2 * _scale,1,4));
     stroke(theme.destinationTheme[theme._theme][0]);
     fill(theme.destinationTheme[theme._theme][1]);
-    ellipse(transX(d._loc.x),transY(d._loc.y),constrain(20 * _scale,10,25),constrain(20 * _scale,10,25));
+    ellipse(transX(d._loc.x),transY(d._loc.y),constrain(20 * _scale,5,15),constrain(20 * _scale,5,15));
     if(_displayId) displayId(d);
 }
 
@@ -680,7 +698,8 @@ void displayLines() {
     if(_usePoint) {
         displayPointLines();
     } else {
-        displayParticleLines();
+        displayPointLines();
+//        displayParticleLines();
     }
 }
 
@@ -792,7 +811,6 @@ void displayId(Obstacle o) {
     text(o._id,transX(o._loc.x),transY(o._loc.y));
 }
 
-
 void displayTick(Particle p) {
     /** 
     * Renders the particle's tick onto the canvas
@@ -803,7 +821,7 @@ void displayTick(Particle p) {
     float _tickSize = 5.0;
     stroke(0);
     PVector tick = PVector.sub(p._nextLocation,p._loc);
-    tick.setMag((p._mass * p._size / 2) + _tickSize);
+    tick.setMag(((p._mass * p._size / 2)  + _tickSize)/_scale);
     tick.add(p._loc);
     strokeWeight(2);
     line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));
