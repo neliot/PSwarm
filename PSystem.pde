@@ -97,9 +97,9 @@ abstract class PSystem {
     this._run = boolean(modelProperties.getProperty("run"));
     this._loggingP = boolean(modelProperties.getProperty("loggingP"));
     this._loggingN = boolean(modelProperties.getProperty("loggingN"));
-    this.plog = new Logger("csv/P-"+_modelId+"-p.csv");
-    this.nClog = new Logger("csv/P-"+_modelId+"-nc.csv");
-    this.nRlog = new Logger("csv/P-"+_modelId+"-nr.csv");
+    this.plog = new Logger("csv/"+modelProperties.getProperty("swarmData"));
+    this.nClog = new Logger("csv/"+modelProperties.getProperty("cohesionData"));
+    this.nRlog = new Logger("csv/"+modelProperties.getProperty("repulsionData"));
     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");  
@@ -229,7 +229,7 @@ abstract class PSystem {
     json.put("agents",jsonAgents);
     json.put("params",jsonParams);
     json.put("info",jsonInfo);
-    saveJSONObject(json, "save/pswarm"+_modelId+".json");
+    saveJSONObject(json, "save/" + modelProperties.getProperty("swarmName"));
   }
 
   public void loadSwarm() {
@@ -237,7 +237,7 @@ abstract class PSystem {
 * Load environment settings from JSON file.
 * 
 */   
-    JSONObject json = loadJSONObject("save/pswarm"+_modelId+".json");
+    JSONObject json = loadJSONObject("save/" + modelProperties.getProperty("swarmName"));
 
     JSONObject params = json.getJSONObject("params");
     this._Cb = params.getFloat("cb");
