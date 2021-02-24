@@ -444,12 +444,12 @@ void generateMenu() {
     menuInfo2.add("==========================");  
     menuInfo2.add("Default Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._Cb);
-    menuInfo2.add("Cohesion Bias: " + system._kc);
+    menuInfo2.add("Cohesion Weight: " + system._kc);
     menuInfo2.add("Repulsion Range: " + system._Rb);
-    menuInfo2.add("Repulsion Bias: " + system._kr);
+    menuInfo2.add("Repulsion Weight: " + system._kr);
     menuInfo2.add("Obstacle Range: " + system._Ob);
-    menuInfo2.add("Obstacle Bias: " + system._ko);
-    menuInfo2.add("Direction Bias: " + system._kd);
+    menuInfo2.add("Obstacle Weight: " + system._ko);
+    menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
     menuInfo2.add("Repulsion Proportion: " + system._pr);
     menuInfo2.add("Cohesion Proportion: " + system._pc);
@@ -591,11 +591,11 @@ void displayParticle(Particle p) {
         } else {
             fill(theme.particleTheme[theme._theme][2]);
         }
-        ellipse(transX(p._loc.x),transY(p._loc.y),constrain((p._size * p._mass * _scale),3,25),constrain((p._size * p._mass * _scale),3,25));
+        ellipse(transX(p._loc.x),transY(p._loc.y),constrain((p._size * p._mass * _scale),3,15),constrain((p._size * p._mass * _scale),3,15));
         if (renderer == P3D && _shadow) {
             stroke(150,150,150,150);
             fill(150,150,150,150);
-            ellipse(transX(p._loc.x),transY(p._loc.y+100),constrain((p._size * p._mass * _scale),3,25),constrain((p._size * p._mass * _scale),3,25));
+            ellipse(transX(p._loc.x),transY(p._loc.y+100),constrain((p._size * p._mass * _scale),3,15),constrain((p._size * p._mass * _scale),3,15));
         }
         if(_particleTicks) displayTick(p);
         if(_displayId) displayId(p);

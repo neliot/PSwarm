@@ -26,6 +26,7 @@ abstract class PSystem {
   float _kr = 300f; // Must be > _kc to prevent the swarm collapsing.
   float _kd = 80f; // Must be > particle._topspeed to allow free S to coalesce.
   float _ko = 500f; // Stay away from those obstacles Eugene.
+  float _kg = 0f; // mind the gap.
   float _Cb = 70f; // Cohesion range, Must be greater than range to repulsion range. 
   float _Rb = 50f; // Repulsion range, Must be less than range to allow cohesion.
   float _Ob = 75f; // GLobal Obstacle range (stored in each obstacle for future work)
@@ -86,6 +87,7 @@ abstract class PSystem {
     this._kc = float(modelProperties.getProperty("kc"));
     this._kd = float(modelProperties.getProperty("kd"));
     this._ko = float(modelProperties.getProperty("ko"));
+    this._kg = float(modelProperties.getProperty("kg"));
     this._Ob = float(modelProperties.getProperty("Ob"));
     this._speed = float(modelProperties.getProperty("speed"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
@@ -167,6 +169,7 @@ abstract class PSystem {
     jsonParams.setFloat("kc",this._kc);
     jsonParams.setFloat("kd",this._kd);
     jsonParams.setFloat("ko",this._ko);
+    jsonParams.setFloat("kg",this._kg);
     jsonParams.setFloat("ob",this._Ob);
     jsonParams.setFloat("pr",this._pr);
     jsonParams.setFloat("pc",this._pc);
@@ -246,6 +249,7 @@ abstract class PSystem {
     this._kc = params.getFloat("kc");
     this._kd = params.getFloat("kd");
     this._ko = params.getFloat("ko");
+    this._kg = params.getFloat("kg");
     this._Ob = params.getFloat("ob");
     this._pr = params.getFloat("pr");
     this._pc = params.getFloat("pc");

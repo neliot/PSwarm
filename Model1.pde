@@ -89,6 +89,10 @@ class Model1 extends PSystem {
     
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._nbr) {
+      if (p._loc.x == n._loc.x && p._loc.y == n._loc.y) {
+        println("ERROR:" + n._id + ":" + p._id);
+        exit();
+      }
       distance = PVector.dist(p._loc,n._loc);
       if (this._perimCompress && p._isPerim && n._isPerim) {
         v = PVector.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);

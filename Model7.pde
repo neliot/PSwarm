@@ -93,9 +93,9 @@ class Model7 extends PSystem {
       distance = PVector.dist(p._loc,n._loc);
       if (p._isPerim && p.hasGap() && this._perimCompress) {
         temp = PVector.add(p._gap.get(0)._loc,p._gap.get(1)._loc).mult(0.5);
-        temp = PVector.sub(temp,p._loc).mult(this._kc);
+        temp = PVector.sub(temp,p._loc).mult(this._kg);
       } else {
-        temp = PVector.sub(n._loc,p._loc).mult(this._kc);
+        temp = PVector.sub(n._loc,p._loc).mult(this._kg);
       }
       result.add(temp);
       if (this._loggingN && this._loggingP) {
