@@ -99,9 +99,9 @@ abstract class PSystem {
     this._run = boolean(modelProperties.getProperty("run"));
     this._loggingP = boolean(modelProperties.getProperty("loggingP"));
     this._loggingN = boolean(modelProperties.getProperty("loggingN"));
-    this.plog = new Logger("csv/"+modelProperties.getProperty("swarmData"));
-    this.nClog = new Logger("csv/"+modelProperties.getProperty("cohesionData"));
-    this.nRlog = new Logger("csv/"+modelProperties.getProperty("repulsionData"));
+    this.plog = new Logger("/data/csv/"+modelProperties.getProperty("swarmData"));
+    this.nClog = new Logger("/data/csv/"+modelProperties.getProperty("cohesionData"));
+    this.nRlog = new Logger("/data/csv/"+modelProperties.getProperty("repulsionData"));
     this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");  
@@ -159,7 +159,7 @@ abstract class PSystem {
     JSONArray jsonObstaclesZ = new JSONArray();
     
     PrintWriter output;
-//    output = createWriter("save/P-"+_modelId+"-agents.dat"); 
+//    output = createWriter("data/save/P-"+_modelId+"-agents.dat"); 
 //    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
     jsonParams.setFloat("cb",this._Cb);
 //    jsonParams.put("seed",this._seed);
@@ -232,7 +232,7 @@ abstract class PSystem {
     json.put("agents",jsonAgents);
     json.put("params",jsonParams);
     json.put("info",jsonInfo);
-    saveJSONObject(json, "save/" + modelProperties.getProperty("swarmName"));
+    saveJSONObject(json, "data/save/" + modelProperties.getProperty("swarmName"));
   }
 
   public void loadSwarm() {
@@ -240,7 +240,7 @@ abstract class PSystem {
 * Load environment settings from JSON file.
 * 
 */   
-    JSONObject json = loadJSONObject("save/" + modelProperties.getProperty("swarmName"));
+    JSONObject json = loadJSONObject("data/save/" + modelProperties.getProperty("swarmName"));
 
     JSONObject params = json.getJSONObject("params");
     this._Cb = params.getFloat("cb");
