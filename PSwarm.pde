@@ -161,7 +161,9 @@ void setup() {
         default:
         system = new Model9(); 
     }
-    
+    _scale = float(system.modelProperties.getProperty("scale"));
+
+
     directionInfo._visible = boolean(properties.getProperty("directionBox"));
     frameRateInfo._visible = boolean(properties.getProperty("frameRateBox"));
     menuInfo1._visible = boolean(properties.getProperty("menu1Box"));
@@ -170,7 +172,6 @@ void setup() {
     menuInfo2._minimised = boolean(properties.getProperty("menu2BoxMinimised"));
     _displayId = boolean(properties.getProperty("displayId"));
     _particleTicks = boolean(properties.getProperty("particleTicks"));
-    _scale = float(properties.getProperty("scale"));
     _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
     _lines = boolean(properties.getProperty("lines"));
     _grid = boolean(properties.getProperty("grid"));
@@ -818,10 +819,11 @@ void displayTick(Particle p) {
     * @param p Agent/Particle to apply tick to.
     * 
     */
-    float _tickSize = 5.0;
+    float _tickSize = 1;
     stroke(0);
     PVector tick = PVector.sub(p._nextLocation,p._loc);
-    tick.setMag(((p._mass * p._size / 2)  + _tickSize)/_scale);
+//    tick.setMag(((p._mass * p._size / 2)  + _tickSize)/_scale);
+    tick.setMag(constrain((_tickSize*this._scale),0.2,1));
     tick.add(p._loc);
     strokeWeight(2);
     line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));
