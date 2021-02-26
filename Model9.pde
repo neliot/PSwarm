@@ -1,17 +1,18 @@
 class Model9 extends PSystem {
+  
   Model9() {
     super("Linear Vector - Adversarial","9");
   }
 
-  void init() {};
+  void init() {
+  };
 
   void populate() {
     PRNG rand = new PRNG(_seed);
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,rand.nextInt(width),rand.nextInt(height),0,this._Cb,this._Rb,this._speed));
-      } catch (Exception e) {
+        S.add(new Particle(this._nextParticleId++,_grid/2 - rand.nextInt(_grid),(float)_grid/2 - rand.nextInt(_grid),0.0f,this._Cb,this._Rb,this._speed));      } catch (Exception e) {
         println(e);
         exit();
       }
@@ -155,6 +156,8 @@ class Model9 extends PSystem {
 * 
 * @param p The particle that is currently being checked
 */
+    float rotation = HALF_PI;
+    boolean clockwise = false;
     PVector destination = new PVector(0,0,0);
     PVector vd = new PVector(0,0,0);
     PVector vad = new PVector(0,0,0);
@@ -168,21 +171,27 @@ class Model9 extends PSystem {
         }
       }   
     }    
+
+    if (boolean(modelProperties.getProperty("clockwise"))) {
+      rotation = -HALF_PI;
+    } else {
+      rotation = HALF_PI;
+    }
+
+    vd = PVector.sub(destination,p._loc);
     if (!this._perimCoord) {
-      vd = PVector.sub(destination,p._loc);
-      if (id % 2 == 0) {
-        vad = vd.copy().rotate(-HALF_PI).mult(2);
+      if (id % 2 == 0 && boolean(modelProperties.getProperty("alternateDirection"))) {
+        vad = vd.copy().rotate(-rotation).mult(2);
       } else {
-        vad = vd.copy().rotate(HALF_PI).mult(2);
+        vad = vd.copy().rotate(rotation).mult(2);
       }
     } else {
       /* Perimeter only control */
       if (p._isPerim) {
-        vd = PVector.sub(destination,p._loc);
-        if (id % 2 == 0) {
-          vad = vd.copy().rotate(-HALF_PI).mult(2);
+        if (id % 2 == 0 && boolean(modelProperties.getProperty("alternateDirection"))) {
+          vad = vd.copy().rotate(-rotation).mult(2);
         } else {
-          vad = vd.copy().rotate(HALF_PI).mult(2);
+          vad = vd.copy().rotate(rotation).mult(2);
         }
       }
     }
