@@ -397,9 +397,9 @@ void scalers() {
     if(key == 'u') {if (_offsetY >= - 10000) _offsetY -= 15;}
     if(key == 'n') {if (_offsetY <= (height + 10000)) _offsetY += 15;}
     if(key == 'j') {_offsetX = width/2; _offsetY = height/2;}
-    if(key == 'a') {if (_scale > 0.2) _scale -= 0.1;}
+    if(key == 'a') {if (_scale > 0.2) _scale -= 0.05;}
     if(key == 's') {_scale = 1;}
-    if(key == 'd') {if (_scale < 100.0) _scale += 0.1;}
+    if(key == 'd') {if (_scale < 100.0) _scale += 0.05;}
 }
 
 void generateMenu() {
@@ -819,11 +819,10 @@ void displayTick(Particle p) {
     * @param p Agent/Particle to apply tick to.
     * 
     */
-    float _tickSize = 1;
     stroke(0);
     PVector tick = PVector.sub(p._nextLocation,p._loc);
 //    tick.setMag(((p._mass * p._size / 2)  + _tickSize)/_scale);
-    tick.setMag(constrain((_tickSize*this._scale),0.2,1));
+    tick.setMag(((p._size * p._mass)/this._scale));
     tick.add(p._loc);
     strokeWeight(2);
     line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));

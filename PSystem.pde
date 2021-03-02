@@ -232,7 +232,7 @@ abstract class PSystem {
     json.put("agents",jsonAgents);
     json.put("params",jsonParams);
     json.put("info",jsonInfo);
-    saveJSONObject(json, "data/save/" + modelProperties.getProperty("swarmName"));
+    saveJSONObject(json, "data/json/" + modelProperties.getProperty("swarmName"));
   }
 
   public void loadSwarm() {
@@ -240,7 +240,7 @@ abstract class PSystem {
 * Load environment settings from JSON file.
 * 
 */   
-    JSONObject json = loadJSONObject("data/save/" + modelProperties.getProperty("swarmName"));
+    JSONObject json = loadJSONObject("data/json/" + modelProperties.getProperty("swarmName"));
 
     JSONObject params = json.getJSONObject("params");
     this._Cb = params.getFloat("cb");
