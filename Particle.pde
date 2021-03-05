@@ -165,6 +165,18 @@ class Particle {
     this._loc.set(x,y,z);
   }
 
+  public String logString(boolean minLog) {
+/** 
+* Creates a formatted string of particle data.
+*/
+    if (minLog) {
+      return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._isPerim);
+    } else {
+      return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._Cb + "," + this._Rb + "," + this._size + "," + this._mass + "," + this._isPerim);
+    }
+  }
+
+
   public String toString() {
 /** 
 * Creates a formatted string of particle data.

@@ -40,6 +40,7 @@ abstract class PSystem {
   boolean _run = true;
   boolean _perimCoord = false;
   boolean _perimCompress = false;
+  boolean _logMin = false;
 
   String _model; // Text of model type
   String _modelId; // Model number.
@@ -97,12 +98,17 @@ abstract class PSystem {
     this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
     this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
     this._run = boolean(modelProperties.getProperty("run"));
+    this._logMin = boolean(modelProperties.getProperty("logMin"));
     this._loggingP = boolean(modelProperties.getProperty("loggingP"));
     this._loggingN = boolean(modelProperties.getProperty("loggingN"));
     this.plog = new Logger("/data/csv/"+modelProperties.getProperty("swarmData"));
     this.nClog = new Logger("/data/csv/"+modelProperties.getProperty("cohesionData"));
     this.nRlog = new Logger("/data/csv/"+modelProperties.getProperty("repulsionData"));
-    this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
+    if (_logMin) {
+      this.plog.dump("STEP,ID,X,Y,PERIM,CX,CY,CMAG,RX,RY,RMAG,IX,IY,IMAG,DX,DY,DMAG\n");    
+    } else {
+      this.plog.dump("STEP,ID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,CX,CY,CZ,CMAG,RX,RY,RZ,RMAG,IX,IY,IZ,IMAG,AX,AY,AZ,AMAG,DX,DY,DZ,DMAG,CHANGEX,CHANGEY,CHANGEZ,CHANGEMAG\n");    
+    }
     this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
     this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG,DIST\n");  
 
@@ -235,13 +241,21 @@ abstract class PSystem {
     saveJSONObject(json, "data/json/" + modelProperties.getProperty("swarmName"));
   }
 
+  public void loadSwarm(String file) {
+    JSONObject json = loadJSONObject("data/json/" + file);
+    load(json);  
+  }
+
   public void loadSwarm() {
+    JSONObject json = loadJSONObject("data/json/" + modelProperties.getProperty("swarmName"));
+    load(json);  
+  }
+
+  public void load(JSONObject json) {
 /** 
 * Load environment settings from JSON file.
-* 
-*/   
-    JSONObject json = loadJSONObject("data/json/" + modelProperties.getProperty("swarmName"));
-
+*
+*/
     JSONObject params = json.getJSONObject("params");
     this._Cb = params.getFloat("cb");
     this._Rb = params.getFloat("rb");
