@@ -44,6 +44,7 @@ boolean _logo = true;
 boolean _displayId = false; // Display Y/N
 boolean _particleTicks = true; // Display Y/N
 boolean _displayParticleFields = false; // Display Y/N
+int _particleSize = 20;
 boolean _lines = true; // Display Y/N
 boolean _grid = true; // Display Y/N
 boolean _displayDestinations = true; // Display Y/N
@@ -172,6 +173,7 @@ void setup() {
     menuInfo2._minimised = boolean(properties.getProperty("menu2BoxMinimised"));
     _displayId = boolean(properties.getProperty("displayId"));
     _particleTicks = boolean(properties.getProperty("particleTicks"));
+    _particleSize = int(properties.getProperty("particleSize"));
     _displayParticleFields = boolean(properties.getProperty("displayParticleFields"));
     _lines = boolean(properties.getProperty("lines"));
     _grid = boolean(properties.getProperty("grid"));
@@ -344,7 +346,9 @@ void keyPressed() {
     if(key == 'r') {system._run = !system._run;}
     if(key == ' ') {system._dest = !system._dest;}
     if(key == 'q') {if (_gridSize > 20) _gridSize -= 20;}
-    if(key == 'w') {if (_gridSize < 120) _gridSize += 20;}
+    if(key == 'w') {if (_gridSize < 80) _gridSize += 20;}
+    if(key == '6') {if (_particleSize < 100) _particleSize += 1;}
+    if(key == '7') {if (_particleSize > 10) _particleSize -= 1;}
     if(key == 'p') {system._perimCoord = !system._perimCoord;}  
     if(key == 'c') {system._perimCompress = !system._perimCompress;} 
     if(key == 'g') {_grid = !_grid;}
@@ -431,6 +435,8 @@ void generateMenu() {
     menuInfo1.add("(j) RESET - Offset");  
     menuInfo1.add("===========ZOOM===========");
     menuInfo1.add("(a) <-20% (s) 100% (d) 500%-> : " + String.format("%.2f",_scale));
+    menuInfo1.add("==========PARTICLE==========");
+    menuInfo1.add("(6) +1 (7) -1 : " + _particleSize);
     menuInfo1.add("==========================");
     menuInfo1.add("(q) -20 (w) +20 - Grid :" + _gridSize);  
     menuInfo1.add("(y) load (o) Save - Snapshot");
@@ -592,11 +598,11 @@ void displayParticle(Particle p) {
         } else {
             fill(theme.particleTheme[theme._theme][2]);
         }
-        ellipse(transX(p._loc.x),transY(p._loc.y),constrain((p._size * p._mass * _scale),3,15),constrain((p._size * p._mass * _scale),3,15));
+        ellipse(transX(p._loc.x),transY(p._loc.y),_particleSize,_particleSize);
         if (renderer == P3D && _shadow) {
             stroke(150,150,150,150);
             fill(150,150,150,150);
-            ellipse(transX(p._loc.x),transY(p._loc.y+100),constrain((p._size * p._mass * _scale),3,15),constrain((p._size * p._mass * _scale),3,15));
+            ellipse(transX(p._loc.x),transY(p._loc.y+100),_particleSize,_particleSize);
         }
         if(_particleTicks) displayTick(p);
         if(_displayId) displayId(p);
@@ -819,13 +825,15 @@ void displayTick(Particle p) {
     * @param p Agent/Particle to apply tick to.
     * 
     */
+//float _particleSize = 20;
     stroke(0);
     PVector tick = PVector.sub(p._nextLocation,p._loc);
 //    tick.setMag(((p._mass * p._size / 2)  + _tickSize)/_scale);
-    tick.setMag(((p._size * p._mass)/this._scale));
-    tick.add(p._loc);
+    tick.normalize();
+//    tick.add(p._loc);
     strokeWeight(2);
-    line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));
+//    line(transX(p._loc.x), transY(p._loc.y), transX(tick.x), transY(tick.y));
+    line(transX(p._loc.x), transY(p._loc.y), transX(p._loc.x) + (tick.x * (_particleSize/2)), transY(p._loc.y) + (tick.y * (_particleSize/2)));
     strokeWeight(1);
 }
 
