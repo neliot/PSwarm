@@ -32,8 +32,8 @@ PImage logo;
 PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2021";
-String _VERSION = "0.1.6";
-double _scale = 1.0f; // Scaling factor
+String _VERSION = "0.2.0";
+double _scale = 1.0; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY
 int _clickedOffsetX = 0; // Swarm display offsetX
@@ -264,7 +264,7 @@ void draw() {
     system.moveReset();
     fill(0);
     textSize(10);
-    text(_AUTHORS, 10, height - 25);
+    text(_NAME + " - " + _AUTHORS, 10, height - 25);
     image(license,width - 88,height - 31,88,31);
     if(keyPressed) {
         scalers();
@@ -473,7 +473,7 @@ void generateDirectionInfo() {
 void generateFrameRateInfo() {
     frameRateInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     frameRateInfo.clearData();
-    frameRateInfo.add(Double.toString(frameRate));
+    frameRateInfo.add(String.format("%.4f", frameRate));
 }
 
 void displayAgentInfo(Particle p) {
@@ -628,7 +628,7 @@ void displayDestination(Destination d) {
     strokeWeight(2);
     stroke(theme.destinationTheme[theme._theme][0]);
     fill(theme.destinationTheme[theme._theme][1]);
-    ellipse((float)transX(d._loc.x),(float)transY(d._loc.y),10,10);
+    ellipse((float)transX(d._loc.x),(float)transY(d._loc.y),_particleSize,_particleSize);
     if(_displayId) displayId(d);
 }
 
@@ -642,7 +642,7 @@ void displayObstacle(Obstacle o) {
     strokeWeight(2);
     stroke(theme.obstacleTheme[theme._theme][0]);
     fill(theme.obstacleTheme[theme._theme][1]);
-    ellipse((float)transX(o._loc.x),(float)transY(o._loc.y),15,15);
+    ellipse((float)transX(o._loc.x),(float)transY(o._loc.y),_particleSize,_particleSize);
     noFill();
     strokeWeight(1);
     stroke(theme.obstacleTheme[theme._theme][2]);
@@ -659,7 +659,7 @@ void displayObstacleLines() {
             PVectorD start = new PVectorD(system.obstacles.get(i)._loc.x,system.obstacles.get(i)._loc.y);
             PVectorD end = new PVectorD(system.obstacles.get(i - 1)._loc.x,system.obstacles.get(i - 1)._loc.y);
             PVectorD d = pvectorDFactory.sub(end,start);
-            d.rotate(HALF_PI).setMag(system._Ob);
+            d.rotate(MATH.PI/2).setMag(system._Ob);
             line((float)transX(start.x),(float)transY(start.y),(float)transX(end.x),(float)transY(end.y));
             line((float)transX(start.x + d.x),(float)transY(start.y + d.y),(float)transX(end.x + d.x),(float)transY(end.y + d.y));
             line((float)transX(start.x - d.x),(float)transY(start.y - d.y),(float)transX(end.x - d.x),(float)transY(end.y - d.y));

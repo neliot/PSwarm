@@ -12,7 +12,7 @@ class Model9 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,_grid/2 - rand.nextInt(_grid),_grid/2 - rand.nextInt(_grid),0.0f,this._Cb,this._Rb,this._speed));      } catch (Exception e) {
+        S.add(new Particle(this._nextParticleId++,_grid/2 - rand.nextInt(_grid),_grid/2 - rand.nextInt(_grid),0.0,this._Cb,this._Rb,this._speed));      } catch (Exception e) {
         println(e);
         exit();
       }
@@ -156,7 +156,7 @@ class Model9 extends PSystem {
 * 
 * @param p The particle that is currently being checked
 */
-    double rotation = HALF_PI;
+    double rotation = Math.PI/2;
     boolean clockwise = false;
     PVectorD destination = new PVectorD(0,0,0);
     PVectorD vd = new PVectorD(0,0,0);
@@ -173,9 +173,9 @@ class Model9 extends PSystem {
     }    
 
     if (boolean(modelProperties.getProperty("clockwise"))) {
-      rotation = -HALF_PI;
+      rotation = -Math.PI/2;
     } else {
-      rotation = HALF_PI;
+      rotation = Math.PI/2;
     }
 
     vd = pvectorDFactory.sub(destination,p._loc);
