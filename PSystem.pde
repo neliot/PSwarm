@@ -2,14 +2,7 @@
 * Psystem Class - abstract class for 
 *                 implementation of models
 *************************************************
-* V 0.1
-*************************************************
-* Author: Neil Eliot
-*************************************************
-* Date: 16/02/2021
-*************************************************
-* Modified import export to JSON
-*************************************************
+* See history.txt
 */
 
 import java.time.LocalDate;

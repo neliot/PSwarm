@@ -1,3 +1,10 @@
+/************************************************
+* PVectorD Class - double based inplementation of 
+* PVector
+*************************************************
+* See history.txt
+*/
+
 class PVectorD {
     double x;
     double y;
