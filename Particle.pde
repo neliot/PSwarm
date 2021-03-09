@@ -18,22 +18,22 @@ import java.util.ArrayList;
 
 
 class Particle {
-  PVector _loc;
-  PVector _nextLocation;
-  PVector _resultant;
+  PVectorD _loc;
+  PVectorD _nextLocation;
+  PVectorD _resultant;
   ArrayList<Particle> _nbr = new ArrayList<Particle>(); 
   ArrayList<Destination> _destinations = new ArrayList<Destination>();
   ArrayList<Particle> _gap = new ArrayList<Particle>(); 
   int _id;
-  float _size = 10.0f;
-  float _mass = 1.0f;
-  float _Cb = 0.0f;
-  float _Rb = 0.0f;
-  float _topspeed = 3.0f/_mass; 
-  float _sweepAngle = 0.0f;
+  double _size = 10.0;
+  double _mass = 1.0;
+  double _Cb = 0.0;
+  double _Rb = 0.0;
+  double _topspeed = 3.0/_mass; 
+  double _sweepAngle = 0.0;
   boolean _isPerim = true;
   
-  Particle(int i, float x, float y, float z, float Cb, float Rb, float size, float mass, float speed) throws Exception {
+  Particle(int i, double x, double y, double z, double Cb, double Rb, double size, double mass, double speed) throws Exception {
 /** 
 * Creates a particle
 * 
@@ -55,12 +55,12 @@ class Particle {
     if (_Rb >= Cb) {
       throw new Exception("Range must be greater than Repulsion");
     }
-    _loc = new PVector(x,y,z);
-    _nextLocation = new PVector(x,y,z);
-    _resultant = new PVector(0,0,0);
+    _loc = new PVectorD(x,y,z);
+    _nextLocation = new PVectorD(x,y,z);
+    _resultant = new PVectorD(0,0,0);
   }
 
-  Particle(int i, float x, float y, float z, float Cb, float Rb, float speed) throws Exception {
+  Particle(int i, double x, double y, double z, double Cb, double Rb, double speed) throws Exception {
 /** 
 * Creates a particle
 * 
@@ -80,13 +80,13 @@ class Particle {
     if (_Rb >= Cb) {
       throw new Exception("Range must be greater than Repulsion");
     }
-    _loc = new PVector(x,y,z);
-    _nextLocation = new PVector(x,y,z);
-    _resultant = new PVector(0,0,0);
+    _loc = new PVectorD(x,y,z);
+    _nextLocation = new PVectorD(x,y,z);
+    _resultant = new PVectorD(0,0,0);
   }
 
 
-  Particle(int i, float x, float y, float z, float Cb, float Rb) throws Exception {
+  Particle(int i, double x, double y, double z, double Cb, double Rb) throws Exception {
 /** 
 * Creates a particle
 * 
@@ -103,9 +103,9 @@ class Particle {
     if (this._Rb > Cb) {
       throw new Exception("Range must be greater than Repulsion");
     }
-    this._loc = new PVector(x,y,z);
-    this._nextLocation = new PVector(x,y,z);
-    this._resultant = new PVector(0,0,0);
+    this._loc = new PVectorD(x,y,z);
+    this._nextLocation = new PVectorD(x,y,z);
+    this._resultant = new PVectorD(0,0,0);
   }
 
   public JSONObject getJSONProps() {
@@ -161,7 +161,7 @@ class Particle {
     }
   };
 
-  public void setPos(float x, float y, float z){
+  public void setPos(double x, double y, double z){
     this._loc.set(x,y,z);
   }
 
@@ -184,28 +184,32 @@ class Particle {
     return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._Cb + "," + this._Rb + "," + this._size + "," + this._mass + "," + this._isPerim);
   }
 
-  public void setChange(PVector change) {
+  public void setChange(PVectorD change) {
 /** 
 * Adds a vector to the particle.
 * 
 * @param force PVector
 */
     // mass of Particles is set to 1. This is for future work.
-    PVector f = PVector.div(change,this._mass);
+    PVectorD f = pvectorDFactory.div(change,this._mass);
     this._resultant.set(f);
   }
 
-  public void update() {
+  public void update(boolean optimise) {
 /** 
 * Updates the position of the particle based on the accumulated vectors.
 */
-    PVector next = this._loc.copy().add(_resultant);
-    if (PVector.dist(this._loc,next) > this._topspeed) {
-      this._resultant.limit(_topspeed);    
+    PVectorD next = this._loc.copy().add(_resultant);
+    if (optimise) {
+      if (pvectorDFactory.dist(this._loc,next) > this._topspeed) {
+        this._resultant.limit(_topspeed);    
+      }
+    } else {
+        this._resultant.limit(_topspeed);    
     }
     // helping the garbage collector again;
-    this._nextLocation.x = _loc.x;
-    this._nextLocation.y = _loc.y;
+    this._nextLocation.x = this._loc.x;
+    this._nextLocation.y = this._loc.y;
     this._nextLocation.add(_resultant);
   }
 
@@ -232,7 +236,7 @@ class Particle {
 */
     this._nbr.clear();
     for(Particle n : s) {
-      float distance = PVector.dist(this._loc,n._loc); 
+      double distance = pvectorDFactory.dist(this._loc,n._loc); 
       if ( distance <= this._Cb & this != n) {
         this._nbr.add(n);
       }
@@ -240,7 +244,7 @@ class Particle {
     checkNbrs();
   }
 
-  public float calcAngle(float start, float end) {
+  public double calcAngle(double start, double end) {
     if (start < end) {
       start += 360f;
     }
@@ -254,8 +258,8 @@ class Particle {
 * @param neighbours is an ArrayList of all S in the cohesion field of the particle.
 */
 // TEST FOR SMALL CONNECTIONS THAT MUST BE PERIMETER AGENTS    
-    float angle;
-    float dist;
+    double angle;
+    double dist;
     this._isPerim = false;
     this._gap.clear();
     if (this._nbr.size() < 4) {
@@ -264,8 +268,8 @@ class Particle {
     }
 //CALCULATE SWEEP ANGLE
     for (Particle n : _nbr) {
-      PVector head = PVector.sub(n._loc,this._loc);
-      n._sweepAngle = degrees(atan2(head.y,head.x))+180;
+      PVectorD head = pvectorDFactory.sub(n._loc,this._loc);
+      n._sweepAngle = Math.toDegrees(Math.atan2(head.y,head.x))+180;
     }    
   
 //BUBBLE SORT ARRAYLIST ON sweepAngle
@@ -284,7 +288,7 @@ class Particle {
     if (_nbr.size() > 0) {
       for (int i = 0; i < this._nbr.size()-1; i++) {
         angle = calcAngle(this._nbr.get(i)._sweepAngle, this._nbr.get(i+1)._sweepAngle);
-        dist = PVector.dist(this._nbr.get(i)._loc, this._nbr.get(i+1)._loc);
+        dist = pvectorDFactory.dist(this._nbr.get(i)._loc, this._nbr.get(i+1)._loc);
         if ( dist > this._Cb || angle > 180) {
           this._isPerim = true;
 //POPULATE GAP AGENTS
@@ -294,7 +298,7 @@ class Particle {
         }
       }
       angle = calcAngle(this._nbr.get(this._nbr.size()-1)._sweepAngle,this._nbr.get(0)._sweepAngle);
-      dist = PVector.dist(this._nbr.get(0)._loc,this._nbr.get(this._nbr.size()-1)._loc); 
+      dist = pvectorDFactory.dist(this._nbr.get(0)._loc,this._nbr.get(this._nbr.size()-1)._loc); 
       if (dist > _Cb  || angle > 180.0) {
         this._isPerim = true;
 //POPULATE GAP AGENTS

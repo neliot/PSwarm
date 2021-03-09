@@ -23,12 +23,12 @@ class Model1 extends PSystem {
 * Update system - Updates particle positions based on forces and displays the result.
 */
     String pData = "";
-    PVector change = new PVector(0,0,0);
-    PVector avoid = new PVector(0,0,0);
-    PVector dir = new PVector(0,0,0);
-    PVector coh = new PVector(0,0,0);
-    PVector rep = new PVector(0,0,0);
-    PVector inter = new PVector(0,0,0);
+    PVectorD change = new PVectorD(0,0,0);
+    PVectorD avoid = new PVectorD(0,0,0);
+    PVectorD dir = new PVectorD(0,0,0);
+    PVectorD coh = new PVectorD(0,0,0);
+    PVectorD rep = new PVectorD(0,0,0);
+    PVectorD inter = new PVectorD(0,0,0);
     for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
@@ -55,8 +55,7 @@ class Model1 extends PSystem {
       change.add(coh);
       change.add(rep);
       
-      inter.add(coh);
-      inter.add(rep);
+      inter = pvectorDFactory.add(coh,rep);
       
       if (_loggingP) {
         if (_logMin) {
@@ -71,7 +70,7 @@ class Model1 extends PSystem {
       _swarmDirection.set(0,0,0);
       for(Particle p : S) {
         _swarmDirection.add(p._resultant);
-        p.update();
+        p.update(this._particleOptimise);
       }
     }
     if (this._loggingP) {
@@ -81,15 +80,15 @@ class Model1 extends PSystem {
 
   }
     
-  PVector cohesion(Particle p) {
+  PVectorD cohesion(Particle p) {
 /** 
 * cohesion calculation - Calculates the cohesion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
 */
-    PVector vcb = new PVector(0,0,0);
-    PVector v = new PVector(0,0,0);
-    float distance = 0f;
+    PVectorD vcb = new PVectorD(0,0,0);
+    PVectorD v = new PVectorD(0,0,0);
+    double distance = 0;
     String nData = "";
     
 // GET ALL THE NEIGHBOURS
@@ -98,11 +97,11 @@ class Model1 extends PSystem {
         println("ERROR:" + n._id + ":" + p._id);
         exit();
       }
-      distance = PVector.dist(p._loc,n._loc);
+      distance = pvectorDFactory.dist(p._loc,n._loc);
       if (this._perimCompress && p._isPerim && n._isPerim) {
-        v = PVector.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);
+        v = pvectorDFactory.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);
       } else {
-        v = PVector.sub(n._loc,p._loc).mult(this._kc);
+        v = pvectorDFactory.sub(n._loc,p._loc).mult(this._kc);
       }
       vcb.add(v);
       if (this._loggingN && this._loggingP) {
@@ -119,17 +118,17 @@ class Model1 extends PSystem {
     return vcb;
   }
 
-  PVector repulsion(Particle p) {
+  PVectorD repulsion(Particle p) {
 /** 
 * repulsion calculation - Calculates the repulsion between each agent and its neigbours.
 * 
 * @param p The particle that is currently being checked
 */
-    PVector vrb = new PVector(0,0,0);
-    PVector v = new PVector(0,0,0);
+    PVectorD vrb = new PVectorD(0,0,0);
+    PVectorD v = new PVectorD(0,0,0);
     int count = 0;
-    float dist = 0f;
-    float distance = 0f;
+    double dist = 0.0;
+    double distance = 0.0;
     String nData = "";
     for(Particle n : p._nbr) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
@@ -138,10 +137,10 @@ class Model1 extends PSystem {
       } else {
         dist = p._Rb;
       }
-      distance = PVector.dist(p._loc,n._loc);
+      distance = pvectorDFactory.dist(p._loc,n._loc);
       if (distance <= dist & p != n) {
         count++;
-        v = PVector.sub(p._loc, n._loc).setMag(dist - distance).mult(this._kr);
+        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance).mult(this._kr);
         vrb.add(v);
         if (this._loggingN && this._loggingP) {
           nData += plog._counter + "," + p._id + "," + n.toString() + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
@@ -158,28 +157,28 @@ class Model1 extends PSystem {
     return vrb;
   }
 
-  PVector direction(Particle p) {
+  PVectorD direction(Particle p) {
 /** 
 * direction calculation - Calculates the normalised direction.
 * 
 * @param p The particle that is currently being checked
 */
-    PVector destination = new PVector(0,0,0);
-    PVector vd = new PVector(0,0,0);
+    PVectorD destination = new PVectorD(0,0,0);
+    PVectorD vd = new PVectorD(0,0,0);
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._loc;      
       for (int i = 1; i < p._destinations.size(); i++) {
-        if (PVector.dist(p._loc,destination) > PVector.dist(p._loc,p._destinations.get(i)._loc)) {
+        if (pvectorDFactory.dist(p._loc,destination) > pvectorDFactory.dist(p._loc,p._destinations.get(i)._loc)) {
           destination = p._destinations.get(i)._loc;
         }
       }   
     }    
     if (!this._perimCoord) {
-      vd = PVector.sub(destination,p._loc);
+      vd = pvectorDFactory.sub(destination,p._loc);
     } else {
       /* Perimeter only control */
       if (p._isPerim) {
-        vd = PVector.sub(destination,p._loc);
+        vd = pvectorDFactory.sub(destination,p._loc);
       }
     }
     return vd.setMag(this._kd);

@@ -14,11 +14,11 @@
 
 class Destination {
   int _id;
-  PVector _loc;
-  float _size = 10.0f;
-  float _mass = 1.0f;
+  PVectorD _loc;
+  double _size = 10.0;
+  double _mass = 1.0;
 
-  Destination(int i, float x, float y, float z) {
+  Destination(int i, double x, double y, double z) {
 /** 
 * Creates a destination
 * 
@@ -28,10 +28,10 @@ class Destination {
 * @param z location
 */
     this._id = i;
-    this._loc = new PVector(x,y,z);
+    this._loc = new PVectorD(x,y,z);
   }
   
-  Destination(int i, float x, float y, float z, float size, float mass) {
+  Destination(int i, double x, double y, double z, double size, double mass) {
 /** 
 * Creates a desination
 * 
@@ -45,10 +45,10 @@ class Destination {
     this._id = i;
     this._size = size;
     this._mass = mass;
-    this._loc = new PVector(x,y,z);
+    this._loc = new PVectorD(x,y,z);
   }
 
-  public void setPos(float x, float y, float z) {
+  public void setPos(double x, double y, double z) {
     this._loc.set(x,y,z);
   }
 

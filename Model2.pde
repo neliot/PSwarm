@@ -22,11 +22,11 @@ class Model2 extends PSystem {
 * Update system - Updates particle positions based on forces and displays the result.
 */
     String pData = "";
-    PVector change = new PVector(0,0,0);
-    PVector avoid = new PVector(0,0,0);
-    PVector dir = new PVector(0,0,0);
-    PVector coh = new PVector(0,0,0);
-    PVector rep = new PVector(0,0,0);
+    PVectorD change = new PVectorD(0,0,0);
+    PVectorD avoid = new PVectorD(0,0,0);
+    PVectorD dir = new PVectorD(0,0,0);
+    PVectorD coh = new PVectorD(0,0,0);
+    PVectorD rep = new PVectorD(0,0,0);
     for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
@@ -59,7 +59,7 @@ class Model2 extends PSystem {
       _swarmDirection.set(0,0,0);
       for(Particle p : S) {
         _swarmDirection.add(p._resultant);
-        p.update();
+        p.update(this._particleOptimise);
       }
     }
     if (this._loggingP) {
@@ -68,36 +68,36 @@ class Model2 extends PSystem {
     }
   }
 
-  PVector cohesion(Particle p) {
-    return PVector.random2D().mult(p._Cb);
+  PVectorD cohesion(Particle p) {
+    return pvectorDFactory.random2D().mult(p._Cb);
   };
 
-  PVector repulsion(Particle p) {
-    return new PVector(0,0,0);
+  PVectorD repulsion(Particle p) {
+    return new PVectorD(0,0,0);
   };
 
-  PVector direction(Particle p) {
+  PVectorD direction(Particle p) {
 /** 
 * direction calculation - Calculates the normalised direction.
 * 
 * @param p The particle that is currently being checked
 */
-    PVector destination = new PVector(0,0,0);
-    PVector vd = new PVector(0,0,0);
+    PVectorD destination = new PVectorD(0,0,0);
+    PVectorD vd = new PVectorD(0,0,0);
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._loc;      
       for (int i = 1; i < p._destinations.size(); i++) {
-        if (PVector.dist(p._loc,destination) > PVector.dist(p._loc,p._destinations.get(i)._loc)) {
+        if (pvectorDFactory.dist(p._loc,destination) > pvectorDFactory.dist(p._loc,p._destinations.get(i)._loc)) {
           destination = p._destinations.get(i)._loc;
         }
       }   
     }    
     if (!this._perimCoord) {
-      vd = PVector.sub(destination,p._loc);
+      vd = pvectorDFactory.sub(destination,p._loc);
     } else {
       /* Perimeter only control */
       if (p._isPerim) {
-        vd = PVector.sub(destination,p._loc);
+        vd = pvectorDFactory.sub(destination,p._loc);
       }
     }
     return vd.setMag(this._kd);

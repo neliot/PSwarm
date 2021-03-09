@@ -14,12 +14,12 @@
 
 class Obstacle {
   int _id;
-  PVector _loc;
-  float _size = 10.0f;
-  float _mass = 1.0f;
-  float _Ob = 50f;
+  PVectorD _loc;
+  double _size = 10.0;
+  double _mass = 1.0;
+  double _Ob = 50;
   
-  Obstacle(int i, float x, float y, float z) {
+  Obstacle(int i, double x, double y, double z) {
 /** 
 * Creates a desination
 * 
@@ -29,10 +29,10 @@ class Obstacle {
 * @param z location
 */
     this._id = i;
-    this._loc = new PVector(x,y,z);
+    this._loc = new PVectorD(x,y,z);
   }
   
-  Obstacle(int i, float x, float y, float z, float Ob) {
+  Obstacle(int i, double x, double y, double z, double Ob) {
 /** 
 * Creates a desination
 * 
@@ -44,10 +44,10 @@ class Obstacle {
 */
     this._id = i;
     this._Ob = Ob;
-    this._loc = new PVector(x,y,z);
+    this._loc = new PVectorD(x,y,z);
   }
 
-  Obstacle(int i, float x, float y, float z, float Ob, float size, float mass) {
+  Obstacle(int i, double x, double y, double z, double Ob, double size, double mass) {
 /** 
 * Creates a desination
 * 
@@ -63,7 +63,7 @@ class Obstacle {
     this._size = size;
     this._mass = mass;
     this._Ob = Ob;
-    this._loc = new PVector(x,y,z);
+    this._loc = new PVectorD(x,y,z);
   }
 
   public JSONObject getJSONProps() {
@@ -75,7 +75,7 @@ class Obstacle {
     return o;
   }
 
-  public void setPos(float x, float y, float z) {
+  public void setPos(double x, double y, double z) {
     this._loc.set(x,y,z);
   }
 
