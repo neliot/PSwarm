@@ -3,8 +3,6 @@
 *************************************************
 * See history.txt
 */
-*/
-
 
 import java.lang.Math.*;
 import java.util.ArrayList; 
