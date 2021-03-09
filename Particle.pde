@@ -246,7 +246,7 @@ class Particle {
 
   public double calcAngle(double start, double end) {
     if (start < end) {
-      start += 360f;
+      start += 360;
     }
     return Math.abs(start - end);
   }

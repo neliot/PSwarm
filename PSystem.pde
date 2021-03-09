@@ -22,19 +22,19 @@ abstract class PSystem {
   ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
   boolean _lines = true;
   int _swarmSize = 0;
-  double _kc = 0.3f; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
-  double _kr = 300f; // Must be > _kc to prevent the swarm collapsing.
-  double _kd = 80f; // Must be > particle._topspeed to allow free S to coalesce.
-  double _ko = 500f; // Stay away from those obstacles Eugene.
-  double _kg = 0f; // mind the gap.
-  double _Cb = 70f; // Cohesion range, Must be greater than range to repulsion range. 
-  double _Rb = 50f; // Repulsion range, Must be less than range to allow cohesion.
-  double _Ob = 75f; // GLobal Obstacle range (stored in each obstacle for future work)
-  double _pr = 1.0f; // Compressed perimeter reduction divisor
-  double _pc = 1.0f; // Compressed perimeter reduction divisor
+  double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
+  double _kr = 300; // Must be > _kc to prevent the swarm collapsing.
+  double _kd = 80; // Must be > particle._topspeed to allow free S to coalesce.
+  double _ko = 500; // Stay away from those obstacles Eugene.
+  double _kg = 0; // mind the gap.
+  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
+  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
+  double _Ob = 75; // GLobal Obstacle range (stored in each obstacle for future work)
+  double _pr = 1.0; // Compressed perimeter reduction divisor
+  double _pc = 1.0; // Compressed perimeter reduction divisor
   int _seed = 1234;
   int _grid = 500;
-  double _speed = 3.0f; // Global agent speed (stored in each agent for future work)
+  double _speed = 3.0; // Global agent speed (stored in each agent for future work)
   boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
@@ -366,7 +366,7 @@ abstract class PSystem {
         PVectorD start = system.obstacles.get(i)._loc;
         PVectorD end = system.obstacles.get(i-1)._loc;
         PVectorD d = pvectorDFactory.sub(end,start);
-        d.rotate(HALF_PI).setMag(system._Ob); 
+        d.rotate(Math.PI/2).setMag(system._Ob); 
         polygon.add(pvectorDFactory.add(start,d));
         polygon.add(pvectorDFactory.add(end,d));
         polygon.add(pvectorDFactory.sub(end,d));
@@ -459,7 +459,7 @@ abstract class PSystem {
 */
     try {
       // create agent in centred quartile.
-      Particle p = new Particle(this._nextParticleId++, (double)x, (double)y, (double)z, this._Cb, this._Rb, 10.0f, 1.0f, this._speed);
+      Particle p = new Particle(this._nextParticleId++, (double)x, (double)y, (double)z, this._Cb, this._Rb, 10.0, 1.0, this._speed);
       p.setDestinations((ArrayList<Destination>) this.destinations.clone());
       this.S.add(p);
     } catch (Exception e) {

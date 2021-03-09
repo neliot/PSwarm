@@ -162,6 +162,13 @@
  **************************************************
  * 17/02/2021 - 0.1.6 - NE
  **************************************************
- * 1. Added ofset and scaling to properties for
+ * 1. Added offset and scaling to properties for
  *    compatability with Python simulator
+ **************************************************
+ * 09/03/2021 - 0.2.0 - NE
+ **************************************************
+ * 1. Converted system to use double precission 
+ *    vectors by adding two classes:
+ *    . PVectorD  
+ *    . PVectorDFactory (factory/static methods)
  **************************************************//
