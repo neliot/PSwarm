@@ -659,7 +659,7 @@ void displayObstacleLines() {
             PVectorD start = new PVectorD(system.obstacles.get(i)._loc.x,system.obstacles.get(i)._loc.y);
             PVectorD end = new PVectorD(system.obstacles.get(i - 1)._loc.x,system.obstacles.get(i - 1)._loc.y);
             PVectorD d = pvectorDFactory.sub(end,start);
-            d.rotate(MATH.PI/2).setMag(system._Ob);
+            d.rotate(Math.PI/2).setMag(system._Ob);
             line((float)transX(start.x),(float)transY(start.y),(float)transX(end.x),(float)transY(end.y));
             line((float)transX(start.x + d.x),(float)transY(start.y + d.y),(float)transX(end.x + d.x),(float)transY(end.y + d.y));
             line((float)transX(start.x - d.x),(float)transY(start.y - d.y),(float)transX(end.x - d.x),(float)transY(end.y - d.y));
