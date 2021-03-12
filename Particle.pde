@@ -150,7 +150,7 @@ class Particle {
     } else {
       return false;
     }
-  };
+  }
 
   public void setPos(double x, double y, double z){
     this._loc.set(x,y,z);
