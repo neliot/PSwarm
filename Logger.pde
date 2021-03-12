@@ -3,6 +3,10 @@
 *************************************************
 * See history.txt
 */
+// JAVA-IMPLEMENTATION
+//  import java.io.PrintWriter; 
+//  import java.io.File;
+
 class Logger {
   PrintWriter _output;
   String _filename;
@@ -17,6 +21,8 @@ class Logger {
     _counter = 0;
     _filename = filename;
     try {
+// JAVA-BASED Processing Mangles
+//   _output = new PrintWriter(new File(_filename));
     _output = createWriter(_filename);
     } catch (Exception e) {
       e.printStackTrace();

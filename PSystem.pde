@@ -4,7 +4,9 @@
 *************************************************
 * See history.txt
 */
-
+import java.io.FileInputStream;  
+import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -68,6 +70,8 @@ abstract class PSystem {
 
     try {
       modelProperties.load( createReader("Model" + this._modelId + ".properties") );
+//  JAVA-BASED PROPERTIES (Processing Mangles the paths)
+//      modelProperties.load(new FileInputStream("Model" + this._modelId + ".properties"));
     } catch(Exception e) {
       println(e);
       exit();
@@ -95,9 +99,9 @@ abstract class PSystem {
     this._logMin = boolean(modelProperties.getProperty("logMin"));
     this._loggingP = boolean(modelProperties.getProperty("loggingP"));
     this._loggingN = boolean(modelProperties.getProperty("loggingN"));
-    this.plog = new Logger("/data/csv/"+modelProperties.getProperty("swarmData"));
-    this.nClog = new Logger("/data/csv/"+modelProperties.getProperty("cohesionData"));
-    this.nRlog = new Logger("/data/csv/"+modelProperties.getProperty("repulsionData"));
+    this.plog = new Logger("data/csv/"+modelProperties.getProperty("swarmData"));
+    this.nClog = new Logger("data/csv/"+modelProperties.getProperty("cohesionData"));
+    this.nRlog = new Logger("data/csv/"+modelProperties.getProperty("repulsionData"));
     if (_logMin) {
       this.plog.dump("STEP,ID,X,Y,PERIM,CX,CY,CMAG,RX,RY,RMAG,IX,IY,IMAG,DX,DY,DMAG,CHANGEX,CHANGEY,CHANGEMAG\n");    
     } else {

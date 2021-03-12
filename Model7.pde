@@ -10,8 +10,9 @@ class Model7 extends PSystem {
     for(int i = 0; i < this._swarmSize; i++) {
       try {
         // create agent in centred quartile.
-        Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._Cb,this._Rb,this._speed);
-        S.add(p);
+        S.add(new Particle(this._nextParticleId++,_grid/2 - rand.nextInt(_grid),(float)_grid/2 - rand.nextInt(_grid),0.0,this._Cb,this._Rb,this._speed));
+//        Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._Cb,this._Rb,this._speed);
+//        S.add(p);
       } catch (Exception e) {
         println(e);
         exit();
@@ -95,7 +96,7 @@ class Model7 extends PSystem {
         temp = pvectorDFactory.add(p._gap.get(0)._loc,p._gap.get(1)._loc).mult(0.5);
         temp = pvectorDFactory.sub(temp,p._loc).mult(this._kg);
       } else {
-        temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._kg);
+        temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._kc);
       }
       result.add(temp);
       if (this._loggingN && this._loggingP) {
