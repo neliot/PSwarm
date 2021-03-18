@@ -143,7 +143,7 @@ class Model1 extends PSystem {
         v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance).mult(this._kr);
         vrb.add(v);
         if (this._loggingN && this._loggingP) {
-          nData += plog._counter + "," + p.logString(this._logMin) + "," + p.logString(this._logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
+          nData += plog._counter + "," + p.logString(this._logMin) + "," + n.logString(this._logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
         }
       }
     }
