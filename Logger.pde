@@ -10,7 +10,7 @@
 class Logger {
   PrintWriter _output;
   String _filename;
-  int _counter = 0;
+  int _counter = 1;
   
   Logger(String filename) {
 /** 
@@ -18,12 +18,12 @@ class Logger {
 * 
 * @param filename name of the data dump file
 */ 
-    _counter = 0;
-    _filename = filename;
+    this._counter = 1;
+    this._filename = filename;
     try {
 // JAVA-BASED Processing Mangles
 //   _output = new PrintWriter(new File(_filename));
-    _output = createWriter(_filename);
+    this._output = createWriter(_filename);
     } catch (Exception e) {
       e.printStackTrace();
       exit();      
@@ -31,16 +31,16 @@ class Logger {
   }
   
   public void dump(String data) {
-    _output.print(data);
+    this._output.print(data);
   }
   
   public void clean() {
-    _output.flush();
-    _counter++;
+    this._output.flush();
+    this._counter++;
   };
   
   public void quit() {
-    _output.flush();
-    _output.close();
+    this._output.flush();
+    this._output.close();
   }
 }

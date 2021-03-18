@@ -116,7 +116,10 @@ class Particle {
 * 
 * @param ArrayList of Destinations
 */
-    this._destinations = destinations;
+    this._destinations.clear();
+    for(Destination d : destinations) {
+      this._destinations.add(d);
+    }
   }
 
   public void addDestination(Destination destination) {
@@ -182,11 +185,11 @@ class Particle {
 * @param force PVector
 */
     // mass of Particles is set to 1. This is for future work.
-    float factor = 1000000000;
+//    float factor = 1000000000;
     PVectorD f = pvectorDFactory.div(change,this._mass);
-    f.x = Math.rint(f.x * factor)/factor; 
-    f.y = Math.rint(f.y * factor)/factor; 
-    f.z = Math.rint(f.z * factor)/factor; 
+//    f.x = Math.rint(f.x * factor)/factor; 
+//    f.y = Math.rint(f.y * factor)/factor; 
+//    f.z = Math.rint(f.z * factor)/factor; 
     this._resultant.set(f);
   }
 
