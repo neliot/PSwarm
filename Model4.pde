@@ -43,7 +43,7 @@ class Model4 extends PSystem {
       rep = repulsion(p);
 
       /* Calculate Obstacle avoidance */
-      if (obstacles.size() > 0) {
+      if (this.O.size() > 0) {
         avoid = avoidObstacles(p);
       }
 

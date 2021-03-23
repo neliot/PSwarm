@@ -49,7 +49,7 @@ class Model5 extends PSystem {
       rep = repulsion(p);
 
       /* Calculate Obstacle avoidance */
-      if (obstacles.size() > 0) {
+      if (O.size() > 0) {
         avoid = avoidObstacles(p);
       }
 

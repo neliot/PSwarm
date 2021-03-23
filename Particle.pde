@@ -110,14 +110,14 @@ class Particle {
     return p;
   };
 
-  public void setDestinations(ArrayList<Destination> destinations) {
+  public void setDestinations(ArrayList<Destination> D) {
 /** 
 * Each agent has its own set of Desinations to allow for individual control of where agents must migrate.
 * 
 * @param ArrayList of Destinations
 */
     this._destinations.clear();
-    for(Destination d : destinations) {
+    for(Destination d : D) {
       this._destinations.add(d);
     }
   }
@@ -216,9 +216,9 @@ class Particle {
 * Updates the position of the particle based on the _acceleration.
 */
     // Copy values rather than object! Lets help the garbage collector out!
-    this._loc.x = _nextLocation.x;
-    this._loc.y = _nextLocation.y;
-    this._loc.z = _nextLocation.z;
+    this._loc.x = helper.rtodp(_nextLocation.x,9);
+    this._loc.y = helper.rtodp(_nextLocation.y,9);
+    this._loc.z = helper.rtodp(_nextLocation.z,9);
   }
 
   public void reset() {

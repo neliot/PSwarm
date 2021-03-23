@@ -21,6 +21,7 @@ java.util.Properties properties = new java.util.Properties();
 PSystem system;
 Theme theme = new Theme(); 
 PVectorDFactory pvectorDFactory = new PVectorDFactory();
+Helper helper = new Helper();
 String renderer = P2D;
 ArrayList<PImage> mice1 = new ArrayList<PImage>();
 ArrayList<PImage> mice2 = new ArrayList<PImage>();
@@ -243,12 +244,12 @@ void draw() {
         }
     }
     if(_displayDestinations) {
-        for (Destination d : system.destinations) {
+        for (Destination d : system.D) {
             displayDestination(d);
            if (mouseOver(d)) _currentDestination = d;
         }
     }
-    for (Obstacle o : system.obstacles) {
+    for (Obstacle o : system.O) {
         displayObstacle(o);
         if (mouseOver(o)) _currentObstacle = o;
     } 
@@ -448,7 +449,7 @@ void generateMenu() {
     menuInfo2.setTitle(system._model);
     menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     menuInfo2.clearData();
-    menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.destinations.size() + " Obstacles:" + system.obstacles.size());
+    menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.D.size() + " Obstacles:" + system.O.size());
     menuInfo2.add("==========================");  
     menuInfo2.add("Default Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._Cb);
@@ -652,12 +653,12 @@ void displayObstacle(Obstacle o) {
 }
 
 void displayObstacleLines() {
-    if(system.obstacles.size() > 1) {
-        for (int i = 1; i < system.obstacles.size(); i++) {
+    if(system.O.size() > 1) {
+        for (int i = 1; i < system.O.size(); i++) {
             strokeWeight(1);
             stroke(theme.obstacleTheme[theme._theme][2]);
-            PVectorD start = new PVectorD(system.obstacles.get(i)._loc.x,system.obstacles.get(i)._loc.y);
-            PVectorD end = new PVectorD(system.obstacles.get(i - 1)._loc.x,system.obstacles.get(i - 1)._loc.y);
+            PVectorD start = new PVectorD(system.O.get(i)._loc.x,system.O.get(i)._loc.y);
+            PVectorD end = new PVectorD(system.O.get(i - 1)._loc.x,system.O.get(i - 1)._loc.y);
             PVectorD d = pvectorDFactory.sub(end,start);
             d.rotate(Math.PI/2).setMag(system._Ob);
             line((float)transX(start.x),(float)transY(start.y),(float)transX(end.x),(float)transY(end.y));

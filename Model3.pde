@@ -48,11 +48,11 @@ class Model3 extends PSystem {
     
 
       /* Calculate Obstacle avoidance */
-      if (obstacles.size() > 0) {
+      if (this.O.size() > 0) {
         avoid = avoidObstacles(p);
       }
 
-      if (this._dest && destinations.size() > 0) {
+      if (this._dest && D.size() > 0) {
         dir = direction(p);
       }
       change.add(dir);

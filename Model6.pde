@@ -8,13 +8,13 @@ class Model6 extends PSystem {
   void populate() {
     this.loadSwarm();
     this.S.clear();
-    for(int i = 0; i < destinations.size(); i++) {
+    for(int i = 0; i < D.size(); i++) {
       try {
         // create agent in centred quartile.
         Particle p = new Particle(this._nextParticleId++,random((width * 0.01),(width * 1.0)),random((height * 0.01),(height * 1.0)),0,this._Cb,this._Rb,this._speed);
         S.add(p);
         p._destinations.clear();
-        p._destinations.add(this.destinations.get(i));
+        p._destinations.add(this.D.get(i));
       } catch (Exception e) {
         println(e);
         exit();
@@ -47,7 +47,7 @@ class Model6 extends PSystem {
       rep = repulsion(p);
 
       /* Calculate Obstacle avoidance */
-      if (obstacles.size() > 0) {
+      if (this.O.size() > 0) {
         avoid = avoidObstacles(p);
       }
 
