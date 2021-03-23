@@ -13,8 +13,8 @@ import java.time.LocalTime;
 abstract class PSystem {
   java.util.Properties modelProperties = new java.util.Properties();
   ArrayList<Particle> S = new ArrayList<Particle>();
-  ArrayList<Destination> destinations = new ArrayList<Destination>();
-  ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+  ArrayList<Destination> D = new ArrayList<Destination>();
+  ArrayList<Obstacle> O = new ArrayList<Obstacle>();
   boolean _lines = true;
   int _swarmSize = 0;
   double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
@@ -206,7 +206,7 @@ abstract class PSystem {
 //    jsonAgents.put("props",jsonAgentsProps);
 
      i = 0;
-    for(Obstacle o : obstacles) {
+    for(Obstacle o : this.O) {
 //      jsonObstaclesProps.setJSONObject(i,o.getJSONProps());
       jsonObstaclesX.setDouble(i,o._loc.x);
       jsonObstaclesY.setDouble(i,o._loc.y);
@@ -221,7 +221,7 @@ abstract class PSystem {
     jsonObstacles.put("coords",jsonObstaclesCoords);
 //    jsonObstacles.put("props",jsonObstaclesProps);
     i = 0;
-    for(Destination d : destinations) {
+    for(Destination d : D) {
 //      jsonDestinationsProps.setJSONObject(i,d.getJSONProps());
       jsonDestinationsX.setDouble(i,d._loc.x);
       jsonDestinationsY.setDouble(i,d._loc.y);
@@ -302,7 +302,7 @@ abstract class PSystem {
       JSONArray z = coords.getJSONArray(2);
 
       Destination dest = new Destination(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i));
-      destinations.add(dest);
+      D.add(dest);
       this._nextDestId = i + 1;
       for(Particle p : S) {
         p.addDestination(dest);
@@ -317,7 +317,7 @@ abstract class PSystem {
       JSONArray x = coords.getJSONArray(0);
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
-      obstacles.add(new Obstacle(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i), this._Ob));
+      this.O.add(new Obstacle(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i), this._Ob));
       this._nextObsId = i + 1;
     }
 // Initialise the swarm based on current model requirements.    
@@ -341,7 +341,7 @@ abstract class PSystem {
 */
     PVectorD result = new PVectorD(0,0,0);
 // GET ALL THE IN RANGE OBSTACLES
-    for(Obstacle o : this.obstacles) {
+    for(Obstacle o : this.O) {
       if (pvectorDFactory.dist(p._loc,o._loc) <= o._Ob) {
          result.add(pvectorDFactory.sub(o._loc,p._loc));
       }
@@ -352,20 +352,20 @@ abstract class PSystem {
 
   public PVectorD calcLineRepulsion(Particle p) {
     PVectorD result = new PVectorD(0,0,0);
-    if (system.obstacles.size() > 1 && this._obstacleLink) {
-      for (int i = 1; i < this.obstacles.size(); i++) {
+    if (system.O.size() > 1 && this._obstacleLink) {
+      for (int i = 1; i < this.O.size(); i++) {
         double x0 = p._loc.x;
         double y0 = p._loc.y;
-        double x1 = this.obstacles.get(i)._loc.x;
-        double y1 = this.obstacles.get(i)._loc.y;
-        double x2 = this.obstacles.get(i-1)._loc.x;
-        double y2 = this.obstacles.get(i-1)._loc.y;
+        double x1 = this.O.get(i)._loc.x;
+        double y1 = this.O.get(i)._loc.y;
+        double x2 = this.O.get(i-1)._loc.x;
+        double y2 = this.O.get(i-1)._loc.y;
         double dir = ((x2-x1) * (y1-y0)) - ((x1-x0) * (y2-y1)); // above or below line segment
         double distance = distBetweenPointAndLine(x0,y0,x1,y1,x2,y2);
         ArrayList<PVectorD> polygon = new ArrayList<PVectorD>();
 
-        PVectorD start = system.obstacles.get(i)._loc;
-        PVectorD end = system.obstacles.get(i-1)._loc;
+        PVectorD start = system.O.get(i)._loc;
+        PVectorD end = system.O.get(i-1)._loc;
         PVectorD d = pvectorDFactory.sub(end,start);
         d.rotate(Math.PI/2).setMag(system._Ob); 
         polygon.add(pvectorDFactory.add(start,d));
@@ -427,7 +427,7 @@ abstract class PSystem {
 * @param z Z Position
 */
     Destination d = new Destination(_nextDestId++,(double)x,(double)y,(double)z);
-    this.destinations.add(d);
+    this.D.add(d);
     for(Particle p : S) {
       p.addDestination(d);
     }
@@ -439,13 +439,13 @@ abstract class PSystem {
 * 
 * @param d Destination
 */
-    for (int i = this.destinations.size() - 1; i >= 0; i--) {
-      Destination dest = this.destinations.get(i);
+    for (int i = this.D.size() - 1; i >= 0; i--) {
+      Destination dest = this.D.get(i);
       if (d == dest) {
         for(Particle p : S) {
           p.removeDestination(d);
         }
-        this.destinations.remove(i);
+        this.D.remove(i);
       }
     }
   }
@@ -461,7 +461,7 @@ abstract class PSystem {
     try {
       // create agent in centred quartile.
       Particle p = new Particle(this._nextParticleId++, (double)x, (double)y, (double)z, this._Cb, this._Rb, 10.0, 1.0, this._speed);
-      p.setDestinations(this.destinations);
+      p.setDestinations(this.D);
       this.S.add(p);
     } catch (Exception e) {
       println(e);
@@ -489,10 +489,10 @@ abstract class PSystem {
 * 
 * @param o Obstacle
 */
-    for (int i = this.obstacles.size() - 1; i >= 0; i--) {
-      Obstacle obs = this.obstacles.get(i);
+    for (int i = this.O.size() - 1; i >= 0; i--) {
+      Obstacle obs = this.O.get(i);
       if (obs == o) {
-        this.obstacles.remove(i);
+        this.O.remove(i);
       }
     }
   }
@@ -505,10 +505,10 @@ abstract class PSystem {
 * @param y Y Position
 * @param z Z Position
 */
-    this.obstacles.add(new Obstacle(_nextObsId++,(double)x,(double)y,(double)z,this._Ob));
+    this.O.add(new Obstacle(_nextObsId++,(double)x,(double)y,(double)z,this._Ob));
   }
 
   public boolean hasObstacles() {
-    return (this.obstacles.size() > 0);
+    return (this.O.size() > 0);
   }
 }
