@@ -259,10 +259,10 @@ class Particle {
     double dist;
     this._isPerim = false;
     this._gap.clear();
-//    if (this._nbr.size() < 3) {
-//      this._isPerim = true;
-//      return;
-//    }
+    if (this._nbr.size() < 3) {
+      this._isPerim = true;
+      return;
+    }
 //CALCULATE SWEEP ANGLE
     for (Particle n : this._nbr) {
       PVectorD head = pvectorDFactory.sub(n._loc,this._loc);
