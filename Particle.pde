@@ -239,7 +239,6 @@ class Particle {
         this._nbr.add(n);
       }
     }
-    checkNbrs();
   }
 
   public double calcAngle(double start, double end) {
@@ -260,12 +259,12 @@ class Particle {
     double dist;
     this._isPerim = false;
     this._gap.clear();
-    if (this._nbr.size() < 4) {
-      this._isPerim = true;
-      return;
-    }
+//    if (this._nbr.size() < 3) {
+//      this._isPerim = true;
+//      return;
+//    }
 //CALCULATE SWEEP ANGLE
-    for (Particle n : _nbr) {
+    for (Particle n : this._nbr) {
       PVectorD head = pvectorDFactory.sub(n._loc,this._loc);
       n._sweepAngle = Math.toDegrees(Math.atan2(head.y,head.x))+180;
     }    

@@ -29,12 +29,19 @@ class Model1 extends PSystem {
     PVectorD coh = new PVectorD(0,0,0);
     PVectorD rep = new PVectorD(0,0,0);
     PVectorD inter = new PVectorD(0,0,0);
+    
+    for(Particle p : S) {      
+      p.nbr(S);
+      p.checkNbrs();
+    }
+    
     for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
       change.set(0,0,0); 
 
-      p.nbr(S);
+//      p.nbr(S);
+//      p.checkNbrs();
 
       /* Calculate Cohesion */
       coh = cohesion(p);
@@ -77,7 +84,6 @@ class Model1 extends PSystem {
       plog.dump(pData);
       plog.clean();
     }
-
   }
     
   PVectorD cohesion(Particle p) {
@@ -90,7 +96,7 @@ class Model1 extends PSystem {
     PVectorD v = new PVectorD(0,0,0);
     double distance = 0;
     String nData = "";
-    
+
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._nbr) {
       if (p._loc.x == n._loc.x && p._loc.y == n._loc.y) {
