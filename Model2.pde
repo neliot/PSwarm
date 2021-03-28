@@ -27,12 +27,16 @@ class Model2 extends PSystem {
     PVectorD dir = new PVectorD(0,0,0);
     PVectorD coh = new PVectorD(0,0,0);
     PVectorD rep = new PVectorD(0,0,0);
+
+    for(Particle p : S) {      
+      p.nbr(S);
+      p.checkNbrs();
+    }
+
     for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
       change.set(0,0,0); 
-
-      p.nbr(S);
 
       /* Calculate Cohesion */
       coh = cohesion(p);
