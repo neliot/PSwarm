@@ -146,7 +146,7 @@ class Model1 extends PSystem {
       distance = pvectorDFactory.dist(p._loc,n._loc);
       if (distance <= dist & p != n) {
         count++;
-        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance).mult(this._kr);
+        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance);
         vrb.add(v);
         if (this._loggingN && this._loggingP) {
           nData += plog._counter + "," + p.logString(this._logMin) + "," + n.logString(this._logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
@@ -160,7 +160,7 @@ class Model1 extends PSystem {
     if (count > 0) {
       vrb.div(count);
     }
-    return vrb;
+    return vrb.mult(this._kr);
   }
 
   PVectorD direction(Particle p) {

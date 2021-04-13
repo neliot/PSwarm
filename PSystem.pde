@@ -36,7 +36,7 @@ abstract class PSystem {
   boolean _perimCoord = false;
   boolean _perimCompress = false;
   boolean _particleOptimise = false;
-  boolean _logMin = false;
+  boolean _logMin = true;
 
   String _model; // Text of model type
   String _modelId; // Model number.
