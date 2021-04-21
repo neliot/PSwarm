@@ -25,10 +25,12 @@ abstract class PSystem {
   double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
   double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
   double _Ob = 75; // GLobal Obstacle range (stored in each obstacle for future work)
-  double _pr = 1.0; // Compressed perimeter reduction divisor
-  double _pc = 1.0; // Compressed perimeter reduction divisor
+  double _pr = 1.0; // Compressed perimeter reduction weight
+  double _pkr = 1.0; // Compressed perimeter -> inner reduction weight
+  double _pc = 1.0; // Compressed perimeter reduction weight
+  int _compression = 1; // Compressed perimeter reduction weight
   int _seed = 1234;
-  int _grid = 500;
+  double _grid = 500;
   double _speed = 3.0; // Global agent speed (stored in each agent for future work)
   boolean _obstacleLink = true;
   boolean _dest = true;
@@ -79,7 +81,7 @@ abstract class PSystem {
 // Default model properties
     this._swarmSize = int(modelProperties.getProperty("size"));
     this._seed = int(modelProperties.getProperty("seed"));
-    this._grid = int(modelProperties.getProperty("grid"));
+    this._grid = Double.parseDouble(modelProperties.getProperty("grid"));
     this._Cb = Double.parseDouble(modelProperties.getProperty("Cb"));
     this._Rb = Double.parseDouble(modelProperties.getProperty("Rb"));
     this._kr = Double.parseDouble(modelProperties.getProperty("kr"));
@@ -91,7 +93,9 @@ abstract class PSystem {
     this._speed = Double.parseDouble(modelProperties.getProperty("speed"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
     this._pr = Double.parseDouble(modelProperties.getProperty("pr"));
+    this._pkr = Double.parseDouble(modelProperties.getProperty("pkr"));
     this._pc = Double.parseDouble(modelProperties.getProperty("pc"));
+    this._compression = int(modelProperties.getProperty("compression"));
     this._dest = boolean(modelProperties.getProperty("dest"));
     this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
     this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
@@ -121,6 +125,15 @@ abstract class PSystem {
       this.populate();
     }
     this.init();  
+  }
+
+  public boolean checkUsed(double x, double y) {
+    for(Particle p : S) {      
+      if (p._loc.x == x && p._loc.y == y) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public PVectorD getCentroid() {
@@ -180,7 +193,9 @@ abstract class PSystem {
     jsonParams.setDouble("kg",this._kg);
     jsonParams.setDouble("ob",this._Ob);
     jsonParams.setDouble("pr",this._pr);
+    jsonParams.setDouble("pkr",this._pkr);
     jsonParams.setDouble("pc",this._pc);
+    jsonParams.setInt("compression",this._compression);
     jsonParams.setDouble("speed",this._speed);
     jsonParams.setBoolean("perim_coord",this._perimCoord);
 //  CROSS COMPATABILITY SETTINGS FOR PYTHON MODEL
@@ -267,8 +282,10 @@ abstract class PSystem {
     this._ko = params.getDouble("ko");
     this._kg = params.getDouble("kg");
     this._Ob = params.getDouble("ob");
+    this._pkr = params.getDouble("pkr");
     this._pr = params.getDouble("pr");
     this._pc = params.getDouble("pc");
+    this._compression = params.getInt("compression");
     this._speed = params.getDouble("speed");
     this._perimCoord = params.getBoolean("perim_coord");
 
@@ -321,7 +338,7 @@ abstract class PSystem {
       this._nextObsId = i + 1;
     }
 // Initialise the swarm based on current model requirements.    
-    this.init(); 
+    this.init();  
   }
   
   public void moveReset() {

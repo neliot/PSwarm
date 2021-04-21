@@ -59,7 +59,7 @@ class PVectorDFactory {
         double dx = v1.x - v2.x;
         double dy = v1.y - v2.y;
         double dz = v1.z - v2.z;
-        return (double) Math.sqrt(dx*dx + dy*dy + dz*dz);
+        return Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
 
     public double dot(PVectorD v1, PVectorD v2) {

@@ -289,6 +289,7 @@ class Particle {
         angle = calcAngle(this._nbr.get(i)._sweepAngle, this._nbr.get(i+1)._sweepAngle);
         dist = pvectorDFactory.dist(this._nbr.get(i)._loc, this._nbr.get(i+1)._loc);
         if ( dist > this._Cb || angle > Math.PI) {
+//        if ( dist > this._Cb) {
           this._isPerim = true;
 //POPULATE GAP AGENTS
           this._gapStart.add(this._nbr.get(i));          
@@ -298,6 +299,7 @@ class Particle {
       angle = calcAngle(this._nbr.get(this._nbr.size()-1)._sweepAngle,this._nbr.get(0)._sweepAngle);
       dist = pvectorDFactory.dist(this._nbr.get(0)._loc,this._nbr.get(this._nbr.size()-1)._loc); 
       if (dist > _Cb  || angle > Math.PI) {
+//      if (dist > _Cb) {
         this._isPerim = true;
 //POPULATE GAP AGENTS
 //        this._gap.clear();

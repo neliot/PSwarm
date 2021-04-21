@@ -5,12 +5,25 @@ class Model2 extends PSystem {
 
   void init() {};
 
-  void populate() {
+    void populate() {
+    boolean used = false;
+    double nextX = 0;
+    double nextY = 0;
     PRNG rand = new PRNG(_seed);
     for(int i = 0; i < this._swarmSize; i++) {
       try {
+        used = true;
+        while (used) {
+          nextX = _grid/2 - (rand.nextFloat() * _grid);
+          nextY = _grid/2 - (rand.nextFloat() * _grid);
+          used = checkUsed(nextX,nextY);
+          if (used) {
+            println(nextX + ":" + nextY + "-used");
+          }
+        }
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,_grid/2 - rand.nextInt(_grid),(float)_grid/2 - rand.nextInt(_grid),0.0,this._Cb,this._Rb,this._speed));      } catch (Exception e) {
+        S.add(new Particle(this._nextParticleId++,nextX,nextY,0.0,this._Cb,this._Rb,this._speed));
+      } catch (Exception e) {
         println(e);
         exit();
       }

@@ -171,4 +171,14 @@
  *    vectors by adding two classes:
  *    . PVectorD  
  *    . PVectorDFactory (factory/static methods)
+ **************************************************
+ * 21/04/2021 - 0.2.0 - NE
+ **************************************************
+ * 1. Major upgrade to gap reduction. Added pkr in
+ *    two modes.
+ *    . Inner - Only agents next to a perimeter 
+ *      agent get pkr adjustment to push inner 
+ *      and perim away.   
+ *    . Outer - Any xor agent relationship b^b'
+ *      gets pkr adjustment towards the perimeter.
  **************************************************//

@@ -73,6 +73,8 @@ int _OBSTACLE = 2;
 int _WINDOW = 3;
 //
 String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
+String[] _compress = {"None","Outer","Inner"};
+
 InfoBox menuInfo1 = new InfoBox(2,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox menuInfo2 = new InfoBox(346,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
@@ -135,7 +137,7 @@ void setup() {
     mouse = mouse1;
     _offsetX = width/2;
     _offsetY = height/2;
-    
+    try {
     switch(int(properties.getProperty("model"))) {
         case 1:
         system = new Model1(); 
@@ -163,6 +165,10 @@ void setup() {
         break;
         default:
         system = new Model9(); 
+    }
+    } catch (Exception e) {
+        System.out.println(e);
+        System.exit(-1);
     }
     _scale = Double.parseDouble(system.modelProperties.getProperty("scale"));
 
@@ -403,9 +409,9 @@ void scalers() {
     if(key == 'u') {if (_offsetY >= - 10000) _offsetY -= 15;}
     if(key == 'n') {if (_offsetY <= (height + 10000)) _offsetY += 15;}
     if(key == 'j') {_offsetX = width/2; _offsetY = height/2;}
-    if(key == 'a') {if (_scale > 0.2) _scale -= 0.05;}
+    if(key == 'a') {if (_scale > 0.2) _scale -= 0.5;}
     if(key == 's') {_scale = 1;}
-    if(key == 'd') {if (_scale < 100.0) _scale += 0.05;}
+    if(key == 'd') {if (_scale < 100.0) _scale += 0.5;}
 }
 
 void generateMenu() {
@@ -450,6 +456,12 @@ void generateMenu() {
     menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     menuInfo2.clearData();
     menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.D.size() + " Obstacles:" + system.O.size());
+    menuInfo2.add("==========================");
+    if (boolean(system.modelProperties.getProperty("loadSwarm"))) {
+        menuInfo2.add("JSON: " + system.modelProperties.getProperty("swarmName") + " (LOADED)");  
+    } else {
+        menuInfo2.add("JSON: " + system.modelProperties.getProperty("swarmName") + " (DEFAULT)");  
+    }
     menuInfo2.add("==========================");  
     menuInfo2.add("Default Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._Cb);
@@ -460,8 +472,11 @@ void generateMenu() {
     menuInfo2.add("Obstacle Weight: " + system._ko);
     menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
-    menuInfo2.add("Repulsion Proportion: " + system._pr);
-    menuInfo2.add("Cohesion Proportion: " + system._pc);
+    menuInfo2.add("pr: " + system._pr);
+    menuInfo2.add("pkr: " + system._pkr);
+    menuInfo2.add("pc: " + system._pc);
+    menuInfo2.add("kg: " + system._kg);
+    menuInfo2.add("Compression: " + _compress[system._compression]);
     menuInfo2.add("==========================");  
     menuInfo2.add("Average Magnitude: " + String.format("%015.4f",system._swarmDirection.mag()));
 }
