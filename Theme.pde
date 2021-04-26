@@ -27,8 +27,8 @@ class Theme  {
   };
   color[][] desktopTheme = {
   // | background           | grid1                | grid2               |  
-    {color(200,200,200,100),color(80 ,80 ,80 ,100),color(0  ,0  ,0  ,100)},
-    {color(255,255,255,0),color(100,100,100,100),color(50 ,50 ,50 ,100)}
+    {color(200,200,200,100),color(80 ,80 ,80 ,100),color(0  ,0  ,0  ,50)},
+    {color(255,255,255,0),color(100,100,100,100),color(50 ,50 ,50 ,50)}
   };
 
   color[][] particleTheme = {

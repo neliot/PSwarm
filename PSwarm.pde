@@ -73,8 +73,6 @@ int _OBSTACLE = 2;
 int _WINDOW = 3;
 //
 String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
-String[] _compress = {"None","Outer","Inner"};
-
 InfoBox menuInfo1 = new InfoBox(2,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox menuInfo2 = new InfoBox(346,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
 InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
@@ -142,29 +140,29 @@ void setup() {
         case 1:
         system = new Model1(); 
         break;
-        case 2:
-        system = new Model2(); 
-        break;
-        case 3:
-        system = new Model3(); 
-        break;
-        case 4:
-        system = new Model4(); 
-        break;
-        case 5:
-        system = new Model5(); 
-        break;
-        case 6:
-        system = new Model6(); 
-        break;
-        case 7:
-        system = new Model7(); 
-        break;
-        case 8:
-        system = new Model8(); 
-        break;
-        default:
-        system = new Model9(); 
+        // case 2:
+        // system = new Model2(); 
+        // break;
+        // case 3:
+        // system = new Model3(); 
+        // break;
+        // case 4:
+        // system = new Model4(); 
+        // break;
+        // case 5:
+        // system = new Model5(); 
+        // break;
+        // case 6:
+        // system = new Model6(); 
+        // break;
+        // case 7:
+        // system = new Model7(); 
+        // break;
+        // case 8:
+        // system = new Model8(); 
+        // break;
+        // default:
+        // system = new Model9(); 
     }
     } catch (Exception e) {
         System.out.println(e);
@@ -355,8 +353,8 @@ void keyPressed() {
     if(key == ' ') {system._dest = !system._dest;}
     if(key == 'q') {if (_gridSize > 20) _gridSize -= 20;}
     if(key == 'w') {if (_gridSize < 80) _gridSize += 20;}
-    if(key == '6') {if (_particleSize < 100) _particleSize += 1;}
-    if(key == '7') {if (_particleSize > 10) _particleSize -= 1;}
+    if(key == '6') {if (_particleSize < 150) _particleSize += 1;}
+    if(key == '7') {if (_particleSize > 5) _particleSize -= 1;}
     if(key == 'p') {system._perimCoord = !system._perimCoord;}  
     if(key == 'c') {system._perimCompress = !system._perimCompress;} 
     if(key == 'g') {_grid = !_grid;}
@@ -472,11 +470,10 @@ void generateMenu() {
     menuInfo2.add("Obstacle Weight: " + system._ko);
     menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
-    menuInfo2.add("pr: " + system._pr);
-    menuInfo2.add("pkr: " + system._pkr);
-    menuInfo2.add("pc: " + system._pc);
+    menuInfo2.add("pr: " + "[[" + system._pr[0][0] + "," + system._pr[0][1] +"],[" + system._pr[1][0] + "," + system._pr[1][1] + "]]" );
+    menuInfo2.add("pkr: " + "[[" + system._pkr[0][0] + "," + system._pkr[0][1] +"],[" + system._pkr[1][0] + "," + system._pkr[1][1] + "]]" );
+    menuInfo2.add("pkc: " + "[[" + system._pkc[0][0] + "," + system._pkc[0][1] +"],[" + system._pkc[1][0] + "," + system._pkc[1][1] + "]]" );
     menuInfo2.add("kg: " + system._kg);
-    menuInfo2.add("Compression: " + _compress[system._compression]);
     menuInfo2.add("==========================");  
     menuInfo2.add("Average Magnitude: " + String.format("%015.4f",system._swarmDirection.mag()));
 }
@@ -560,7 +557,7 @@ void displayGrid() {
     * Display the grid
     */ 
     stroke(theme.desktopTheme[theme._theme][2]);
-    strokeWeight(5);
+    strokeWeight(2);
     noFill();
     circle((float)_offsetX,(float)_offsetY,(float)(10*_scale));
     boolean alt = true;

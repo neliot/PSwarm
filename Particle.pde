@@ -109,7 +109,15 @@ class Particle {
     p.put("top_speed",this._topspeed); 
     p.put("id", this._id);
     return p;
-  };
+  }
+
+  public int isPerim(){
+    if (this._isPerim) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 
   public void setDestinations(ArrayList<Destination> D) {
 /** 

@@ -113,7 +113,7 @@ class Model3 extends PSystem {
     for(Particle n : p._nbr) {
       distance = pvectorDFactory.dist(p._loc,n._loc);
       if (this._perimCompress && p._isPerim && n._isPerim) {
-        temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);
+        temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._pkc[0][0]).mult(this._kc);
       } else {
         temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._kc);
       }
@@ -148,7 +148,7 @@ class Model3 extends PSystem {
     for(Particle n : p._nbr) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
       if (this._perimCompress && p._isPerim && n._isPerim) { 
-        dist = p._Rb * this._pr;
+        dist = p._Rb * this._pr[0][0];
       } else {
         dist = p._Rb;
       }

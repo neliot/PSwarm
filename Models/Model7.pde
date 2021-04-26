@@ -201,7 +201,8 @@ class Model7 extends PSystem {
       if (this._perimCompress && p._isPerim && n._isPerim) { 
         dist = p._Rb * this._pr;
       } else if (this._perimCompress && p._isPerim && n._isPerim) {
-        dist = p._Rb * this._pkr;
+        dist = p._Rb * this._pr;
+//        dist = p._Rb * this._pkr;
       } else {
         dist = p._Rb;
       }
