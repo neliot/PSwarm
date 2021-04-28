@@ -198,7 +198,7 @@ class Model1 extends PSystem {
       distance = pvectorDFactory.dist(p._loc,n._loc);                     // calculate neighbour distance
       if (distance <= dist & p != n) {                                    // If this agent has an effect in this relationship
         count++;                                                          // keep a record of the number of relationships
-        v = pvectorDFactory.sub(p._loc, n._loc).setMag(p._Rb - distance); // Calculate initial vector
+        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance); // Calculate initial vector
 //        if (this._compression == 0 || !this._perimCompress) {             // if compression is off (by setting or interactive)
         if (this._perimCompress) {             // if compression is off (by setting or interactive)
           v.mult(this._pkr[p.isPerim()][n.isPerim()]);

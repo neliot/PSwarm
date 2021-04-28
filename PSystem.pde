@@ -29,6 +29,8 @@ abstract class PSystem {
   double[][] _pkr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
   double[][] _pkc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
   double[][] _data = new double[2][2];
+  double _stability_factor = 0.0; //int(modelProperties.getProperty("stability_factor"))
+
 //  int _compression = 1; // Compressed perimeter reduction weight
   int _seed = 1234;
   double _grid = 500;
@@ -96,6 +98,7 @@ abstract class PSystem {
     this._pr = getArray(modelProperties.getProperty("pr"));
     this._pkr = getArray(modelProperties.getProperty("pkr"));
     this._pkc = getArray(modelProperties.getProperty("pkc"));
+    this._stability_factor = Double.parseDouble(modelProperties.getProperty("stability_factor"));
 //    this._compression = int(modelProperties.getProperty("compression"));
     this._dest = boolean(modelProperties.getProperty("dest"));
     this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
@@ -221,7 +224,7 @@ abstract class PSystem {
     jsonParams.setBoolean("perim_coord",this._perimCoord);
 //  CROSS COMPATABILITY SETTINGS FOR PYTHON MODEL
     jsonParams.setString("scaling","linear");
-    jsonParams.setDouble("stability_factor", 0.0);
+    jsonParams.setDouble("stability_factor", this._stability_factor);
     jsonParams.setDouble("exp_rate", 0.2);
 
     jsonParamsPkrData.setDouble(0,this._pkr[0][0]);
@@ -353,11 +356,8 @@ abstract class PSystem {
     this._ko = params.getDouble("ko");
     this._kg = params.getDouble("kg");
     this._Ob = params.getDouble("ob");
-//    this._pkr = params.getDouble("pkr");
-//    this._pr = params.getDouble("pr");
-//    this._pc = params.getDouble("pc");
-//    this._compression = params.getInt("compression");
     this._speed = params.getDouble("speed");
+    this._stability_factor = params.getDouble("stability_factor");
     this._perimCoord = params.getBoolean("perim_coord");
 
     this.S.clear();

@@ -106,7 +106,7 @@ class Model8 extends PSystem {
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._nbr) {
       distance = pvectorDFactory.dist(p._loc,n._loc);
-      if (distance > p._Rb+ this._stabaliseRange) {
+      if (distance > p._Rb + this._stabaliseRange) {
         count++;
         if (this._perimCompress && p._isPerim && n._isPerim) {
             temp = pvectorDFactory.sub(n._loc,p._loc).mult(this._pc).mult(this._kc);
