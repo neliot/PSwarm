@@ -18,14 +18,14 @@ class Particle {
   ArrayList<Particle> _gapEnd = new ArrayList<Particle>(); 
   int _id;
   double _size = 10.0;
-  double _mass = 1.0;
-  double _Cb = 0.0;
-  double _Rb = 0.0;
+  double _mass = 1.0; 
+  double _Cb = 0.0; // Currently not used.
+  double _Rb = 0.0; // Currently not used.
   double _topspeed = 3.0/_mass; 
   double _sweepAngle = 0.0;
   boolean _isPerim = true;
   
-  Particle(int i, double x, double y, double z, double Cb, double Rb, double size, double mass, double speed) throws Exception {
+  Particle(int i, double x, double y, double z, double size, double mass, double speed) {
 /** 
 * Creates a particle
 * 
@@ -39,20 +39,17 @@ class Particle {
 * @param mass mass of agent (can be used to effect speed)
 */
     this._id = i;
-    this._Cb = Cb;
-    this._Rb = Rb;
+//    this._Cb = Cb; // Currently not used.
+//    this._Rb = Rb; // Currently not used.
     this._size = size;
     this._mass = mass;
     this._topspeed = speed;
-    if (_Rb >= Cb) {
-      throw new Exception("Range must be greater than Repulsion");
-    }
     _loc = new PVectorD(x,y,z);
     _nextLocation = new PVectorD(x,y,z);
     _resultant = new PVectorD(0,0,0);
   }
 
-  Particle(int i, double x, double y, double z, double Cb, double Rb, double speed) throws Exception {
+  Particle(int i, double x, double y, double z, double speed) {
 /** 
 * Creates a particle
 * 
@@ -66,19 +63,15 @@ class Particle {
 * @param mass mass of agent (can be used to effect speed)
 */
     this._id = i;
-    this._Cb = Cb;
-    this._Rb = Rb;
+//    this._Cb = Cb; // Currently not used.
+//    this._Rb = Rb; // Currently not used.
     this._topspeed = speed;
-    if (_Rb >= Cb) {
-      throw new Exception("Range must be greater than Repulsion");
-    }
     _loc = new PVectorD(x,y,z);
     _nextLocation = new PVectorD(x,y,z);
     _resultant = new PVectorD(0,0,0);
   }
 
-
-  Particle(int i, double x, double y, double z, double Cb, double Rb) throws Exception {
+  Particle(int i, double x, double y, double z) {
 /** 
 * Creates a particle
 * 
@@ -90,11 +83,8 @@ class Particle {
 * @param Rb repulse repulsion range of agents
 */
     this._id = i;
-    this._Cb = Cb;
-    this._Rb= Rb;
-    if (this._Rb > Cb) {
-      throw new Exception("Range must be greater than Repulsion");
-    }
+//    this._Cb = Cb; // Currently not used.
+//    this._Rb= Rb; // Currently not used.
     this._loc = new PVectorD(x,y,z);
     this._nextLocation = new PVectorD(x,y,z);
     this._resultant = new PVectorD(0,0,0);
@@ -104,8 +94,8 @@ class Particle {
     JSONObject p = new JSONObject();
     p.put("size",this._size);
     p.put("mass",this._mass);
-    p.put("cb",this._Cb);
-    p.put("rb",this._Rb);
+//    p.put("cb",this._Cb); // Currently not used.
+//    p.put("rb",this._Rb); // Currently not used.
     p.put("top_speed",this._topspeed); 
     p.put("id", this._id);
     return p;
@@ -175,7 +165,7 @@ class Particle {
     if (minLog) {
       return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._isPerim);
     } else {
-      return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._Cb + "," + this._Rb + "," + this._size + "," + this._mass + "," + this._isPerim);
+      return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._size + "," + this._mass + "," + this._isPerim);
     }
   }
 
@@ -183,7 +173,7 @@ class Particle {
 /** 
 * Creates a formatted string of particle data.
 */
-    return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._Cb + "," + this._Rb + "," + this._size + "," + this._mass + "," + this._isPerim);
+    return(this._id + "," + this._loc.x + "," + this._loc.y + "," + this._loc.z + "," + this._size + "," + this._mass + "," + this._isPerim);
   }
 
   public void setChange(PVectorD change) {
@@ -193,11 +183,7 @@ class Particle {
 * @param force PVector
 */
     // mass of Particles is set to 1. This is for future work.
-//    float factor = 1000000000;
     PVectorD f = pvectorDFactory.div(change,this._mass);
-//    f.x = Math.rint(f.x * factor)/factor; 
-//    f.y = Math.rint(f.y * factor)/factor; 
-//    f.z = Math.rint(f.z * factor)/factor; 
     this._resultant.set(f);
   }
 
@@ -206,16 +192,17 @@ class Particle {
 * Updates the position of the particle based on the accumulated vectors.
 */
     PVectorD next = this._loc.copy().add(_resultant);
-    if (optimise) {
-      if (pvectorDFactory.dist(this._loc,next) > this._topspeed) {
+//    if (optimise) {
+//      if (pvectorDFactory.dist(this._loc,next) > this._topspeed) {
+//        this._resultant.limit(_topspeed);    
+//      }
+//    } else {
         this._resultant.limit(_topspeed);    
-      }
-    } else {
-        this._resultant.limit(_topspeed);    
-    }
+//    }
     // helping the garbage collector again;
     this._nextLocation.x = this._loc.x;
     this._nextLocation.y = this._loc.y;
+    this._nextLocation.z = this._loc.z;
     this._nextLocation.add(_resultant);
   }
 
@@ -227,6 +214,9 @@ class Particle {
     this._loc.x = helper.rtodp(_nextLocation.x,9);
     this._loc.y = helper.rtodp(_nextLocation.y,9);
     this._loc.z = helper.rtodp(_nextLocation.z,9);
+//    this._loc.x = this._nextLocation.x;
+//    this._loc.y = this._nextLocation.y;
+//    this._loc.z = this._nextLocation.z;
   }
 
   public void reset() {
@@ -236,14 +226,13 @@ class Particle {
     this._resultant.mult(0);
   }
 
-  public void nbr(ArrayList<Particle> s){
+  public void nbr(ArrayList<Particle> s, double c){
 /** 
 * Identify Partcle neighbours.
 */
     this._nbr.clear();
     for(Particle n : s) {
-      double distance = pvectorDFactory.dist(this._loc,n._loc); 
-      if ( distance <= this._Cb & this != n) {
+      if (pvectorDFactory.dist(this._loc,n._loc) <= c && this != n) {
         this._nbr.add(n);
       }
     }
@@ -257,7 +246,7 @@ class Particle {
     return Math.abs(diff);
   }
 
-  public void checkNbrs() {
+  public void checkNbrs(boolean gap, double c) {
 /** 
 * Examines the S neighbours to determine if the agent is on an edge.
 * 
@@ -296,23 +285,26 @@ class Particle {
       for (int i = 0; i < this._nbr.size()-1; i++) {
         angle = calcAngle(this._nbr.get(i)._sweepAngle, this._nbr.get(i+1)._sweepAngle);
         dist = pvectorDFactory.dist(this._nbr.get(i)._loc, this._nbr.get(i+1)._loc);
-        if ( dist > this._Cb || angle > Math.PI) {
+        if ( dist > c || angle > Math.PI) {
 //        if ( dist > this._Cb) {
           this._isPerim = true;
 //POPULATE GAP AGENTS
-          this._gapStart.add(this._nbr.get(i));          
-          this._gapEnd.add(this._nbr.get(i+1));
+          if ( dist > c || gap) {
+            this._gapStart.add(this._nbr.get(i));          
+            this._gapEnd.add(this._nbr.get(i+1));
+          }
         }
       }
       angle = calcAngle(this._nbr.get(this._nbr.size()-1)._sweepAngle,this._nbr.get(0)._sweepAngle);
       dist = pvectorDFactory.dist(this._nbr.get(0)._loc,this._nbr.get(this._nbr.size()-1)._loc); 
-      if (dist > _Cb  || angle > Math.PI) {
-//      if (dist > _Cb) {
+      if (dist > c || angle > Math.PI) {
         this._isPerim = true;
 //POPULATE GAP AGENTS
 //        this._gap.clear();
-        this._gapStart.add(this._nbr.get(0));          
-        this._gapEnd.add(this._nbr.get(this._nbr.size()-1));
+        if (dist > c || gap) {
+          this._gapStart.add(this._nbr.get(0));          
+          this._gapEnd.add(this._nbr.get(this._nbr.size()-1));
+        }
       }
     }
   }  

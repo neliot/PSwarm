@@ -17,27 +17,30 @@ abstract class PSystem {
   ArrayList<Obstacle> O = new ArrayList<Obstacle>();
   boolean _lines = true;
   int _swarmSize = 0;
-  double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
-  double _kr = 300; // Must be > _kc to prevent the swarm collapsing.
+//  double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
+//  double _kr = 300; // Must be > _kc to prevent the swarm collapsing.
   double _kd = 80; // Must be > particle._topspeed to allow free S to coalesce.
   double _ko = 500; // Stay away from those obstacles Eugene.
   double _kg = 0; // mind the gap.
-  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
-  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
+  boolean _rgf = false; // mind the gap.
+//  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
+//  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
   double _Ob = 75; // GLobal Obstacle range (stored in each obstacle for future work)
-  double[][] _pr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
-  double[][] _pkr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
-  double[][] _pkc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
-  double[][] _data = new double[2][2];
-  double _stability_factor = 0.0; //int(modelProperties.getProperty("stability_factor"))
+//  double[][] _pr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
+  double[][] _kr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
+  double[][] _kc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
+  double[][] _R = {{1.0,1.0},{1.0,1.0}}; // Repulsion
+  double _C = 1; // Cohesion
+//  double[][] _data = new double[2][2];
+  double _stability_factor = 0.0; 
 
-//  int _compression = 1; // Compressed perimeter reduction weight
   int _seed = 1234;
   double _grid = 500;
   double _speed = 3.0; // Global agent speed (stored in each agent for future work)
   boolean _obstacleLink = true;
   boolean _dest = true;
   boolean _run = true;
+  int _step = 0;
   boolean _perimCoord = false;
   boolean _perimCompress = false;
   boolean _particleOptimise = false;
@@ -85,19 +88,25 @@ abstract class PSystem {
     this._swarmSize = int(modelProperties.getProperty("size"));
     this._seed = int(modelProperties.getProperty("seed"));
     this._grid = Double.parseDouble(modelProperties.getProperty("grid"));
-    this._Cb = Double.parseDouble(modelProperties.getProperty("Cb"));
-    this._Rb = Double.parseDouble(modelProperties.getProperty("Rb"));
-    this._kr = Double.parseDouble(modelProperties.getProperty("kr"));
-    this._kc = Double.parseDouble(modelProperties.getProperty("kc"));
+//    this._Cb = Double.parseDouble(modelProperties.getProperty("Cb"));
+//    this._Rb = Double.parseDouble(modelProperties.getProperty("Rb"));
+//    this._kr = Double.parseDouble(modelProperties.getProperty("kr"));
+//    this._kc = Double.parseDouble(modelProperties.getProperty("kc"));
+//    this._kc = getArray(modelProperties.getProperty("kc"));
+//    this._kr = getArray(modelProperties.getProperty("kr"));
     this._kd = Double.parseDouble(modelProperties.getProperty("kd"));
     this._ko = Double.parseDouble(modelProperties.getProperty("ko"));
     this._kg = Double.parseDouble(modelProperties.getProperty("kg"));
+//    this._rgf = Double.parseDouble(modelProperties.getProperty("rgf"));
+    this._rgf = boolean(modelProperties.getProperty("rgf"));
     this._Ob = Double.parseDouble(modelProperties.getProperty("Ob"));
     this._speed = Double.parseDouble(modelProperties.getProperty("speed"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
-    this._pr = getArray(modelProperties.getProperty("pr"));
-    this._pkr = getArray(modelProperties.getProperty("pkr"));
-    this._pkc = getArray(modelProperties.getProperty("pkc"));
+//    this._pr = getArray(modelProperties.getProperty("pr"));
+    this._kr = getArray(modelProperties.getProperty("kr"));
+    this._kc = getArray(modelProperties.getProperty("kc"));
+    this._R = getArray(modelProperties.getProperty("rb"));
+    this._C = Double.parseDouble(modelProperties.getProperty("cb"));
     this._stability_factor = Double.parseDouble(modelProperties.getProperty("stability_factor"));
 //    this._compression = int(modelProperties.getProperty("compression"));
     this._dest = boolean(modelProperties.getProperty("dest"));
@@ -172,15 +181,14 @@ abstract class PSystem {
     jsonInfo.put("time",LocalTime.now());
     jsonInfo.put("by","PSywarm " + _VERSION);
 
-    JSONArray jsonParamsPkr = new JSONArray();
-    JSONArray jsonParamsPkrData = new JSONArray();
+    JSONArray jsonParamsKr = new JSONArray();
+    JSONArray jsonParamsKrData = new JSONArray();
 
-    JSONArray jsonParamsPr = new JSONArray();
-    JSONArray jsonParamsPrData = new JSONArray();
+    JSONArray jsonParamsR = new JSONArray();
+    JSONArray jsonParamsRData = new JSONArray();
 
-    JSONArray jsonParamsPkc = new JSONArray();
-    JSONArray jsonParamsPkcData = new JSONArray();
-
+    JSONArray jsonParamsKc = new JSONArray();
+    JSONArray jsonParamsKcData = new JSONArray();
 
     JSONObject jsonAgents = new JSONObject();
 //    JSONArray jsonAgentsProps = new JSONArray();
@@ -206,18 +214,19 @@ abstract class PSystem {
     PrintWriter output;
 //    output = createWriter("data/save/P-"+_modelId+"-agents.dat"); 
 //    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
-    jsonParams.setDouble("cb",this._Cb);
+//    jsonParams.setDouble("cb",this._Cb);
 //    jsonParams.put("seed",this._seed);
 //    jsonParams.put("grid",this._grid);
-    jsonParams.setDouble("rb",this._Rb);
-    jsonParams.setDouble("kr",this._kr);
-    jsonParams.setDouble("kc",this._kc);
+//    jsonParams.setDouble("rb",this._Rb);
+//    jsonParams.setDouble("kr",this._kr);
+//    jsonParams.setDouble("kc",this._kc);
     jsonParams.setDouble("kd",this._kd);
-    jsonParams.setDouble("ko",this._ko);
+//    jsonParams.setDouble("ko",this._ko);
     jsonParams.setDouble("kg",this._kg);
-    jsonParams.setDouble("ob",this._Ob);
-//    jsonParams.setDouble("pr",this._pr);
-//    jsonParams.setDouble("pkr",this._pkr);
+    jsonParams.setBoolean("rgf",this._rgf);
+//    jsonParams.setDouble("ob",this._Ob);
+//    jsonParams.setDouble("R",this._R);
+    jsonParams.setDouble("cb",this._C);
 //    jsonParams.setDouble("pc",this._pc);
 //    jsonParams.setInt("compression",this._compression);
     jsonParams.setDouble("speed",this._speed);
@@ -227,32 +236,32 @@ abstract class PSystem {
     jsonParams.setDouble("stability_factor", this._stability_factor);
     jsonParams.setDouble("exp_rate", 0.2);
 
-    jsonParamsPkrData.setDouble(0,this._pkr[0][0]);
-    jsonParamsPkrData.setDouble(1,this._pkr[0][1]);
-    jsonParamsPkr.setJSONArray(0,jsonParamsPkrData);
-    jsonParamsPkrData = new JSONArray();
-    jsonParamsPkrData.setDouble(0,this._pkr[1][0]);
-    jsonParamsPkrData.setDouble(1,this._pkr[1][1]);
-    jsonParamsPkr.setJSONArray(1,jsonParamsPkrData);
-    jsonParams.put("pkr",jsonParamsPkr);
+    jsonParamsKrData.setDouble(0,this._kr[0][0]);
+    jsonParamsKrData.setDouble(1,this._kr[0][1]);
+    jsonParamsKr.setJSONArray(0,jsonParamsKrData);
+    jsonParamsKrData = new JSONArray();
+    jsonParamsKrData.setDouble(0,this._kr[1][0]);
+    jsonParamsKrData.setDouble(1,this._kr[1][1]);
+    jsonParamsKr.setJSONArray(1,jsonParamsKrData);
+    jsonParams.put("kr",jsonParamsKr);
 
-    jsonParamsPkcData.setDouble(0,this._pkc[0][0]);
-    jsonParamsPkcData.setDouble(1,this._pkc[0][1]);
-    jsonParamsPkc.setJSONArray(0,jsonParamsPkcData);
-    jsonParamsPkcData = new JSONArray();
-    jsonParamsPkcData.setDouble(0,this._pkc[1][0]);
-    jsonParamsPkcData.setDouble(1,this._pkc[1][1]);
-    jsonParamsPkc.setJSONArray(1,jsonParamsPkcData);
-    jsonParams.put("pkc",jsonParamsPkc);
+    jsonParamsKcData.setDouble(0,this._kc[0][0]);
+    jsonParamsKcData.setDouble(1,this._kc[0][1]);
+    jsonParamsKc.setJSONArray(0,jsonParamsKcData);
+    jsonParamsKcData = new JSONArray();
+    jsonParamsKcData.setDouble(0,this._kc[1][0]);
+    jsonParamsKcData.setDouble(1,this._kc[1][1]);
+    jsonParamsKc.setJSONArray(1,jsonParamsKcData);
+    jsonParams.put("kc",jsonParamsKc);
 
-    jsonParamsPrData.setDouble(0,this._pr[0][0]);
-    jsonParamsPrData.setDouble(1,this._pr[0][1]);
-    jsonParamsPr.setJSONArray(0,jsonParamsPrData);
-    jsonParamsPrData = new JSONArray();
-    jsonParamsPrData.setDouble(0,this._pr[1][0]);
-    jsonParamsPrData.setDouble(1,this._pr[1][1]);
-    jsonParamsPr.setJSONArray(1,jsonParamsPrData);
-    jsonParams.put("pr",jsonParamsPr);
+    jsonParamsRData.setDouble(0,this._R[0][0]);
+    jsonParamsRData.setDouble(1,this._R[0][1]);
+    jsonParamsR.setJSONArray(0,jsonParamsRData);
+    jsonParamsRData = new JSONArray();
+    jsonParamsRData.setDouble(0,this._R[1][0]);
+    jsonParamsRData.setDouble(1,this._R[1][1]);
+    jsonParamsR.setJSONArray(1,jsonParamsRData);
+    jsonParams.put("rb",jsonParamsR);
 
     i = 0;
     for(Particle p : S) {
@@ -325,37 +334,37 @@ abstract class PSystem {
 *
 */
     JSONObject params = json.getJSONObject("params");
-    JSONArray pkr = json.getJSONObject("params").getJSONArray("pkr");
+    JSONArray kr = json.getJSONObject("params").getJSONArray("kr");
     for(int x = 0; x < 2 ; x++) {
       for(int y = 0; y < 2; y++) {
-        this._pkr[x][y] = pkr.getJSONArray(x).getDouble(y);
+        this._kr[x][y] = kr.getJSONArray(x).getDouble(y);
       }
     }
 
-    JSONArray pkc = json.getJSONObject("params").getJSONArray("pkc");
+    JSONArray kc = json.getJSONObject("params").getJSONArray("kc");
     for(int x = 0; x < 2 ; x++) {
       for(int y = 0; y < 2; y++) {
-        this._pkc[x][y] = pkc.getJSONArray(x).getDouble(y);
+        this._kc[x][y] = kc.getJSONArray(x).getDouble(y);
       }
     }
 
-    JSONArray pr = json.getJSONObject("params").getJSONArray("pr");
+    JSONArray R = json.getJSONObject("params").getJSONArray("rb");
     for(int x = 0; x < 2 ; x++) {
       for(int y = 0; y < 2; y++) {
-        this._pr[x][y] = pr.getJSONArray(x).getDouble(y);
+        this._R[x][y] = R.getJSONArray(x).getDouble(y);
       }
     }
-
-//    this._pkro = pkr.getDouble(0);
-//    this._pkri = pkr.getDouble(1);
-    this._Cb = params.getDouble("cb");
-    this._Rb = params.getDouble("rb");
-    this._kr = params.getDouble("kr");
-    this._kc = params.getDouble("kc");
+//    this._Cb = params.getDouble("cb");
+//    this._Rb = params.getDouble("rb");
+    this._C = params.getDouble("cb");
+//    this._R = params.getDouble("R");
+//    this._kr = params.getDouble("kr");
+//    this._kc = params.getDouble("kc");
     this._kd = params.getDouble("kd");
-    this._ko = params.getDouble("ko");
+//    this._ko = params.getDouble("ko");
     this._kg = params.getDouble("kg");
-    this._Ob = params.getDouble("ob");
+    this._rgf = params.getBoolean("rgf");
+//    this._Ob = params.getDouble("ob");
     this._speed = params.getDouble("speed");
     this._stability_factor = params.getDouble("stability_factor");
     this._perimCoord = params.getBoolean("perim_coord");
@@ -372,7 +381,7 @@ abstract class PSystem {
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
       try {
-        S.add(new Particle(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i), this._Cb, this._Rb, this._speed));
+        S.add(new Particle(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i), this._speed));
         this._nextParticleId = i + 1;
       } catch (Exception e) {
         println(e);
@@ -548,7 +557,7 @@ abstract class PSystem {
 */
     try {
       // create agent in centred quartile.
-      Particle p = new Particle(this._nextParticleId++, (double)x, (double)y, (double)z, this._Cb, this._Rb, 10.0, 1.0, this._speed);
+      Particle p = new Particle(this._nextParticleId++, (double)x, (double)y, (double)z, 10.0, 1.0, this._speed);
       p.setDestinations(this.D);
       this.S.add(p);
     } catch (Exception e) {

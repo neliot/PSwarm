@@ -462,18 +462,18 @@ void generateMenu() {
     }
     menuInfo2.add("==========================");  
     menuInfo2.add("Default Speed: " + system._speed);
-    menuInfo2.add("Cohesion Range: " + system._Cb);
-    menuInfo2.add("Cohesion Weight: " + system._kc);
-    menuInfo2.add("Repulsion Range: " + system._Rb);
-    menuInfo2.add("Repulsion Weight: " + system._kr);
+    menuInfo2.add("Cohesion Range: " + system._C);
+//    menuInfo2.add("Cohesion Weight: " + system._kc);
+//    menuInfo2.add("Repulsion Range: " + system._R);
+//    menuInfo2.add("Repulsion Weight: " + system._kr);
     menuInfo2.add("Obstacle Range: " + system._Ob);
     menuInfo2.add("Obstacle Weight: " + system._ko);
     menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
-    menuInfo2.add("pr: " + "[[" + system._pr[0][0] + "," + system._pr[0][1] +"],[" + system._pr[1][0] + "," + system._pr[1][1] + "]]" );
-    menuInfo2.add("pkr: " + "[[" + system._pkr[0][0] + "," + system._pkr[0][1] +"],[" + system._pkr[1][0] + "," + system._pkr[1][1] + "]]" );
-    menuInfo2.add("pkc: " + "[[" + system._pkc[0][0] + "," + system._pkc[0][1] +"],[" + system._pkc[1][0] + "," + system._pkc[1][1] + "]]" );
-    menuInfo2.add("kg: " + system._kg);
+    menuInfo2.add("R: " + "[[" + system._R[0][0] + "," + system._R[0][1] +"],[" + system._R[1][0] + "," + system._R[1][1] + "]]" );
+    menuInfo2.add("kr: " + "[[" + system._kr[0][0] + "," + system._kr[0][1] +"],[" + system._kr[1][0] + "," + system._kr[1][1] + "]]" );
+    menuInfo2.add("kc: " + "[[" + system._kc[0][0] + "," + system._kc[0][1] +"],[" + system._kc[1][0] + "," + system._kc[1][1] + "]]" );
+    menuInfo2.add("kg: " + system._kg + " reflex: " + system._rgf);
     menuInfo2.add("==========================");  
     menuInfo2.add("Average Magnitude: " + String.format("%015.4f",system._swarmDirection.mag()));
 }
@@ -487,6 +487,7 @@ void generateFrameRateInfo() {
     frameRateInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     frameRateInfo.clearData();
     frameRateInfo.add(String.format("%.4f", frameRate));
+    frameRateInfo.add("STEP:" + String.format("%d", system._step));
 }
 
 void displayAgentInfo(Particle p) {
@@ -496,12 +497,13 @@ void displayAgentInfo(Particle p) {
     } else {
         tick = ' ';
     }
-    pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + " Z:" + String.format("%07.2f",p._loc.z) + "] " + tick);
+//    pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + " Z:" + String.format("%07.2f",p._loc.z) + "] " + tick);
+    pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + "] " + tick);
     pInfo.setColour(theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5]);
     pInfo.clearData();
     pInfo.add("Mass: [" + p._mass + "]");
-    pInfo.add("Rb : [" + p._Rb + "]");
-    pInfo.add("Cb : [" + p._Cb + "]");
+//    pInfo.add("Rb : [" + p._Rb + "]");
+//    pInfo.add("Cb : [" + p._Cb + "]");
     pInfo.add("Speed: [" + p._topspeed + "]");
     pInfo.add("Size: [" + p._size + "]");
     pInfo.add("Neighbours: [" + p._nbr.size() + "]");
@@ -512,7 +514,8 @@ void displayAgentInfo(Particle p) {
         } else {
             tick = ' ';
         }
-        pInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._loc.x) + " Y:" + String.format("%07.2f",n._loc.y) + " Z:" + String.format("%07.2f",n._loc.z) + "] " + tick);
+//        pInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._loc.x) + " Y:" + String.format("%07.2f",n._loc.y) + " Z:" + String.format("%07.2f",n._loc.z) + "] " + tick);
+        pInfo.add("(" + String.format("%02d", i++) + ")-" + String.format("%03d",n._id) + " [X:" + String.format("%07.2f",n._loc.x) + " Y:" + String.format("%07.2f",n._loc.y) + "] " + tick);
     }
     pInfo.draw();
 }
@@ -531,7 +534,7 @@ void displayObstacleInfo(Obstacle o) {
     obstacleInfo.setColour(theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8]);
     obstacleInfo.clearData();
     obstacleInfo.add("Size: [" + o._size + "]");
-    obstacleInfo.add("Range: [" + o._Ob + "]");
+//    obstacleInfo.add("Range: [" + o._Ob + "]");
     obstacleInfo.add("Mass: [" + o._mass + "]");
     obstacleInfo.draw();
 }
@@ -770,7 +773,7 @@ void displayPointLines() {
     */ 
     for (Particle i : system.S) {
         for (Particle j : system.S) {
-            if (pvectorDFactory.dist(i._loc,j._loc) < i._Cb & i != j) {
+            if (pvectorDFactory.dist(i._loc,j._loc) <= system._C & i != j) {
                 // Calculate start point
                 PVectorD atb = pvectorDFactory.sub(i._loc,j._loc);
                 PVectorD start = i._loc.copy();

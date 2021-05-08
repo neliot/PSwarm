@@ -4,14 +4,6 @@ class Model1 extends PSystem {
   }
 
   void init() {
-    // if (this._compression == 1 && this._pkr > 1) {
-    //   println("Outer compression must have pkr <= 1");
-    //   exit();
-    // }
-    // if (this._compression == 2 && this._pkr < 1) {
-    //   println("Inner compression must have pkr >= 1");
-    //   exit();
-    // }
   }
 
   void populate() {
@@ -26,12 +18,9 @@ class Model1 extends PSystem {
           nextX = _grid/2 - (rand.nextFloat() * _grid);
           nextY = _grid/2 - (rand.nextFloat() * _grid);
           used = checkUsed(nextX,nextY);
-//          if (used) {
-//            println(nextX + ":" + nextY + "-used");
-//          }
         }
         // create agent in centred quartile.
-        S.add(new Particle(this._nextParticleId++,nextX,nextY,0.0,this._Cb,this._Rb,this._speed));
+        S.add(new Particle(this._nextParticleId++,nextX,nextY,0.0,this._speed));
       } catch (Exception e) {
         println(e);
         exit();
@@ -45,18 +34,22 @@ class Model1 extends PSystem {
 */
     String pData = "";
     PVectorD change = new PVectorD(0,0,0);
+    PVectorD stepChange = new PVectorD(0,0,0);
     PVectorD avoid = new PVectorD(0,0,0);
     PVectorD dir = new PVectorD(0,0,0);
     PVectorD coh = new PVectorD(0,0,0);
     PVectorD rep = new PVectorD(0,0,0);
     PVectorD perimGap = new PVectorD(0,0,0);
     PVectorD inter = new PVectorD(0,0,0);
-    
-    for(Particle p : S) {      
-      p.nbr(S);
-      p.checkNbrs();
+    if (this._run) {
+      this._step++;
     }
-    
+    for(Particle p : S) {      
+      p.nbr(S, this._C);
+    }
+    for(Particle p : S) {      
+      p.checkNbrs(this._rgf, this._C);
+    }
     for(Particle p : S) {      
       avoid.set(0,0,0);
       dir.set(0,0,0);
@@ -94,7 +87,7 @@ class Model1 extends PSystem {
       
       if (_loggingP) {
         if (this._logMin) {
-          pData += plog._counter + "," + p.logString(this._logMin) + "," + coh.x + "," + coh.y + "," + coh.mag() + "," + rep.x + "," + rep.y + "," + rep.mag() + "," + inter.x + "," + inter.y + "," + inter.mag() + "," + dir.x + "," + dir.y + "," + dir.mag() + "," + change.x + "," + change.y + "," + change.mag() + "\n";
+          pData += plog._counter + "," + p.logString(this._logMin) + "," + coh.x + "," + coh.y + "," + coh.mag() + "," + rep.x + "," + rep.y + "," + rep.mag() + "," + inter.x + "," + inter.y + "," + inter.mag() + "," + dir.x + "," + dir.y + "," + dir.mag() + "," + change.x + "," + change.y + "," + change.mag() + "\n"; 
         } else {
           pData += plog._counter + "," + p.logString(this._logMin) + "," + coh.x + "," + coh.y + "," + coh.z + "," + coh.mag() + "," + rep.x + "," + rep.y + "," +  rep.z + "," + rep.mag() + "," + inter.x + "," + inter.y + "," +  inter.z + "," + inter.mag() + "," + avoid.x + "," + avoid.y + "," + avoid.z + "," + avoid.mag() + "," + dir.x + "," + dir.y + "," + dir.z + "," + dir.mag() + "," + change.x + "," + change.y + "," + change.z + "," + change.mag() + "\n";
         }
@@ -123,20 +116,20 @@ class Model1 extends PSystem {
     PVectorD vcb = new PVectorD(0,0,0);
     PVectorD v = new PVectorD(0,0,0);
     double distance = 0;
-//    p._nbr.clear();
     String nData = "";
     
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._nbr) {
       v = pvectorDFactory.sub(n._loc,p._loc);
       if (this._perimCompress) {
-        v.mult(this._pkc[p.isPerim()][n.isPerim()]);
+        v.mult(this._kc[p.isPerim()][n.isPerim()]);
+      } else {
+        v.mult(this._kc[0][0]);
       }
-      v.mult(this._kc);
       vcb.add(v);
       if (this._loggingN && this._loggingP) {
         distance = pvectorDFactory.dist(p._loc,n._loc);
-        nData = plog._counter + "," + p._id + "," + n.toString() + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "," + distance + "\n";
+        nData += plog._counter + "," + p.logString(_logMin) + "," + n.logString(_logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "," + distance + "\n";
       }
     }
     if (this._loggingN && this._loggingP) {
@@ -191,24 +184,20 @@ class Model1 extends PSystem {
     String nData = "";
     for(Particle n : p._nbr) {
       // IF compress permeter then reduce repulsion field if both agents are perimeter agents.
-      dist = p._Rb;
       if (this._perimCompress) { 
-        dist = dist * this._pr[p.isPerim()][n.isPerim()];
+        dist = this._R[p.isPerim()][n.isPerim()];
+      } else {
+        dist = this._R[0][0];
       }
       distance = pvectorDFactory.dist(p._loc,n._loc);                     // calculate neighbour distance
       if (distance <= dist & p != n) {                                    // If this agent has an effect in this relationship
         count++;                                                          // keep a record of the number of relationships
-        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance); // Calculate initial vector
-//        if (this._compression == 0 || !this._perimCompress) {             // if compression is off (by setting or interactive)
-        if (this._perimCompress) {             // if compression is off (by setting or interactive)
-          v.mult(this._pkr[p.isPerim()][n.isPerim()]);
-        // } else if ((p._isPerim ^ n._isPerim) && (this._compression == 1)) { // Outer compression apply kr and pkr to i & p
-        //   v.mult(this._kr);
-        //   v.mult(this._pkr);
-        // } else if ((!p._isPerim && n._isPerim) && (this._compression == 2)) { // Inner compression apply kr and pkr to i only
-        //   v.mult(this._kr);
+        v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance);  // Calculate initial vector
+        if (this._perimCompress) {                                        // if compression is off (by setting or interactive)
+          v.mult(this._kr[p.isPerim()][n.isPerim()]);
+        } else {
+          v.mult(this._kr[0][0]);
         }
-        v.mult(this._kr);                      // Must be inner to inner relationship
         vrb.add(v);                              // Sum the neighbours
         if (this._loggingN && this._loggingP) {
           nData = plog._counter + "," + p._id + "," + n.toString() + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "," + distance + "\n";
