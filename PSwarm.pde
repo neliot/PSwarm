@@ -540,19 +540,19 @@ void displayObstacleInfo(Obstacle o) {
 }
 
 void displayCentroid() {
-    double _size1 = 45;
-    double _size2 = 30;
-    double _size3 = 15;
+    double _size1 = 80;
+    double _size2 = 50;
+    double _size3 = 20;
     PVectorD center = system.getCentroid();
     double x = transX(center.x);
     double y = transY(center.y);
     noStroke();
     fill(0,0,100,100);
-    ellipse((float)x,(float)y,(float)(_size1 * _scale),(float)(_size1 * _scale));
+    ellipse((float)x,(float)y,(float)_size1,(float)_size1);
     fill(0,100,0,100);
-    ellipse((float)x,(float)y,(float)(_size2 * _scale),(float)(_size2 * _scale));
+    ellipse((float)x,(float)y,(float)_size2,(float)_size2);
     fill(100,0,0,200);
-    ellipse((float)x,(float)y,(float)(_size3 * _scale),(float)(_size3 * _scale));
+    ellipse((float)x,(float)y,(float)_size3,(float)_size3);
 }
 
 void displayGrid() {

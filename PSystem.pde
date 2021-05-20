@@ -30,6 +30,7 @@ abstract class PSystem {
   double[][] _kr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
   double[][] _kc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
   double[][] _R = {{1.0,1.0},{1.0,1.0}}; // Repulsion
+
   double _C = 1; // Cohesion
 //  double[][] _data = new double[2][2];
   double _stability_factor = 0.0; 
