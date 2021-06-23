@@ -26,15 +26,11 @@ abstract class PSystem {
 //  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
 //  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
   double _Ob = 75; // GLobal Obstacle range (stored in each obstacle for future work)
-//  double[][] _pr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
   double[][] _kr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
   double[][] _kc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
   double[][] _R = {{1.0,1.0},{1.0,1.0}}; // Repulsion
-
   double _C = 1; // Cohesion
-//  double[][] _data = new double[2][2];
   double _stability_factor = 0.0; 
-
   int _seed = 1234;
   double _grid = 500;
   double _speed = 3.0; // Global agent speed (stored in each agent for future work)
@@ -59,7 +55,6 @@ abstract class PSystem {
   Logger plog;
   Logger nClog;
   Logger nRlog;
-
 
 // Abstract methods for model implementation
   abstract void update();
@@ -89,27 +84,18 @@ abstract class PSystem {
     this._swarmSize = int(modelProperties.getProperty("size"));
     this._seed = int(modelProperties.getProperty("seed"));
     this._grid = Double.parseDouble(modelProperties.getProperty("grid"));
-//    this._Cb = Double.parseDouble(modelProperties.getProperty("Cb"));
-//    this._Rb = Double.parseDouble(modelProperties.getProperty("Rb"));
-//    this._kr = Double.parseDouble(modelProperties.getProperty("kr"));
-//    this._kc = Double.parseDouble(modelProperties.getProperty("kc"));
-//    this._kc = getArray(modelProperties.getProperty("kc"));
-//    this._kr = getArray(modelProperties.getProperty("kr"));
     this._kd = Double.parseDouble(modelProperties.getProperty("kd"));
     this._ko = Double.parseDouble(modelProperties.getProperty("ko"));
     this._kg = Double.parseDouble(modelProperties.getProperty("kg"));
-//    this._rgf = Double.parseDouble(modelProperties.getProperty("rgf"));
     this._rgf = boolean(modelProperties.getProperty("rgf"));
     this._Ob = Double.parseDouble(modelProperties.getProperty("Ob"));
     this._speed = Double.parseDouble(modelProperties.getProperty("speed"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
-//    this._pr = getArray(modelProperties.getProperty("pr"));
     this._kr = getArray(modelProperties.getProperty("kr"));
     this._kc = getArray(modelProperties.getProperty("kc"));
     this._R = getArray(modelProperties.getProperty("rb"));
     this._C = Double.parseDouble(modelProperties.getProperty("cb"));
     this._stability_factor = Double.parseDouble(modelProperties.getProperty("stability_factor"));
-//    this._compression = int(modelProperties.getProperty("compression"));
     this._dest = boolean(modelProperties.getProperty("dest"));
     this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
     this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
@@ -213,23 +199,10 @@ abstract class PSystem {
     JSONArray jsonObstaclesZ = new JSONArray();
     
     PrintWriter output;
-//    output = createWriter("data/save/P-"+_modelId+"-agents.dat"); 
-//    output.println(this.S.size() + "," + this._Cb + "," + this._Rb + "," + this._kr + "," + this._kc + "," + this._kd +  "," + this._pc + "," + this._pr);
-//    jsonParams.setDouble("cb",this._Cb);
-//    jsonParams.put("seed",this._seed);
-//    jsonParams.put("grid",this._grid);
-//    jsonParams.setDouble("rb",this._Rb);
-//    jsonParams.setDouble("kr",this._kr);
-//    jsonParams.setDouble("kc",this._kc);
     jsonParams.setDouble("kd",this._kd);
-//    jsonParams.setDouble("ko",this._ko);
     jsonParams.setDouble("kg",this._kg);
     jsonParams.setBoolean("rgf",this._rgf);
-//    jsonParams.setDouble("ob",this._Ob);
-//    jsonParams.setDouble("R",this._R);
     jsonParams.setDouble("cb",this._C);
-//    jsonParams.setDouble("pc",this._pc);
-//    jsonParams.setInt("compression",this._compression);
     jsonParams.setDouble("speed",this._speed);
     jsonParams.setBoolean("perim_coord",this._perimCoord);
 //  CROSS COMPATABILITY SETTINGS FOR PYTHON MODEL
@@ -271,7 +244,6 @@ abstract class PSystem {
       jsonAgentsY.setDouble(i,p._loc.y);
       jsonAgentsZ.setDouble(i,p._loc.z);
       i++;
-//      output.println(p.toString());
     }
     
     jsonAgentsCoords.setJSONArray(0,jsonAgentsX);
@@ -355,21 +327,13 @@ abstract class PSystem {
         this._R[x][y] = R.getJSONArray(x).getDouble(y);
       }
     }
-//    this._Cb = params.getDouble("cb");
-//    this._Rb = params.getDouble("rb");
     this._C = params.getDouble("cb");
-//    this._R = params.getDouble("R");
-//    this._kr = params.getDouble("kr");
-//    this._kc = params.getDouble("kc");
     this._kd = params.getDouble("kd");
-//    this._ko = params.getDouble("ko");
     this._kg = params.getDouble("kg");
     this._rgf = params.getBoolean("rgf");
-//    this._Ob = params.getDouble("ob");
     this._speed = params.getDouble("speed");
     this._stability_factor = params.getDouble("stability_factor");
     this._perimCoord = params.getBoolean("perim_coord");
-
     this.S.clear();
 
 // Commented JSON components to created reduced data set. These might be resurrected later.

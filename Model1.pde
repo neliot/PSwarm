@@ -120,6 +120,10 @@ class Model1 extends PSystem {
     
 // GET ALL THE NEIGHBOURS
     for(Particle n : p._nbr) {
+      if (p._loc.x == n._loc.x && p._loc.y == n._loc.y) { // DROP OUT ON AGENT CLASH
+        println("ERROR:" + n._id + ":" + p._id);
+        exit();
+      }
       v = pvectorDFactory.sub(n._loc,p._loc);
       if (this._perimCompress) {
         v.mult(this._kc[p.isPerim()][n.isPerim()]);
@@ -200,7 +204,7 @@ class Model1 extends PSystem {
         }
         vrb.add(v);                              // Sum the neighbours
         if (this._loggingN && this._loggingP) {
-          nData = plog._counter + "," + p._id + "," + n.toString() + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "," + distance + "\n";
+          nData += plog._counter + "," + p.logString(this._logMin) + "," + n.logString(this._logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
         }
       }
     }

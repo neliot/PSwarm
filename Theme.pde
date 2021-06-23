@@ -33,8 +33,8 @@ class Theme  {
 
   color[][] particleTheme = {
   // | stroke               | fill1                | fill2     |  
-    {color(0  ,0  ,0  ,255),color(25 ,100,25 ,255),color(50 ,175,50 ,255)},
-    {color(0  ,0  ,0  ,255),color(50 ,150,50 ,255),color(200,255,200,255)}
+    {color(0  ,0  ,0  ,255),color(250, 10, 25 ,255),color(50 ,175,50 ,255)},
+    {color(0  ,0  ,0  ,255),color(250, 15, 50 ,255),color(200,255,200,255)}
   };
 
   color[][] obstacleTheme = {
