@@ -183,23 +183,28 @@ class Particle {
     this._resultant.set(f);
   }
 
-  public void update(boolean optimise) {
+  public void update(boolean optimise, String scaling, double gain) {
 /** 
 * Updates the position of the particle based on the accumulated vectors.
 */
-    PVectorD next = this._loc.copy().add(_resultant);
-//    if (optimise) {
-//      if (pvectorDFactory.dist(this._loc,next) > this._topspeed) {
-//        this._resultant.limit(_topspeed);    
-//      }
-//    } else {
-        this._resultant.limit(_topspeed);    
-//    }
+    PVectorD next = this._loc.copy().add(this._resultant);
+    if (scaling.equals("linear")) {
+      this._resultant.mult(gain);  
+//      this._resultant.limit(this._topspeed);    
+    } else {
+      if (optimise) {
+        if (pvectorDFactory.dist(this._loc,next) > this._topspeed) {
+          this._resultant.limit(_topspeed);    
+        } // else go with the vector for the movement
+      } else {
+          this._resultant.limit(_topspeed);   
+      }
+    }
     // helping the garbage collector again;
     this._nextLocation.x = this._loc.x;
     this._nextLocation.y = this._loc.y;
     this._nextLocation.z = this._loc.z;
-    this._nextLocation.add(_resultant);
+    this._nextLocation.add(this._resultant);
   }
 
   public void move() {

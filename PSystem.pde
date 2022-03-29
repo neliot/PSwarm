@@ -19,26 +19,33 @@ abstract class PSystem {
   int _swarmSize = 0;
 //  double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
 //  double _kr = 300; // Must be > _kc to prevent the swarm collapsing.
-  double _kd = 80; // Must be > particle._topspeed to allow free S to coalesce.
-  double _ko = 500; // Stay away from those obstacles Eugene.
+//  double _kd = 80; // Must be > particle._topspeed to allow free S to coalesce.
+//  double _ka = 80; // Adversarial Bias
+  double _arange = 500; // Adversarial Range
+  double _ko = 1; // Stay away from those obstacles Eugene.
   double _kg = 0; // mind the gap.
   boolean _rgf = false; // mind the gap.
+  double _gain = 0.002; // gain controller.
 //  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
 //  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
-  double _Ob = 75; // GLobal Obstacle range (stored in each obstacle for future work)
+  double _Ob = 1; // Global Obstacle range (stored in each obstacle for future work)
   double[][] _kr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
   double[][] _kc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
   double[][] _R = {{1.0,1.0},{1.0,1.0}}; // Repulsion
+  double[] _kd = {1.0,1.0}; // Directional Bias
+  double[] _ka = {1.0,1.0}; // Adversarial Bias
   double _C = 1; // Cohesion
   double _stability_factor = 0.0; 
+  String _scaling = "non-linear"; 
   int _seed = 1234;
   double _grid = 500;
   double _speed = 3.0; // Global agent speed (stored in each agent for future work)
   boolean _obstacleLink = true;
   boolean _dest = true;
+  //boolean _adver = true;
   boolean _run = true;
   int _step = 0;
-  boolean _perimCoord = false;
+//  boolean _perimCoord = false;
   boolean _perimCompress = false;
   boolean _particleOptimise = false;
   boolean _logMin = true;
@@ -84,20 +91,25 @@ abstract class PSystem {
     this._swarmSize = int(modelProperties.getProperty("size"));
     this._seed = int(modelProperties.getProperty("seed"));
     this._grid = Double.parseDouble(modelProperties.getProperty("grid"));
-    this._kd = Double.parseDouble(modelProperties.getProperty("kd"));
+    this._arange = Double.parseDouble(modelProperties.getProperty("arange"));
     this._ko = Double.parseDouble(modelProperties.getProperty("ko"));
     this._kg = Double.parseDouble(modelProperties.getProperty("kg"));
     this._rgf = boolean(modelProperties.getProperty("rgf"));
-    this._Ob = Double.parseDouble(modelProperties.getProperty("Ob"));
+    this._Ob = Double.parseDouble(modelProperties.getProperty("Ob"));    
     this._speed = Double.parseDouble(modelProperties.getProperty("speed"));
+    this._gain = Double.parseDouble(modelProperties.getProperty("gain"));
     this._obstacleLink = boolean(modelProperties.getProperty("obstacleLink"));
+    this._scaling = modelProperties.getProperty("scaling");
     this._kr = getArray(modelProperties.getProperty("kr"));
     this._kc = getArray(modelProperties.getProperty("kc"));
     this._R = getArray(modelProperties.getProperty("rb"));
+    this._kd = getArray2(modelProperties.getProperty("kd"));
+    this._ka = getArray2(modelProperties.getProperty("ka"));
     this._C = Double.parseDouble(modelProperties.getProperty("cb"));
     this._stability_factor = Double.parseDouble(modelProperties.getProperty("stability_factor"));
     this._dest = boolean(modelProperties.getProperty("dest"));
-    this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
+//    this._adver = boolean(modelProperties.getProperty("adver"));
+//    this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
     this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
     this._run = boolean(modelProperties.getProperty("run"));
     this._logMin = boolean(modelProperties.getProperty("logMin"));
@@ -134,6 +146,14 @@ abstract class PSystem {
     result[0][1] = Double.parseDouble(vals[1]);
     result[1][0] = Double.parseDouble(vals[2]);
     result[1][1] = Double.parseDouble(vals[3]);
+    return result;
+  }
+
+  public double[] getArray2(String data) {
+    double[] result = new double[2];
+    String[] vals = data.split(",");
+    result[0] = Double.parseDouble(vals[0]);
+    result[1] = Double.parseDouble(vals[1]);
     return result;
   }
 
@@ -174,6 +194,9 @@ abstract class PSystem {
     JSONArray jsonParamsR = new JSONArray();
     JSONArray jsonParamsRData = new JSONArray();
 
+    JSONArray jsonParamsKd = new JSONArray();
+    JSONArray jsonParamsKa = new JSONArray();
+
     JSONArray jsonParamsKc = new JSONArray();
     JSONArray jsonParamsKcData = new JSONArray();
 
@@ -199,16 +222,28 @@ abstract class PSystem {
     JSONArray jsonObstaclesZ = new JSONArray();
     
     PrintWriter output;
-    jsonParams.setDouble("kd",this._kd);
+//    jsonParams.setDouble("kd",this._kd);
+//    jsonParams.setDouble("ka",this._ka);
+    jsonParams.setDouble("arange",this._arange);
+//    jsonParams.setBoolean("adver",this._adver);
     jsonParams.setDouble("kg",this._kg);
     jsonParams.setBoolean("rgf",this._rgf);
     jsonParams.setDouble("cb",this._C);
     jsonParams.setDouble("speed",this._speed);
-    jsonParams.setBoolean("perim_coord",this._perimCoord);
+    jsonParams.setDouble("gain",this._gain);
+//    jsonParams.setBoolean("perim_coord",this._perimCoord);
 //  CROSS COMPATABILITY SETTINGS FOR PYTHON MODEL
-    jsonParams.setString("scaling","linear");
+    jsonParams.setString("scaling",this._scaling);
     jsonParams.setDouble("stability_factor", this._stability_factor);
     jsonParams.setDouble("exp_rate", 0.2);
+
+    jsonParamsKd.setDouble(0,this._kd[0]);
+    jsonParamsKd.setDouble(1,this._kd[1]);
+    jsonParams.put("kd",jsonParamsKd);
+
+    jsonParamsKa.setDouble(0,this._ka[0]);
+    jsonParamsKa.setDouble(1,this._ka[1]);
+    jsonParams.put("ka",jsonParamsKa);
 
     jsonParamsKrData.setDouble(0,this._kr[0][0]);
     jsonParamsKrData.setDouble(1,this._kr[0][1]);
@@ -294,11 +329,21 @@ abstract class PSystem {
   public void loadSwarm(String file) {
     JSONObject json = loadJSONObject("data/json/" + file);
     load(json);  
+    if(this._loggingP) {
+      Logger jlog = new Logger("data/csv/json.txt");
+      jlog.dump(modelProperties.getProperty("swarmName"));
+      jlog.quit(); 
+    }
   }
 
   public void loadSwarm() {
-    JSONObject json = loadJSONObject("data/json/" + modelProperties.getProperty("swarmName"));
-    load(json);  
+    JSONObject json = loadJSONObject("data/json/" + modelProperties.getProperty("swarmName"));   
+    load(json);
+    if(this._loggingP) {
+      Logger jlog = new Logger("data/csv/json.txt");
+      jlog.dump(modelProperties.getProperty("swarmName"));
+      jlog.quit(); 
+    }  
   }
 
   public void load(JSONObject json) {
@@ -312,6 +357,16 @@ abstract class PSystem {
       for(int y = 0; y < 2; y++) {
         this._kr[x][y] = kr.getJSONArray(x).getDouble(y);
       }
+    }
+
+    JSONArray kd = json.getJSONObject("params").getJSONArray("kd");
+    for(int x = 0; x < 2 ; x++) {
+      this._kd[x] = kd.getDouble(x);
+    }
+
+    JSONArray ka = json.getJSONObject("params").getJSONArray("ka");
+    for(int x = 0; x < 2 ; x++) {
+      this._ka[x] = ka.getDouble(x);
     }
 
     JSONArray kc = json.getJSONObject("params").getJSONArray("kc");
@@ -328,12 +383,17 @@ abstract class PSystem {
       }
     }
     this._C = params.getDouble("cb");
-    this._kd = params.getDouble("kd");
+//    this._kd = params.getDouble("kd");
+//    this._ka = params.getDouble("ka");
+//    this._adver = params.getBoolean("adver");
+    this._arange = params.getDouble("arange");
     this._kg = params.getDouble("kg");
     this._rgf = params.getBoolean("rgf");
     this._speed = params.getDouble("speed");
+    this._gain = params.getDouble("gain");
+    this._scaling = params.getString("scaling");
     this._stability_factor = params.getDouble("stability_factor");
-    this._perimCoord = params.getBoolean("perim_coord");
+//    this._perimCoord = params.getBoolean("perim_coord");
     this.S.clear();
 
 // Commented JSON components to created reduced data set. These might be resurrected later.

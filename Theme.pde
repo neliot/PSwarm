@@ -46,7 +46,7 @@ class Theme  {
   color[][] destinationTheme = {
   // | stroke               | fill               |
     {color(0  ,0  ,0  ,255),color(150,10 ,10 ,255)}, 
-    {color(0  ,0  ,0  ,255),color(255,0  ,0  ,255)}
+    {color(0  ,0  ,0  ,255),color(200,0  ,0  ,255)}
   };
 
   color[] lineTheme = {

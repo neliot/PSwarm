@@ -106,6 +106,7 @@ void settings() {
     } else {
         noSmooth();
     }
+    println("SETTINGS COMPLETE");
 }
 
 void setup() {
@@ -135,10 +136,13 @@ void setup() {
     mouse = mouse1;
     _offsetX = width/2;
     _offsetY = height/2;
+    println("BASIC SETUP COMPLETE");
     try {
     switch(int(properties.getProperty("model"))) {
         case 1:
         system = new Model1(); 
+        println("MODEL LOADED");
+
         break;
         // case 2:
         // system = new Model2(); 
@@ -355,8 +359,9 @@ void keyPressed() {
     if(key == 'w') {if (_gridSize < 80) _gridSize += 20;}
     if(key == '6') {if (_particleSize < 150) _particleSize += 1;}
     if(key == '7') {if (_particleSize > 5) _particleSize -= 1;}
-    if(key == 'p') {system._perimCoord = !system._perimCoord;}  
+//    if(key == 'p') {system._perimCoord = !system._perimCoord;}  
     if(key == 'c') {system._perimCompress = !system._perimCompress;} 
+//    if(key == 'v') {system._adver = !system._adver;} 
     if(key == 'g') {_grid = !_grid;}
     if(key == 'l') {_lines = !_lines;} 
     if(key == 'i') {_displayId = !_displayId;}
@@ -425,6 +430,7 @@ void generateMenu() {
     }
     menuInfo1.clearData();
     menuInfo1.add("(SPACE) Destinations Active: " + system._dest);
+//    menuInfo1.add("(v) Adversarial: " + system._adver);
     menuInfo1.add("(z) Display Destinations: " + _displayDestinations);
     menuInfo1.add("(r) Run: " + system._run);
     menuInfo1.add("(i) Display Ids: " + _displayId);
@@ -432,7 +438,7 @@ void generateMenu() {
     menuInfo1.add("(l) Display Link Lines: " + _lines);
     menuInfo1.add("(t) Display particle ticks: " + _particleTicks);
     menuInfo1.add("(x) Display centroid: " + _displayCentroid);
-    menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
+//    menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
     menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
     menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
     menuInfo1.add("===========PAN============");
@@ -463,17 +469,18 @@ void generateMenu() {
     menuInfo2.add("==========================");  
     menuInfo2.add("Default Speed: " + system._speed);
     menuInfo2.add("Cohesion Range: " + system._C);
-//    menuInfo2.add("Cohesion Weight: " + system._kc);
-//    menuInfo2.add("Repulsion Range: " + system._R);
-//    menuInfo2.add("Repulsion Weight: " + system._kr);
     menuInfo2.add("Obstacle Range: " + system._Ob);
     menuInfo2.add("Obstacle Weight: " + system._ko);
-    menuInfo2.add("Direction Weight: " + system._kd);
+//    menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
+    menuInfo2.add("kd: " + "[" + system._kd[0] + "," + system._kd[1] +"]" );
+    menuInfo2.add("ka: " + "[" + system._ka[0] + "," + system._ka[1] +"]" );
     menuInfo2.add("R: " + "[[" + system._R[0][0] + "," + system._R[0][1] +"],[" + system._R[1][0] + "," + system._R[1][1] + "]]" );
     menuInfo2.add("kr: " + "[[" + system._kr[0][0] + "," + system._kr[0][1] +"],[" + system._kr[1][0] + "," + system._kr[1][1] + "]]" );
     menuInfo2.add("kc: " + "[[" + system._kc[0][0] + "," + system._kc[0][1] +"],[" + system._kc[1][0] + "," + system._kc[1][1] + "]]" );
     menuInfo2.add("kg: " + system._kg + " reflex: " + system._rgf);
+    menuInfo2.add("Scaling: " + "[" + system._scaling + "]");
+    menuInfo2.add("Gain: " + "[" + system._gain + "]");
     menuInfo2.add("==========================");  
     menuInfo2.add("Average Magnitude: " + String.format("%015.4f",system._swarmDirection.mag()));
 }
@@ -627,9 +634,14 @@ void displayParticle(Particle p) {
             noFill();
             strokeWeight(1);
             stroke(150,0,0);
-            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Rb * 2 * _scale), (float)(p._Rb* 2 * _scale));
+//            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Rb * 2 * _scale), (float)(p._Rb* 2 * _scale));
+            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._R[p.isPerim()][0] * 2 * _scale), (float)(system._R[p.isPerim()][0] * 2 * _scale));
+            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._R[p.isPerim()][1] * 2 * _scale), (float)(system._R[p.isPerim()][1] * 2 * _scale));
+//            system._R[p.isPerim()][0];
+//            system._R[p.isPerim()][1];
             stroke(0,150,0);
-            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Cb * 2 * _scale), (float)(p._Cb * 2 * _scale));
+            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._C * 2 * _scale), (float)(system._C * 2 * _scale));
+//            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Cb * 2 * _scale), (float)(p._Cb * 2 * _scale));
         }
     }
 }
@@ -644,7 +656,7 @@ void displayDestination(Destination d) {
     strokeWeight(2);
     stroke(theme.destinationTheme[theme._theme][0]);
     fill(theme.destinationTheme[theme._theme][1]);
-    ellipse((float)transX(d._loc.x),(float)transY(d._loc.y),_particleSize,_particleSize);
+    ellipse((float)transX(d._loc.x),(float)transY(d._loc.y),_particleSize*1.5,_particleSize*1.5);
     if(_displayId) displayId(d);
 }
 

@@ -1,6 +1,6 @@
 class Model1 extends PSystem {
   Model1() {
-    super("Linear Vector + Void Reduction","1");
+    super("Relationship-based","1");
   }
 
   void init() {
@@ -39,6 +39,7 @@ class Model1 extends PSystem {
     PVectorD dir = new PVectorD(0,0,0);
     PVectorD coh = new PVectorD(0,0,0);
     PVectorD rep = new PVectorD(0,0,0);
+    PVectorD adv = new PVectorD(0,0,0);
     PVectorD perimGap = new PVectorD(0,0,0);
     PVectorD inter = new PVectorD(0,0,0);
     if (this._run) {
@@ -57,6 +58,7 @@ class Model1 extends PSystem {
       perimGap.set(0,0,0); 
       coh.set(0,0,0);
       rep.set(0,0,0);
+      adv.set(0,0,0);
 
       /* Calculate Cohesion */
       coh = cohesion(p);
@@ -77,7 +79,13 @@ class Model1 extends PSystem {
       if (this._dest && D.size() > 0) {
         dir = direction(p);
       }
+
+      if (this._dest && D.size() > 0) {
+        adv = adversarial(p);
+      }
+
       change.add(dir);
+      change.add(adv);
       change.add(avoid);
       change.add(coh);
       change.add(rep);
@@ -98,7 +106,7 @@ class Model1 extends PSystem {
       _swarmDirection.set(0,0,0);
       for(Particle p : S) {
         _swarmDirection.add(p._resultant);
-        p.update(this._particleOptimise);
+        p.update(this._particleOptimise, this._scaling, this._gain);
       }
     }
     if (this._loggingP) {
@@ -125,11 +133,7 @@ class Model1 extends PSystem {
         exit();
       }
       v = pvectorDFactory.sub(n._loc,p._loc);
-      if (this._perimCompress) {
-        v.mult(this._kc[p.isPerim()][n.isPerim()]);
-      } else {
-        v.mult(this._kc[0][0]);
-      }
+      v.mult(this._kc[p.isPerim()][n.isPerim()]);
       vcb.add(v);
       if (this._loggingN && this._loggingP) {
         distance = pvectorDFactory.dist(p._loc,n._loc);
@@ -170,8 +174,7 @@ class Model1 extends PSystem {
         v = pvectorDFactory.sub(v,p._loc);
         vgb.add(v);
     }
-    vgb.mult(this._kg);
-    return vgb;
+    return vgb.mult(this._kg);
   }
 
   PVectorD repulsion(Particle p) {
@@ -197,11 +200,7 @@ class Model1 extends PSystem {
       if (distance <= dist & p != n) {                                    // If this agent has an effect in this relationship
         count++;                                                          // keep a record of the number of relationships
         v = pvectorDFactory.sub(p._loc, n._loc).setMag(dist - distance);  // Calculate initial vector
-        if (this._perimCompress) {                                        // if compression is off (by setting or interactive)
-          v.mult(this._kr[p.isPerim()][n.isPerim()]);
-        } else {
-          v.mult(this._kr[0][0]);
-        }
+        v.mult(this._kr[p.isPerim()][n.isPerim()]);
         vrb.add(v);                              // Sum the neighbours
         if (this._loggingN && this._loggingP) {
           nData += plog._counter + "," + p.logString(this._logMin) + "," + n.logString(this._logMin) + "," + v.x + "," + v.y + "," + v.z + "," + v.mag() + "\n";
@@ -226,6 +225,7 @@ class Model1 extends PSystem {
 */
     PVectorD destination = new PVectorD(0,0,0);
     PVectorD vd = new PVectorD(0,0,0);
+
     if (p._destinations.size() > 0) {
       destination = p._destinations.get(0)._loc;      
       for (int i = 1; i < p._destinations.size(); i++) {
@@ -234,14 +234,58 @@ class Model1 extends PSystem {
         }
       }   
     }    
-    if (!this._perimCoord) {
-      vd = pvectorDFactory.sub(destination,p._loc);
-    } else {
+//    if (!this._perimCoord) {
+    vd = pvectorDFactory.sub(destination,p._loc);
+//    } else {
       /* Perimeter only control */
-      if (p._isPerim) {
-        vd = pvectorDFactory.sub(destination,p._loc);
-      }
+//      if (p._isPerim) {
+//        vd = pvectorDFactory.sub(destination,p._loc);
+//      }
+//    }
+//linear
+    return vd.mult(this._kd[p.isPerim()]);
+  }
+
+  public PVectorD direction2(Particle p) {
+/** 
+* Aggregate Destination calculation
+* 
+* @param p The particle that is currently being checked
+*/
+    PVectorD vd = new PVectorD(0,0,0);
+    PVectorD influence = new PVectorD(0,0,0);
+// GET ALL THE IN RANGE DESTINATIONS
+    for(Destination d : p._destinations) {
+      influence = pvectorDFactory.sub(d._loc,p._loc).setMag(1).mult(1/pvectorDFactory.dist(d._loc,p._loc)); 
+      vd.add(influence);
     }
-    return vd.setMag(this._kd);
+    return vd.mult(this._kd[p.isPerim()]);
+  }
+
+  PVectorD adversarial(Particle p) {
+/** 
+* Adversarial calculation - Calculates the normalised direction.
+* 
+* @param p The particle that is currently being checked
+*/
+    double rotation = Math.PI/2;
+    boolean clockwise = false; // Maybe add rotation direction later
+
+    PVectorD destination = new PVectorD(0,0,0);
+    PVectorD va = new PVectorD(0,0,0);
+
+    if (p._destinations.size() > 0) {
+      destination = p._destinations.get(0)._loc;      
+      for (int i = 1; i < p._destinations.size(); i++) {
+        if (pvectorDFactory.dist(p._loc,destination) > pvectorDFactory.dist(p._loc,p._destinations.get(i)._loc)) {
+          destination = p._destinations.get(i)._loc;
+        }
+      }   
+    }
+    if (pvectorDFactory.dist(destination, p._loc) > this._arange) {
+      return va;
+    }    
+    va = pvectorDFactory.sub(destination,p._loc).rotate(rotation);
+    return va.mult(this._ka[p.isPerim()]);
   }
 }
