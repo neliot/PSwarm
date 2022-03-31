@@ -17,17 +17,11 @@ abstract class PSystem {
   ArrayList<Obstacle> O = new ArrayList<Obstacle>();
   boolean _lines = true;
   int _swarmSize = 0;
-//  double _kc = 0.3; // Must be < particle._topspeed to allow the swarm to stabalise to "pseudo equilibrium" (no jitter).
-//  double _kr = 300; // Must be > _kc to prevent the swarm collapsing.
-//  double _kd = 80; // Must be > particle._topspeed to allow free S to coalesce.
-//  double _ka = 80; // Adversarial Bias
   double _arange = 500; // Adversarial Range
   double _ko = 1; // Stay away from those obstacles Eugene.
   double _kg = 0; // mind the gap.
   boolean _rgf = false; // mind the gap.
   double _gain = 0.002; // gain controller.
-//  double _Cb = 70; // Cohesion range, Must be greater than range to repulsion range. 
-//  double _Rb = 50; // Repulsion range, Must be less than range to allow cohesion.
   double _Ob = 1; // Global Obstacle range (stored in each obstacle for future work)
   double[][] _kr = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter -> inner reduction weight
   double[][] _kc = {{1.0,1.0},{1.0,1.0}}; // Compressed perimeter reduction weight
@@ -128,15 +122,7 @@ abstract class PSystem {
         this.nClog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,COHX,COHY,COHZ,MAG,DIST\n");    
         this.nRlog.dump("STEP,PID,NID,X,Y,Z,RANGE,REPULSE,SIZE,MASS,PERIM,REPX,REPY,REPZ,MAG\n");  
       }
-    }
-
-// Random swarm or load current saved model
-    if (boolean(modelProperties.getProperty("loadSwarm"))) {
-      this.loadSwarm();
-    } else {
-      this.populate();
-    }
-    this.init();  
+    }  
   }
 
   public double[][] getArray(String data) {
@@ -232,7 +218,6 @@ abstract class PSystem {
     jsonParams.setDouble("speed",this._speed);
     jsonParams.setDouble("gain",this._gain);
 //    jsonParams.setBoolean("perim_coord",this._perimCoord);
-//  CROSS COMPATABILITY SETTINGS FOR PYTHON MODEL
     jsonParams.setString("scaling",this._scaling);
     jsonParams.setDouble("stability_factor", this._stability_factor);
     jsonParams.setDouble("exp_rate", 0.2);
@@ -383,9 +368,6 @@ abstract class PSystem {
       }
     }
     this._C = params.getDouble("cb");
-//    this._kd = params.getDouble("kd");
-//    this._ka = params.getDouble("ka");
-//    this._adver = params.getBoolean("adver");
     this._arange = params.getDouble("arange");
     this._kg = params.getDouble("kg");
     this._rgf = params.getBoolean("rgf");
@@ -393,7 +375,6 @@ abstract class PSystem {
     this._gain = params.getDouble("gain");
     this._scaling = params.getString("scaling");
     this._stability_factor = params.getDouble("stability_factor");
-//    this._perimCoord = params.getBoolean("perim_coord");
     this.S.clear();
 
 // Commented JSON components to created reduced data set. These might be resurrected later.
@@ -401,7 +382,6 @@ abstract class PSystem {
     JSONArray coords = json.getJSONObject("agents").getJSONArray("coords");
 
     for (int i = 0; i < coords.getJSONArray(0).size(); i++) {
-//      JSONObject p = props.getJSONObject(i);
       JSONArray x = coords.getJSONArray(0);
       JSONArray y = coords.getJSONArray(1);
       JSONArray z = coords.getJSONArray(2);
@@ -442,8 +422,6 @@ abstract class PSystem {
       this.O.add(new Obstacle(i, (double)x.getDouble(i), (double)y.getDouble(i), (double)z.getDouble(i), this._Ob));
       this._nextObsId = i + 1;
     }
-// Initialise the swarm based on current model requirements.    
-    this.init();  
   }
   
   public void moveReset() {
@@ -469,7 +447,7 @@ abstract class PSystem {
       }
     }
     result.add(calcLineRepulsion(p));
-    return result.mult(-_ko);
+    return result.mult(-this._ko);
   }
 
   public PVectorD calcLineRepulsion(Particle p) {

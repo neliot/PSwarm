@@ -114,6 +114,7 @@ void setup() {
     * Load system images setup Swarm model
     * 
     */
+    println("SETUP STARTED");
     logo = loadImage("icons/logo6.png");
     frameRate(int(properties.getProperty("frameRate")));
     if(!boolean(properties.getProperty("fullScreen"))) {
@@ -136,38 +137,14 @@ void setup() {
     mouse = mouse1;
     _offsetX = width/2;
     _offsetY = height/2;
-    println("BASIC SETUP COMPLETE");
     try {
-    switch(int(properties.getProperty("model"))) {
-        case 1:
-        system = new Model1(); 
-        println("MODEL LOADED");
-
-        break;
-        // case 2:
-        // system = new Model2(); 
-        // break;
-        // case 3:
-        // system = new Model3(); 
-        // break;
-        // case 4:
-        // system = new Model4(); 
-        // break;
-        // case 5:
-        // system = new Model5(); 
-        // break;
-        // case 6:
-        // system = new Model6(); 
-        // break;
-        // case 7:
-        // system = new Model7(); 
-        // break;
-        // case 8:
-        // system = new Model8(); 
-        // break;
-        // default:
-        // system = new Model9(); 
-    }
+        switch(int(properties.getProperty("model"))) {
+            case 1:
+            system = new Model1(); 
+            println("MODEL LOADED");
+            break;
+        }
+        system.init();
     } catch (Exception e) {
         System.out.println(e);
         System.exit(-1);
@@ -198,6 +175,7 @@ void setup() {
     displayWindows.add(frameRateInfo);
     frameRateInfo.setPos(width - (frameRateInfo._width + 2),2);
     background(theme.desktopTheme[theme._theme][0]);
+    println("SETUP COMPLETE");
 }
 
 public void mouseExited() {
@@ -473,11 +451,12 @@ void generateMenu() {
     menuInfo2.add("Obstacle Weight: " + system._ko);
 //    menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
-    menuInfo2.add("kd: " + "[" + system._kd[0] + "," + system._kd[1] +"]" );
-    menuInfo2.add("ka: " + "[" + system._ka[0] + "," + system._ka[1] +"]" );
-    menuInfo2.add("R: " + "[[" + system._R[0][0] + "," + system._R[0][1] +"],[" + system._R[1][0] + "," + system._R[1][1] + "]]" );
-    menuInfo2.add("kr: " + "[[" + system._kr[0][0] + "," + system._kr[0][1] +"],[" + system._kr[1][0] + "," + system._kr[1][1] + "]]" );
-    menuInfo2.add("kc: " + "[[" + system._kc[0][0] + "," + system._kc[0][1] +"],[" + system._kc[1][0] + "," + system._kc[1][1] + "]]" );
+    menuInfo2.add("kd: " + "[" + system._kd[0] + "," + system._kd[1] +"]");
+    menuInfo2.add("ka: " + "[" + system._ka[0] + "," + system._ka[1] +"]");
+    menuInfo2.add("arange: " + "[" + system._arange + "]");
+    menuInfo2.add("R: " + "[[" + system._R[0][0] + "," + system._R[0][1] +"],[" + system._R[1][0] + "," + system._R[1][1] + "]]");
+    menuInfo2.add("kr: " + "[[" + system._kr[0][0] + "," + system._kr[0][1] +"],[" + system._kr[1][0] + "," + system._kr[1][1] + "]]");
+    menuInfo2.add("kc: " + "[[" + system._kc[0][0] + "," + system._kc[0][1] +"],[" + system._kc[1][0] + "," + system._kc[1][1] + "]]");
     menuInfo2.add("kg: " + system._kg + " reflex: " + system._rgf);
     menuInfo2.add("Scaling: " + "[" + system._scaling + "]");
     menuInfo2.add("Gain: " + "[" + system._gain + "]");
