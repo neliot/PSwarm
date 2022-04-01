@@ -86,11 +86,11 @@ class Model1 extends PSystem {
       }
 
       change.add(dir);
-//      change.add(adv);
-//      change.add(avoid);
+      change.add(adv);
+      change.add(avoid);
       change.add(coh);
       change.add(rep);
-//      change.add(perimGap);
+      change.add(perimGap);
       
       inter = pvectorDFactory.add(coh,rep);
       
