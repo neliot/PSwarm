@@ -33,7 +33,7 @@ PImage logo;
 PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2021";
-String _VERSION = "0.2.0";
+String _VERSION = "0.3.0";
 double _scale = 1.0; // Scaling factor
 int _offsetX = 0; // Swarm display offsetX
 int _offsetY = 0; // Swarm display offsetY

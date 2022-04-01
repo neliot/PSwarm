@@ -181,4 +181,13 @@
  *      and perim away.   
  *    . Outer - Any xor agent relationship b^b'
  *      gets pkr adjustment towards the perimeter.
+ **************************************************
+ * 01/04/2022 - 0.3.0 - NE
+ **************************************************
+ * 1. Major upgrade to model1 to support
+ *    . Linear - No normalisation of vectors.      
+ *    . Non-Linear - Movement of agents is 
+ *      normalised to produce constant speed.
+ *      There is an optimise option to reduce small 
+ *      movements when vector is eless than max speed.
  **************************************************//
