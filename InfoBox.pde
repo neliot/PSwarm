@@ -3,6 +3,7 @@
 *************************************************
 * See history.txt
 */
+import processing.sound.*;
 
 class InfoBox {
   ArrayList<String> _data = new ArrayList<String>();
@@ -10,6 +11,7 @@ class InfoBox {
   color _borderColour;
   color _textColour;
   color _fillColour;
+  SoundFile _sound;
   int _posX;
   int _posY;
   int _width;
@@ -17,6 +19,7 @@ class InfoBox {
   int _lineHeight = 25;
   boolean _moveable = true;
   boolean _minimised = false;
+  boolean _canMinimise = true;
   boolean _mouse = false;
   boolean _visible = true;
   PImage _graphic;
@@ -53,6 +56,17 @@ class InfoBox {
     this._mouse = mouse;
   }
 
+  InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title, boolean mouse, SoundFile sound) {
+    this._posX = x;
+    this._posY = y;
+    this._borderColour = borderColour;
+    this._fillColour = fillColour;
+    this._textColour = textColour;
+    this._title = title;
+    this._mouse = mouse;
+    this._sound = sound;
+  }
+
   InfoBox(int x, int y, color borderColour, color fillColour, color textColour, String title) {
     this._posX = x;
     this._posY = y;
@@ -61,6 +75,16 @@ class InfoBox {
     this._textColour = textColour;
     this._title = title;
     this._mouse = false;
+  }
+
+  void setSound(SoundFile sound) {
+      this._sound = sound;
+  }
+
+  void playSound() {
+    if (this._sound != null) {
+      this._sound.play();
+    }
   }
 
   void setGraphic(PImage graphic) {
@@ -187,6 +211,7 @@ class InfoBox {
 */    
     int offX = 0;
     int offY = 0;
+
     if (_graphic != null) {
       this._height = this._graphic.height + 29;
       this._width = this._graphic.width + 4;
@@ -216,21 +241,24 @@ class InfoBox {
     textSize(16);
     textAlign(LEFT,BOTTOM);
     int nextItem = 1;
-    stroke(_borderColour);
+    stroke(this._borderColour);
     fill(this._fillColour);
     rect(this._posX+offX,this._posY+offY,this._width,25);
-    if (_minimised) {
+    if (_minimised & _canMinimise) {
       this._height = 25;
+      fill(this._fillColour);
       rect(this._posX+offX,this._posY+offY,this._width,25);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
     } else {
+      fill(this._fillColour);
       rect(this._posX+offX,this._posY+offY,this._width,this._height);
       fill(this._textColour);
       text(this._title,this._posX+offX+2,this._posY+offY+25);
       if (this._graphic != null) {
         image(this._graphic,this._posX+offX+2,this._posY+offY + 25 + 2);
       } else {
+        fill(this._textColour);
         for (String d : _data) { 
           text(d, this._posX+offX+2, this._posY+offY+25 + (this._lineHeight * nextItem));
           nextItem++;

@@ -17,6 +17,8 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ****************************************************************************/
+import processing.sound.*;
+
 java.util.Properties properties = new java.util.Properties();
 PSystem system;
 Theme theme = new Theme(); 
@@ -30,6 +32,7 @@ PImage mouse;
 PImage mouse1;
 PImage mouse2;
 PImage logo;
+PImage about;
 PImage license;
 String _NAME = "PSwarm";
 String _AUTHORS = "(c) 2021";
@@ -73,10 +76,11 @@ int _OBSTACLE = 2;
 int _WINDOW = 3;
 //
 String[] _modes = {"Agent (L-Add R-Remove)","Destination (L-Add R-Remove)","Obstacle (L-Add R-Remove)","Window (L-Grab R-Minimise)"};
-InfoBox menuInfo1 = new InfoBox(2,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
-InfoBox menuInfo2 = new InfoBox(346,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU");
-InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction");
-InfoBox frameRateInfo = new InfoBox(2,800,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Frame Rate");
+InfoBox menuInfo1 = new InfoBox(2,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU",false);
+InfoBox menuInfo2 = new InfoBox(346,2,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"MENU",false);
+InfoBox directionInfo = new InfoBox(2,605,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Direction",false);
+InfoBox frameRateInfo = new InfoBox(2,800,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"Frame Rate",false);
+InfoBox aboutInfo = new InfoBox(10,10,theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2],"About",false);
 
 InfoBox destinationInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2],"Destination",true);
 InfoBox pInfo = new InfoBox(0,0,theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5],"Agent",true);
@@ -116,6 +120,8 @@ void setup() {
     */
     println("SETUP STARTED");
     logo = loadImage("icons/logo6.png");
+    aboutInfo.setGraphic(loadImage("icons/about.jpg"));
+    aboutInfo.setSound(new SoundFile(this, "/sound/about.mp3"));
     frameRate(int(properties.getProperty("frameRate")));
     if(!boolean(properties.getProperty("fullScreen"))) {
         surface.setTitle(_NAME + " : " + _VERSION);
@@ -151,9 +157,10 @@ void setup() {
     }
     _scale = Double.parseDouble(system.modelProperties.getProperty("scale"));
 
-
     directionInfo._visible = boolean(properties.getProperty("directionBox"));
     frameRateInfo._visible = boolean(properties.getProperty("frameRateBox"));
+    aboutInfo._visible = false;
+    aboutInfo._canMinimise = false;
     menuInfo1._visible = boolean(properties.getProperty("menu1Box"));
     menuInfo2._visible = boolean(properties.getProperty("menu2Box"));
     menuInfo1._minimised = boolean(properties.getProperty("menu1BoxMinimised"));
@@ -173,6 +180,7 @@ void setup() {
     displayWindows.add(menuInfo2);
     displayWindows.add(directionInfo);
     displayWindows.add(frameRateInfo);
+    displayWindows.add(aboutInfo);
     frameRateInfo.setPos(width - (frameRateInfo._width + 2),2);
     background(theme.desktopTheme[theme._theme][0]);
     println("SETUP COMPLETE");
@@ -338,7 +346,7 @@ void keyPressed() {
     if(key == '6') {if (_particleSize < 150) _particleSize += 1;}
     if(key == '7') {if (_particleSize > 5) _particleSize -= 1;}
 //    if(key == 'p') {system._perimCoord = !system._perimCoord;}  
-    if(key == 'c') {system._perimCompress = !system._perimCompress;} 
+//    if(key == 'c') {system._perimCompress = !system._perimCompress;} 
 //    if(key == 'v') {system._adver = !system._adver;} 
     if(key == 'g') {_grid = !_grid;}
     if(key == 'l') {_lines = !_lines;} 
@@ -350,7 +358,15 @@ void keyPressed() {
     if(key == '1') {screenGrab();}
     if(key == 'm') {changeMode();}
     if(key == '2') {changeTheme();} 
+    if(key == '\\') {displayAbout();} 
 }
+
+void displayAbout() {
+    aboutInfo._visible=!aboutInfo._visible;
+    if (aboutInfo._visible) {
+        aboutInfo.playSound();
+    }
+};
 
 void changeMode() {
     _mode += 1;
@@ -401,14 +417,11 @@ void generateMenu() {
     */ 
     if(system._loggingP) {
         menuInfo1.setTitle("Menu - " + theme._themeName[theme._theme] + " (LOGGING)");
-        menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][3],theme.menuTheme[theme._theme][2]);
     } else {
         menuInfo1.setTitle("Menu - " + theme._themeName[theme._theme]);
-        menuInfo1.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     }
     menuInfo1.clearData();
     menuInfo1.add("(SPACE) Destinations Active: " + system._dest);
-//    menuInfo1.add("(v) Adversarial: " + system._adver);
     menuInfo1.add("(z) Display Destinations: " + _displayDestinations);
     menuInfo1.add("(r) Run: " + system._run);
     menuInfo1.add("(i) Display Ids: " + _displayId);
@@ -416,8 +429,6 @@ void generateMenu() {
     menuInfo1.add("(l) Display Link Lines: " + _lines);
     menuInfo1.add("(t) Display particle ticks: " + _particleTicks);
     menuInfo1.add("(x) Display centroid: " + _displayCentroid);
-//    menuInfo1.add("(p) Perimeter Coordination: " + system._perimCoord);
-    menuInfo1.add("(c) Perimeter Compress: " + system._perimCompress);
     menuInfo1.add("(0) Display Particle Fields: " + _displayParticleFields);
     menuInfo1.add("===========PAN============");
     menuInfo1.add("(h/k) X:" + (_offsetX - width/2));
@@ -435,7 +446,6 @@ void generateMenu() {
     menuInfo1.add("(ESC) EXIT");
     
     menuInfo2.setTitle(system._model);
-    menuInfo2.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     menuInfo2.clearData();
     menuInfo2.add("Agents:" + system.S.size() + " Destinations:" + system.D.size() + " Obstacles:" + system.O.size());
     menuInfo2.add("==========================");
@@ -449,7 +459,6 @@ void generateMenu() {
     menuInfo2.add("Cohesion Range: " + system._C);
     menuInfo2.add("Obstacle Range: " + system._Ob);
     menuInfo2.add("Obstacle Weight: " + system._ko);
-//    menuInfo2.add("Direction Weight: " + system._kd);
     menuInfo2.add("==========================");  
     menuInfo2.add("kd: " + "[" + system._kd[0] + "," + system._kd[1] +"]");
     menuInfo2.add("ka: " + "[" + system._ka[0] + "," + system._ka[1] +"]");
@@ -466,11 +475,9 @@ void generateMenu() {
 
 void generateDirectionInfo() {
     directionInfo.setGraphic(swarmDirectionImage());
-    directionInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
 }
 
 void generateFrameRateInfo() {
-    frameRateInfo.setColour(theme.menuTheme[theme._theme][0],theme.menuTheme[theme._theme][1],theme.menuTheme[theme._theme][2]);
     frameRateInfo.clearData();
     frameRateInfo.add(String.format("%.4f", frameRate));
     frameRateInfo.add("STEP:" + String.format("%d", system._step));
@@ -483,13 +490,10 @@ void displayAgentInfo(Particle p) {
     } else {
         tick = ' ';
     }
-//    pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + " Z:" + String.format("%07.2f",p._loc.z) + "] " + tick);
     pInfo.setTitle("ID:" + p._id + " [X:" + String.format("%07.2f",p._loc.x) + " Y:" + String.format("%07.2f",p._loc.y) + "] " + tick);
     pInfo.setColour(theme.boxTheme[theme._theme][3],theme.boxTheme[theme._theme][4],theme.boxTheme[theme._theme][5]);
     pInfo.clearData();
     pInfo.add("Mass: [" + p._mass + "]");
-//    pInfo.add("Rb : [" + p._Rb + "]");
-//    pInfo.add("Cb : [" + p._Cb + "]");
     pInfo.add("Speed: [" + p._topspeed + "]");
     pInfo.add("Size: [" + p._size + "]");
     pInfo.add("Neighbours: [" + p._nbr.size() + "]");
@@ -508,7 +512,6 @@ void displayAgentInfo(Particle p) {
 
 void displayDestinationInfo(Destination dest) {
     destinationInfo.setTitle("ID:" + dest._id + " [X:" + String.format("%.2f",dest._loc.x) + ", Y:" + String.format("%.2f",dest._loc.y) + "]");
-    destinationInfo.setColour(theme.boxTheme[theme._theme][0],theme.boxTheme[theme._theme][1],theme.boxTheme[theme._theme][2]);
     destinationInfo.clearData();
     destinationInfo.add("Size: [" + dest._size + "]");
     destinationInfo.add("Mass: [" + dest._mass + "]");
@@ -517,10 +520,8 @@ void displayDestinationInfo(Destination dest) {
 
 void displayObstacleInfo(Obstacle o) {
     obstacleInfo.setTitle("ID:" + o._id + " [X:" + String.format("%.2f",o._loc.x) + ", Y:" + String.format("%.2f",o._loc.y) + "]");
-    obstacleInfo.setColour(theme.boxTheme[theme._theme][6],theme.boxTheme[theme._theme][7],theme.boxTheme[theme._theme][8]);
     obstacleInfo.clearData();
     obstacleInfo.add("Size: [" + o._size + "]");
-//    obstacleInfo.add("Range: [" + o._Ob + "]");
     obstacleInfo.add("Mass: [" + o._mass + "]");
     obstacleInfo.draw();
 }
@@ -613,14 +614,10 @@ void displayParticle(Particle p) {
             noFill();
             strokeWeight(1);
             stroke(150,0,0);
-//            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Rb * 2 * _scale), (float)(p._Rb* 2 * _scale));
             ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._R[p.isPerim()][0] * 2 * _scale), (float)(system._R[p.isPerim()][0] * 2 * _scale));
             ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._R[p.isPerim()][1] * 2 * _scale), (float)(system._R[p.isPerim()][1] * 2 * _scale));
-//            system._R[p.isPerim()][0];
-//            system._R[p.isPerim()][1];
             stroke(0,150,0);
             ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(system._C * 2 * _scale), (float)(system._C * 2 * _scale));
-//            ellipse((float)transX(p._loc.x),(float)transY(p._loc.y), (float)(p._Cb * 2 * _scale), (float)(p._Cb * 2 * _scale));
         }
     }
 }

@@ -40,7 +40,7 @@ abstract class PSystem {
   boolean _run = true;
   int _step = 0;
 //  boolean _perimCoord = false;
-  boolean _perimCompress = false;
+//  boolean _perimCompress = false;
   boolean _particleOptimise = false;
   boolean _logMin = true;
 
@@ -104,7 +104,7 @@ abstract class PSystem {
     this._dest = boolean(modelProperties.getProperty("dest"));
 //    this._adver = boolean(modelProperties.getProperty("adver"));
 //    this._perimCoord = boolean(modelProperties.getProperty("perimCoord"));
-    this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
+//    this._perimCompress = boolean(modelProperties.getProperty("perimCompress"));
     this._run = boolean(modelProperties.getProperty("run"));
     this._logMin = boolean(modelProperties.getProperty("logMin"));
     this._loggingP = boolean(modelProperties.getProperty("loggingP"));
